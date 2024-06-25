@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Saved Routes</title>
+</head>
+<body>
+    <h1>Saved Routes</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Start Point</th>
+                <th>End Point</th>
+                <th>Travel Mode</th>
+                <th>Route Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="route : ${routes}">
+                <td th:text="${route.startPoint}">Start Point</td>
+                <td th:text="${route.endPoint}">End Point</td>
+                <td th:text="${route.travelMode}">Travel Mode</td>
+                <td th:text="${route.routeDetails}">Route Details</td>
+            </tr>
+        </tbody>
+    </table>
+    <a href="/">Back to Map</a>
+</body>
+</html>
