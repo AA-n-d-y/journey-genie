@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Route Details</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCX-Ukm1kWZZt1ZQnKaiteVcl2OxoCH5S8&libraries=places,geocoding"></script>
+    <script>
+        let map, directionsService, directionsRenderer;
+
+        function initMap() {
+            directionsService = new google.maps.DirectionsService();
+            directionsRenderer = new google.maps.DirectionsRenderer();
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: 49.2827, lng: -123.1207 },
+                zoom: 8,
+            });
+            directionsRenderer.setMap(map);
+
+            const routeDetails = /*[[${route.routeDetails}]]*/ 'default';
+            if (routeDetails !== 'default') {
+                directionsRenderer.setDirections(JSON.parse(routeDetails));
+            }
+        }
+
+        function calculateAndDisplayRoute(directionsService, directionsRenderer, routeDetails) {
+            directionsRenderer.setDirections(JSON.parse(routeDetails));
+        }
+    </script>
+</head>
+<body onload="initMap()">
+    <h1>Route Details</h1>
+    <div id="map" style="height: 500px; width: 100%;"></div>
+    <a href="/saved-routes">Back to Saved Routes</a>
+</body>
+</html>

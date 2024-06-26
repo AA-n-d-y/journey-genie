@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -23,6 +23,13 @@ public class RouteController {
         List<Route> routes = routeRepository.findAll();
         model.addAttribute("routes", routes);
         return "saved-routes";
+    }
+
+    @GetMapping("/route-details/{id}")
+    public String viewRouteDetails(@PathVariable Long id, Model model) {
+        Route route = routeRepository.findById(id).orElse(null);
+        model.addAttribute("route", route);
+        return "route-details";
     }
 
     @PostMapping("/save-route")

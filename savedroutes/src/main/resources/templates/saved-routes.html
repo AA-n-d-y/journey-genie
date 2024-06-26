@@ -8,18 +8,20 @@
     <table>
         <thead>
             <tr>
+                <th>Date Creation</th>
                 <th>Start Point</th>
                 <th>End Point</th>
                 <th>Travel Mode</th>
-                <th>Route Details</th>
+                <th>Routes</th>
             </tr>
         </thead>
         <tbody>
             <tr th:each="route : ${routes}">
+                <td th:text="${route.creationDate}">Date Creation</td>
                 <td th:text="${route.startPoint}">Start Point</td>
                 <td th:text="${route.endPoint}">End Point</td>
                 <td th:text="${route.travelMode}">Travel Mode</td>
-                <td th:text="${route.routeDetails}">Route Details</td>
+                <td><a th:href="@{'/route-details/' + ${route.id}}">View Route</a></td>
             </tr>
         </tbody>
     </table>

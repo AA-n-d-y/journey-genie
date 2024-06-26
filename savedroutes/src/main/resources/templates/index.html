@@ -496,46 +496,6 @@
             });
         }
 
-        function calculateBestRoute() {
-            const modes = ['TRANSIT', 'DRIVING', 'WALKING', 'BICYCLING'];
-            let bestRoute = null;
-            let bestDuration = Infinity;
-
-            const checkNextMode = () => {
-                if (modes.length === 0) {
-                    if (bestRoute) {
-                        directionsRenderer.setDirections(bestRoute);
-                        selectedRoute = bestRoute.routes[0];
-                        displayRouteOptions(bestRoute.routes);
-                    } else {
-                        alert("Could not retrieve route.");
-                    }
-                    return;
-                }
-
-                const mode = modes.shift();
-                const request = {
-                    origin: currentLocation,
-                    destination: destination,
-                    travelMode: mode,
-                    provideRouteAlternatives: true
-                };
-
-                directionsService.route(request, function (result, status) {
-                    if (status === 'OK') {
-                        const routeDuration = result.routes[0].legs[0].duration.value; // duration in seconds
-                        if (routeDuration < bestDuration) {
-                            bestDuration = routeDuration;
-                            bestRoute = result;
-                        }
-                    }
-                    checkNextMode();
-                });
-            };
-
-            checkNextMode();
-        }
-
         function displayRouteOptions(routes) {
             const routesContainer = document.getElementById('routes');
             routesContainer.innerHTML = '';
@@ -570,85 +530,40 @@
             document.getElementById('destination').value = '';
         }
 
-// function for saved routes version 1
-        // function saveRoute() {
-        //     if (!currentLocation || !destination) {
-        //         alert("Please select both current location and destination.");
-        //         return;
-        //     }
-
-        //     const startPoint = document.getElementById('current-location').value;
-        //     const endPoint = document.getElementById('destination').value;
-        //     const travelMode = document.querySelector('input[name="route"]:checked').value;
-        //     const routeDetails = JSON.stringify(directionsRenderer.getDirections());
-
-        //     const form = document.createElement('form');
-        //     form.method = 'post';
-        //     form.action = '/save-route';
-
-        //     const startPointInput = document.createElement('input');
-        //     startPointInput.type = 'hidden';
-        //     startPointInput.name = 'startPoint';
-        //     startPointInput.value = startPoint;
-        //     form.appendChild(startPointInput);
-
-        //     const endPointInput = document.createElement('input');
-        //     endPointInput.type = 'hidden';
-        //     endPointInput.name = 'endPoint';
-        //     endPointInput.value = endPoint;
-        //     form.appendChild(endPointInput);
-
-        //     const travelModeInput = document.createElement('input');
-        //     travelModeInput.type = 'hidden';
-        //     travelModeInput.name = 'travelMode';
-        //     travelModeInput.value = travelMode;
-        //     form.appendChild(travelModeInput);
-
-        //     const routeDetailsInput = document.createElement('input');
-        //     routeDetailsInput.type = 'hidden';
-        //     routeDetailsInput.name = 'routeDetails';
-        //     routeDetailsInput.value = routeDetails;
-        //     form.appendChild(routeDetailsInput);
-
-        //     document.body.appendChild(form);
-        //     form.submit();
-        // }
-        // function for saved routes version 1
         function saveRoute() {
-    if (!currentLocation || !destination) {
-        alert("Please select both current location and destination.");
-        return;
-    }
+            if (!currentLocation || !destination) {
+                alert("Please select both current location and destination.");
+                return;
+            }
 
-    const startPoint = document.getElementById('current-location').value;
-    const endPoint = document.getElementById('destination').value;
-    const travelMode = document.querySelector('input[name="route"]:checked').value;
-    const routeDetails = JSON.stringify(directionsRenderer.getDirections());
+            const startPoint = document.getElementById('current-location').value;
+            const endPoint = document.getElementById('destination').value;
+            const travelMode = document.querySelector('input[name="route"]:checked').value;
+            const routeDetails = JSON.stringify(directionsRenderer.getDirections());
 
-    fetch('/save-route', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-            'startPoint': startPoint,
-            'endPoint': endPoint,
-            'travelMode': travelMode,
-            'routeDetails': routeDetails
-        })
-    })
-    .then(response => {
-        if (response.ok) {
-            alert('Route saved successfully.');
-        } else {
-            alert('Failed to save route.');
+            fetch('/save-route', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'startPoint': startPoint,
+                    'endPoint': endPoint,
+                    'travelMode': travelMode,
+                    'routeDetails': routeDetails
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Route saved successfully.');
+                } else {
+                    alert('Failed to save route.');
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
         }
-    })
-    .catch((error) => {
-        console.error('Error:', error);
-    });
-}
-
     </script>
     <style>
         .route-option {
@@ -665,18 +580,19 @@
     </style>
 </head>
 <body onload="initMap()">
-    <h1>Saved Routes</h1>
+    <h1>search your routes</h1>
     <input id="current-location" type="text" placeholder="Enter current location">
     <input id="destination" type="text" placeholder="Enter destination">
     <button onclick="calculateRoute('DRIVING')">Car Route</button>
     <button onclick="calculateRoute('WALKING')">Walking Route</button>
     <button onclick="calculateRoute('BICYCLING')">Bicycling Route</button>
     <button onclick="calculateRoute('TRANSIT')">Transit Route</button>
+    <button onclick="calculateRoute('FLYING')">Flying Route</button>
     <button onclick="calculateBestRoute()">Best Route</button>
     <button onclick="clearMap()">Clear Map</button>
     <button onclick="saveRoute()">Save This Route</button>
     <div id="routes"></div>
     <div id="map" style="height: 500px; width: 100%;"></div>
-    <a href="/saved-routes">See Your Saved Routes</a> <!-- Link to saved routes page -->
+    <a href="/saved-routes">See Your Saved Routes</a>
 </body>
 </html>

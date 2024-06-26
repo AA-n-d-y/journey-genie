@@ -1,6 +1,7 @@
 package com.example.savedroutes.model;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 public class Route {
@@ -17,8 +18,11 @@ public class Route {
     @Column(length = 10000)
     private String routeDetails;
 
+    private LocalDateTime creationDate;
+
     // Default constructor
     public Route() {
+        this.creationDate = LocalDateTime.now();
     }
 
     // Parameterized constructor
@@ -27,6 +31,7 @@ public class Route {
         this.endPoint = endPoint;
         this.travelMode = travelMode;
         this.routeDetails = routeDetails;
+        this.creationDate = LocalDateTime.now();
     }
 
     // Getters and Setters
@@ -68,5 +73,13 @@ public class Route {
 
     public void setRouteDetails(String routeDetails) {
         this.routeDetails = routeDetails;
+    }
+
+    public LocalDateTime getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
     }
 }
