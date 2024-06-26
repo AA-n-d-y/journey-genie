@@ -22,11 +22,18 @@ public class LoginsController {
     @Autowired
     private UserRepository repo;
 
-
     // Get request (displaying login page)
     @GetMapping("/login")
     public String displayLogin() {
         return "loginPage";
+    }
+
+    // Get request (displaying user page)
+    @GetMapping("/home")
+    public String displayUserPage(@RequestParam Map<String, String> data, Model model) {
+        User user = new User("Bob", "John", "bobJohn", "hello");
+        model.addAttribute("user", user);
+        return "userPage";
     }
     
 }
