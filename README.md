@@ -23,7 +23,7 @@ The target audience is travelers, but anyone can use the website. <br><br>
 There are several competitors, including Google Maps, TripIt, Trivago, etc. Our project will differ from other applications due to the variety of options available to users. For example, our app suggests local events and festivals to help the user immerse in the local culture. The checklist tool also provides suggestions on what to bring based on their plans and the weather. <br><br>
 
 
-## Does this project have many individual features or one main feature (a possibility with many subproblems)? These are the ‘epics’ of your project.
+## Does this project have many individual features or one main feature (a possibility with many subproblems)? These are the ‘epics’ of our project.
 
 Our project has one main feature – travel planning. It contains many subproblems: adding/saving/deleting destinations, analyzing ideal routes to their locations, providing weather information, listing local events, etc. <br>
 
