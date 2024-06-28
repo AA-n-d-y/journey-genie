@@ -31,7 +31,7 @@ public class UserController {
     @GetMapping("/admin")
     public String getAllUsers(Model model){
         List<User> users = repo.findAll();
-        model.addAttribute("user", users);
+        model.addAttribute("users", users);
         return "usersList";
     }
 }
