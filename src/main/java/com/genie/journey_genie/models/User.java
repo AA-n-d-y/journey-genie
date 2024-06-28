@@ -13,14 +13,15 @@ public class User {
     // Attributes
     private String firstName;
     private String lastName;
-    private String userName;
+    private String username;
+    private String password;
     private String email;
     
     // Constructor
-    public User(String firstName, String lastName, String userName, String email) {
+    public User(String firstName, String lastName, String username, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.userName = userName;
+        this.username = username;
         this.email = email;
     }
 
@@ -40,10 +41,17 @@ public class User {
     }
 
     public String getUserName() {
-        return this.userName;
+        return this.username;
     }
-    public String setUserName(String userName) {
-        return this.userName = userName;
+    public String setUserName(String username) {
+        return this.username = username;
+    }
+
+    public String getPassword() {
+        return this.password;
+    }
+    public String setPassword(String password) {
+        return this.password = password;
     }
 
     public String getEmail() {

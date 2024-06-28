@@ -22,12 +22,12 @@
 
                 <!-- Sign in -->
                 <div class = "h2 text-center form-label mb-4"> Login </div>
-                <form action = "/home" method = "GET">
+                <form action = "/home" method = "POST">
                   <div>
-                    <input type = "text" placeholder = "Username" class = "form-control mb-3"></input> 
+                    <input type = "text" name = "username" placeholder = "Username" class = "form-control mb-3" required></input> 
                   </div>
                   <div>
-                    <input type = "text" placeholder = "Password" class = "form-control mb-3"></input> 
+                    <input type = "text" name = "password" placeholder = "Password" class = "form-control mb-3" required></input> 
                   </div>
                   <div>
                     <input type = "submit" value = "Sign in" class = "btn btn-info text-white w-100 mb-4"></input> 
