@@ -1,3 +1,5 @@
+// Java file for the User class
+
 package com.genie.journey_genie.models;
 
 import jakarta.persistence.*;
