@@ -1,3 +1,5 @@
+// Java file for the User repository
+
 package com.genie.journey_genie.models;
 
 import org.springframework.data.jpa.repository.JpaRepository;
