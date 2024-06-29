@@ -1,4 +1,4 @@
-package com.genie.journey_genie.controller;
+package com.genie.journey_genie.controllers;
 
 import java.util.Map;
 import java.util.List;
@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.ui.Model;
 
-import com.genie.journey_genie.model.User;
-import com.genie.journey_genie.repository.UserRepository;
+import com.genie.journey_genie.models.User;
+import com.genie.journey_genie.models.UserRepository;
 
 @Controller
 public class UserController {
@@ -23,9 +23,9 @@ public class UserController {
     public String registerUser(@RequestParam Map<String, String> newuser){
         String username = newuser.get("username");
         String password = newuser.get("password");
-        //String type = newuser.get("type");
-        repo.save(new User(username, password, "user"));
-        return "redirect:/";
+        String type = newuser.get("type");
+        repo.save(new User(username, password, type));
+        return "redirect:/admin";
     }
 
     @GetMapping("/admin")
