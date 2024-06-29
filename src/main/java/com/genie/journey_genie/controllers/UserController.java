@@ -34,4 +34,9 @@ public class UserController {
         model.addAttribute("users", users);
         return "usersList";
     }
+
+    @GetMapping("/register")
+    public String viewRegister(){
+        return "register";
+    }
 }
