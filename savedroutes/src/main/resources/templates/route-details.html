@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Route Details</title>
-    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkRHXVlE1vMgAgNQyOqFipf919uddFzmk&libraries=places,geocoding"></script>
+    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=API_KEY&libraries=places,geocoding"></script>
     <script>
         let map, directionsService, directionsRenderer;
 
@@ -27,16 +27,17 @@
     </script> -->
 </head>
 <body>
-<!-- <body onload="initMap()"> -->
-    <!-- <h1>Route Details</h1>
-    <div id="map" style="height: 500px; width: 100%;"></div>
-    <a href="/saved-routes">Back to Saved Routes</a> -->
+    <!-- <body onload="initMap()"> -->
+    <h1>Route Details</h1>
+    <!-- <div id="map" style="height: 500px; width: 100%;"></div>-->
 
-    <div th:text="${route.startPoint}"></div>
-    <div th:text="${route.endPoint}"></div>
+    <div th:text="${route.startCoords}"></div>
+    <div th:text="${route.endCoords}"></div>
     <div th:text="${route.travelMode}"></div>
 
-    <iframe id="map" height="500" width="500" style="border:0" loading="lazy" allowfullscreen
-th:src="@{${'https://www.google.com/maps/embed/v1/directions?origin=' + route.startPoint + '&destination=' + route.endPoint + '&key=API_KEY'}}"></iframe>
+    <iframe id="map" height="500" width="100%" style="border:0" loading="lazy" allowfullscreen
+th:src="@{${'https://www.google.com/maps/embed/v1/directions?origin=' + route.startCoords + '&destination=' + route.endCoords + '&key=API_KEY'}}"></iframe>
+
+    <a href="/saved-routes">Back to Saved Routes</a>
 </body>
 </html>

@@ -10,6 +10,9 @@ public class Route {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String startCoords;
+    private String endCoords;
+
     private String startPoint;
     private String endPoint;
     private String travelMode;
@@ -26,7 +29,9 @@ public class Route {
     }
 
     // Parameterized constructor
-    public Route(String startPoint, String endPoint, String travelMode, String routeDetails) {
+    public Route(String startCoords, String endCoords, String startPoint, String endPoint, String travelMode, String routeDetails) {
+        this.startCoords = startCoords;
+        this.endCoords = endCoords;
         this.startPoint = startPoint;
         this.endPoint = endPoint;
         this.travelMode = travelMode;
@@ -43,6 +48,22 @@ public class Route {
         this.id = id;
     }
 
+    public String getStartCoords() {
+        return startCoords;
+    }
+
+    public void setStartCoords(String startCoords) {
+        this.startCoords = startCoords;
+    }
+
+    public String getEndCoords() {
+        return endCoords;
+    }
+
+    public void setEndCoords(String endCoords) {
+        this.endCoords = endCoords;
+    }
+    
     public String getStartPoint() {
         return startPoint;
     }

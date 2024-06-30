@@ -388,7 +388,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Saved Routes</title>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCX-Ukm1kWZZt1ZQnKaiteVcl2OxoCH5S8&libraries=places,geocoding"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=API_KEY&libraries=places,geocoding"></script>
     <script>
         let map, currentLocation, destination, directionsService, directionsRenderer, geocoder;
         let currentMarker, destinationMarker;
@@ -547,6 +547,8 @@
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
                 body: new URLSearchParams({
+                    'startCoords': currentLocation,
+                    'endCoords': destination,
                     'startPoint': startPoint,
                     'endPoint': endPoint,
                     'travelMode': travelMode,

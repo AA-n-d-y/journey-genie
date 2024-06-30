@@ -32,8 +32,7 @@ public class RouteController {
         if (route.getStartPoint().contains("#")) {
             int index = route.getStartPoint().indexOf("#");
             StringBuilder startPoint = new StringBuilder(route.getStartPoint());
-            startPoint = startPoint.delete(index, index+6);
-            route.setStartPoint(startPoint.toString());
+            route.setStartPoint(startPoint.delete(index, index+6).toString());
         }   
         route.setStartPoint(route.getStartPoint().replace(", ", "+"));
         route.setStartPoint(route.getStartPoint().replace(" ", "+"));
@@ -41,8 +40,7 @@ public class RouteController {
         if (route.getEndPoint().contains("#")) {
             int index = route.getEndPoint().indexOf("#");
             StringBuilder endPoint = new StringBuilder(route.getEndPoint());
-            endPoint = endPoint.delete(index, index+6);
-            route.setEndPoint(endPoint.toString());
+            route.setEndPoint(endPoint.delete(index, index+6).toString());
         }
         route.setEndPoint(route.getEndPoint().replace(", ", "+"));
         route.setEndPoint(route.getEndPoint().replace(" ", "+"));
@@ -53,11 +51,15 @@ public class RouteController {
 
     @PostMapping("/save-route")
     public String saveRoute(
+            Model model,
+            @RequestParam String startCoords,
+            @RequestParam String endCoords,
             @RequestParam String startPoint,
             @RequestParam String endPoint,
             @RequestParam String travelMode,
             @RequestParam String routeDetails) {
-        Route route = new Route(startPoint, endPoint, travelMode, routeDetails);
+
+        Route route = new Route(startCoords, endCoords, startPoint, endPoint, travelMode, routeDetails);
         routeRepository.save(route);
         return "redirect:/saved-routes";
     }
