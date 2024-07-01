@@ -5,30 +5,38 @@ package com.genie.journey_genie.models;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "User")
+@Table(name = "Users")
 public class User {
-    // Setting up the id
+    // ID
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;   
-    
+    private int userID;
+
     // Attributes
     private String firstName;
     private String lastName;
     private String username;
     private String password;
     private String email;
-    private boolean isAdmin = false;
+    private String type;
     
+
     // Constructor
-    public User(String firstName, String lastName, String username, String email) {
+    public User(String firstName, String lastName, String username, String password, String email, String type) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
+        this.password = password;
         this.email = email;
+        this.type = type;
     }
 
+
     // Getters and setters
+    public int getUserID() {
+        return this.userID;
+    }
+    
     public String getFirstName() {
         return this.firstName;
     }
@@ -43,15 +51,15 @@ public class User {
         this.lastName = lastName;
     }
 
-    public String getUserName() {
-        return this.username;
+    public String getUsername() {
+        return username;
     }
-    public void setUserName(String username) {
+    public void setUsername(String username) {
         this.username = username;
     }
 
     public String getPassword() {
-        return this.password;
+        return password;
     }
     public void setPassword(String password) {
         this.password = password;
@@ -64,11 +72,11 @@ public class User {
         this.email = email;
     }
 
-    public boolean getUserType() {
-        return this.isAdmin;
+    public String getType() {
+        return type;
     }
-    public void setUserType(boolean isAdmin) {
-        this.isAdmin = isAdmin;
+    public void setType(String type) {
+        this.type = type;
     }
     
 }

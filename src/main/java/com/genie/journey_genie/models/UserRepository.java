@@ -2,9 +2,10 @@
 
 package com.genie.journey_genie.models;
 
-import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository extends JpaRepository<User, Integer> {
+import java.util.List;
+
+public interface UserRepository extends JpaRepository<User, Integer>{
     List<User> findByUsernameAndPassword(String username, String password);
 }

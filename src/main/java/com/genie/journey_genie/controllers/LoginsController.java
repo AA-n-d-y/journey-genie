@@ -32,15 +32,6 @@ public class LoginsController {
     }
 
     
-    // Get request (displaying registration page)
-    @GetMapping("register")
-    public String displayRegistration() {
-        // NEED TO ADD THE PAGE
-
-        return " ";
-    }
-
-    
     // Get request (displaying the login page)
     @GetMapping("/home")
     public String displayUserPageG(){
