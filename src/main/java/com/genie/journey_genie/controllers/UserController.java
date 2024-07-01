@@ -15,7 +15,9 @@ import org.springframework.ui.Model;
 import com.genie.journey_genie.models.User;
 import com.genie.journey_genie.models.UserRepository;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class UserController {
@@ -25,8 +27,30 @@ public class UserController {
   
     // Get request (displaying registration page)
     @GetMapping("/register")
-    public String displayRegistration() {
-        return "register";
+    public String displayRegistration(Model model, HttpServletResponse response, HttpServletRequest request, HttpSession session) {
+        // Finding the session
+        User user = (User) session.getAttribute("sessionUser");
+
+        // If user is null, return the registration page
+        if (user == null) {
+            response.setStatus(200);
+            return "register";
+        }
+
+        // Else return the home page
+        else if (user.getType() == "Admin") {
+            // Finding all the users and rendering the admin page
+            List<User> users = repo.findAll();
+            model.addAttribute("users", users);
+            response.setStatus(401);
+            return "adminPage";
+        }
+        else {
+            model.addAttribute("user", user);
+            response.setStatus(401);
+            return "userPage";
+        }
+        
     }
 
 
@@ -42,24 +66,17 @@ public class UserController {
         String password = newUser.get("password");
         String email = newUser.get("email");
         String type = newUser.get("type");
-        repo.save(new User(firstname, lastname, username, password, email, type));
 
-        // Finding all the users and rendering the admin page
-        List<User> users = repo.findAll();
-        model.addAttribute("users", users);
-        response.setStatus(201);
-        return "adminPage";
-    }
-
-
-    // Get request (displaying the admin page)
-    @GetMapping("/admin")
-    public String getAllUsers(Model model, HttpServletResponse response){
-        // Finding all the users and rendering the admin page
-        List<User> users = repo.findAll();
-        model.addAttribute("users", users);
-        response.setStatus(200);
-        return "adminPage";
+        // If the user exists already
+        if (repo.findByUsername(username).size() > 0) {
+            return "userExists";
+        }
+        // Else
+        else {
+            repo.save(new User(firstname, lastname, username, password, email, type));
+            response.setStatus(201);
+            return "loginPage";
+        }
     }
 
 }

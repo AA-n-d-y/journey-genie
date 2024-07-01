@@ -7,10 +7,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import com.genie.journey_genie.models.*;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.view.RedirectView;
+
 import java.util.Map;
 import org.springframework.ui.Model;
 
@@ -27,55 +31,108 @@ public class LoginsController {
 
     // Get request (displaying login page)
     @GetMapping("/login")
-    public String displayLogin(HttpServletResponse response) {
-        response.setStatus(200);
-        return "loginPage";
+    public String displayLogin(Model model, HttpServletResponse response, HttpServletRequest request, HttpSession session) {
+       // Finding the session
+       User user = (User) session.getAttribute("sessionUser");
+
+       // If user is null, return the login page
+       if (user == null) {
+           response.setStatus(200);
+           return "loginPage";
+       }
+
+       // Else return the home page
+       else if (user.getType() == "Admin") {
+           // Finding all the users and rendering the admin page
+           List<User> users = repo.findAll();
+           model.addAttribute("users", users);
+           response.setStatus(401);
+           return "adminPage";
+       }
+       else {
+           model.addAttribute("user", user);
+           response.setStatus(401);
+           return "userPage";
+       }
+       
     }
 
     
-    // Get request (displaying the user page)
+    // Get request (displaying the user/admin page)
     @GetMapping("/home")
-    public String displayUserPageG(HttpServletResponse response){
-        // DO SOMETHING HERE FOR LOGINS
-        response.setStatus(200);
-        return "loginPage";
+    public String displayUserPageG(Model model, HttpServletResponse response, HttpServletRequest request, HttpSession session){
+       // Finding the session
+       User user = (User) session.getAttribute("sessionUser");
+
+       // If user is null, return the login page
+        if (user == null) {
+           response.setStatus(200);
+           return "loginPage";
+        }
+
+       // Else return the home page
+        else if (user.getType() == "Admin") {
+           // Finding all the users and rendering the admin page
+           List<User> users = repo.findAll();
+           model.addAttribute("users", users);
+           response.setStatus(401);
+           return "adminPage";
+        }
+        else {
+           model.addAttribute("user", user);
+           response.setStatus(401);
+           return "userPage";
+        }
+       
     }
     
 
-    // Post request (displaying the user page after attempting to log in)
+    // Post request (displaying the user/admin page after attempting to log in)
     @PostMapping("/home")
-    public String displayUserPage(@RequestParam Map<String, String> loginForm, Model model, HttpServletResponse response) {
-        try {
-            // Getting the user
-            List<User> user = repo.findByUsernameAndPassword(loginForm.get("username"), loginForm.get("password"));
+    public String displayUserPage(@RequestParam Map<String, String> loginForm, Model model, HttpServletResponse response, HttpServletRequest request, HttpSession session) {
+        // Getting the user
+        List<User> userList = repo.findByUsernameAndPassword(loginForm.get("username"), loginForm.get("password"));
 
-            // If the user exists
-            if (user != null) {
-                model.addAttribute("user", user.get(0));
-                response.setStatus(200);
-                return "userPage";
-            }
-
-            // Else
-            else {
-                response.setStatus(401);
-                return "loginPage";
-            }
-        }
-        catch(Exception obj) {
+        // If the user does not exist
+        if (userList.isEmpty()) {
             response.setStatus(401);
             return "loginPage";
         }
+
+        // Else create the session
+        User user = userList.get(0);
+        request.getSession().setAttribute("sessionUser", user);
+
+        if (user.getType() == "Admin") {
+            // Finding all the users and rendering the admin page
+            List<User> users = repo.findAll();
+            model.addAttribute("users", users);
+            response.setStatus(200);
+            return "adminPage";
+        }
+        else {
+            model.addAttribute("user", user);
+            response.setStatus(200);
+            return "userPage";
+        }
+
     }
     
 
-    // Get request (displaying login page after logging out)
-    @GetMapping("/logout")
-    public String displayLogout(HttpServletResponse response) {
-        // DO SOMETHING HERE WHEN LOGGING OUT
+    // Post request (displaying login page after logging out)
+    @PostMapping("/logout")
+    public String userLogout(HttpServletResponse response, HttpServletRequest request) {
+        // Destroy the session
+        request.getSession().invalidate();
         response.setStatus(200);
-
         return "loginPage";
+    }
+
+
+    // Get request (redirecting to /login)
+    @GetMapping("/")
+    public RedirectView redirect() {
+        return new RedirectView("login");
     }
 
 }
