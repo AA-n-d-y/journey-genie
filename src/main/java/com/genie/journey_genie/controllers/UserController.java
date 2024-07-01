@@ -15,6 +15,8 @@ import org.springframework.ui.Model;
 import com.genie.journey_genie.models.User;
 import com.genie.journey_genie.models.UserRepository;
 
+import jakarta.servlet.http.HttpServletResponse;
+
 @Controller
 public class UserController {
     // Creating the repository object
@@ -30,7 +32,8 @@ public class UserController {
 
     // Post request (creating a new user)
     @PostMapping("/register")
-    public String registerUser(@RequestParam Map<String, String> newUser, Model model){
+    public String registerUser(@RequestParam Map<String, String> newUser, Model model, HttpServletResponse response){
+        // NEED TO ACCOUNT FOR A DUPLICATE USER
 
         // Creating a new user
         String firstname = newUser.get("firstname");
@@ -44,16 +47,18 @@ public class UserController {
         // Finding all the users and rendering the admin page
         List<User> users = repo.findAll();
         model.addAttribute("users", users);
+        response.setStatus(201);
         return "adminPage";
     }
 
 
     // Get request (displaying the admin page)
     @GetMapping("/admin")
-    public String getAllUsers(Model model){
+    public String getAllUsers(Model model, HttpServletResponse response){
         // Finding all the users and rendering the admin page
         List<User> users = repo.findAll();
         model.addAttribute("users", users);
+        response.setStatus(200);
         return "adminPage";
     }
 

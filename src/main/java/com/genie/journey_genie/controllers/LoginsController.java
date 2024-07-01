@@ -27,21 +27,24 @@ public class LoginsController {
 
     // Get request (displaying login page)
     @GetMapping("/login")
-    public String displayLogin() {
+    public String displayLogin(HttpServletResponse response) {
+        response.setStatus(200);
         return "loginPage";
     }
 
     
-    // Get request (displaying the login page)
+    // Get request (displaying the user page)
     @GetMapping("/home")
-    public String displayUserPageG(){
+    public String displayUserPageG(HttpServletResponse response){
+        // DO SOMETHING HERE FOR LOGINS
+        response.setStatus(200);
         return "loginPage";
     }
     
 
-    // Post request (displaying page after attempting to log in)
+    // Post request (displaying the user page after attempting to log in)
     @PostMapping("/home")
-    public String displayUserPage(@RequestParam Map<String, String> loginForm, Model model) {
+    public String displayUserPage(@RequestParam Map<String, String> loginForm, Model model, HttpServletResponse response) {
         try {
             // Getting the user
             List<User> user = repo.findByUsernameAndPassword(loginForm.get("username"), loginForm.get("password"));
@@ -49,15 +52,18 @@ public class LoginsController {
             // If the user exists
             if (user != null) {
                 model.addAttribute("user", user.get(0));
+                response.setStatus(200);
                 return "userPage";
             }
 
             // Else
             else {
+                response.setStatus(401);
                 return "loginPage";
             }
         }
         catch(Exception obj) {
+            response.setStatus(401);
             return "loginPage";
         }
     }
@@ -65,13 +71,11 @@ public class LoginsController {
 
     // Get request (displaying login page after logging out)
     @GetMapping("/logout")
-    public String displayLogout() {
+    public String displayLogout(HttpServletResponse response) {
         // DO SOMETHING HERE WHEN LOGGING OUT
-
+        response.setStatus(200);
 
         return "loginPage";
     }
-
-
 
 }
