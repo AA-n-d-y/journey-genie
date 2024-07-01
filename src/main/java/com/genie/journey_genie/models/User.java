@@ -21,7 +21,11 @@ public class User {
     private String type;
     
 
-    // Constructor
+    // Constructors
+    public User() {
+
+    }
+    
     public User(String firstName, String lastName, String username, String password, String email, String type) {
         this.firstName = firstName;
         this.lastName = lastName;
