@@ -1,3 +1,5 @@
+// Java file for the logins controller
+
 package com.genie.journey_genie.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;

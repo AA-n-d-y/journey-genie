@@ -18,6 +18,7 @@ public class User {
     private String username;
     private String password;
     private String email;
+    private boolean isAdmin = false;
     
     // Constructor
     public User(String firstName, String lastName, String username, String email) {
@@ -31,36 +32,43 @@ public class User {
     public String getFirstName() {
         return this.firstName;
     }
-    public String setFirstName(String firstName) {
-        return this.firstName = firstName;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
     public String getLastName() {
         return this.lastName;
     }
-    public String setLastName(String lastName) {
-        return this.lastName = lastName;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getUserName() {
         return this.username;
     }
-    public String setUserName(String username) {
-        return this.username = username;
+    public void setUserName(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
         return this.password;
     }
-    public String setPassword(String password) {
-        return this.password = password;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getEmail() {
         return this.email;
     }
-    public String setEmail(String email) {
-        return this.email = email;
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public boolean getUserType() {
+        return this.isAdmin;
+    }
+    public void setUserType(boolean isAdmin) {
+        this.isAdmin = isAdmin;
     }
     
 }
