@@ -42,7 +42,7 @@ public class LoginsController {
        }
 
        // Else return the home page
-       else if (user.getType() == "Admin") {
+       else if (user.getType().toLowerCase().equals("admin")) {
            // Finding all the users and rendering the admin page
            List<User> users = repo.findAll();
            model.addAttribute("users", users);
@@ -71,7 +71,7 @@ public class LoginsController {
         }
 
        // Else return the home page
-        else if (user.getType() == "Admin") {
+        else if (user.getType().toLowerCase().equals("admin")) {
            // Finding all the users and rendering the admin page
            List<User> users = repo.findAll();
            model.addAttribute("users", users);
@@ -103,7 +103,7 @@ public class LoginsController {
         User user = userList.get(0);
         request.getSession().setAttribute("sessionUser", user);
 
-        if (user.getType() == "Admin") {
+        if (user.getType().toLowerCase().equals("admin")) {
             // Finding all the users and rendering the admin page
             List<User> users = repo.findAll();
             model.addAttribute("users", users);

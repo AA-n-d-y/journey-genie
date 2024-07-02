@@ -38,7 +38,7 @@ public class UserController {
         }
 
         // Else return the home page
-        else if (user.getType() == "Admin") {
+        else if (user.getType().toLowerCase().equals("admin")) {
             // Finding all the users and rendering the admin page
             List<User> users = repo.findAll();
             model.addAttribute("users", users);

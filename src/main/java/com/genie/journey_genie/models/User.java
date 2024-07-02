@@ -77,7 +77,7 @@ public class User {
     }
 
     public String getType() {
-        return type;
+        return this.type;
     }
     public void setType(String type) {
         this.type = type;
