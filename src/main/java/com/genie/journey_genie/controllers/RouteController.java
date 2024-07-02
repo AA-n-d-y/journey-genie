@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.List;
 
@@ -30,6 +31,12 @@ public class RouteController {
         Route route = routeRepository.findById(id).orElse(null);
         model.addAttribute("route", route);
         return "route-details";
+    }
+
+    @GetMapping("/delete-route/{id}")
+    public RedirectView deleteRoute(@PathVariable Long id) {
+        routeRepository.deleteById(id);
+        return new RedirectView("/saved-routes");
     }
 
     @PostMapping("/save-route")

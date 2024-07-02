@@ -92,6 +92,7 @@
                             <td th:text="${route.endPoint}">End Point</td>
                             <td th:text="${route.travelMode}">Travel Mode</td>
                             <td><a th:href="@{'/route-details/' + ${route.id}}">View Route</a></td>
+                            <td><a th:href="@{'/delete-route/' + ${route.id}}">Delete</a></td>
                         </tr>
                     </tbody>
                 </table>
