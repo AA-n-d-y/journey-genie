@@ -1,0 +1,264 @@
+
+
+<!-- version 4 with css-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Your Routes</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://maps.googleapis.com/maps/api/js?key=API_KEY&libraries=places,geocoding"></script>
+    <script>
+        let map, currentLocation, destination, directionsService, directionsRenderer, geocoder, travelMode;
+        let currentMarker, destinationMarker;
+        let alternativeRoutes = [];
+        let selectedRoute = null;
+
+        function initMap() {
+            directionsService = new google.maps.DirectionsService();
+            directionsRenderer = new google.maps.DirectionsRenderer();
+            geocoder = new google.maps.Geocoder();
+
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: 49.2827, lng: -123.1207 },
+                zoom: 8,
+            });
+            directionsRenderer.setMap(map);
+
+            google.maps.event.addListener(map, 'click', function (event) {
+                if (!currentLocation) {
+                    setCurrentLocation(event.latLng);
+                } else if (!destination) {
+                    setDestination(event.latLng);
+                } else {
+                    setCurrentLocation(event.latLng);
+                    setDestination(null);
+                }
+            });
+
+            const inputCurrent = document.getElementById("current-location");
+            const inputDestination = document.getElementById("destination");
+
+            const autocompleteCurrent = new google.maps.places.Autocomplete(inputCurrent);
+            const autocompleteDestination = new google.maps.places.Autocomplete(inputDestination);
+
+            autocompleteCurrent.addListener('place_changed', function () {
+                setCurrentLocation(autocompleteCurrent.getPlace().geometry.location);
+            });
+
+            autocompleteDestination.addListener('place_changed', function () {
+                setDestination(autocompleteDestination.getPlace().geometry.location);
+            });
+        }
+
+        function setCurrentLocation(location) {
+            currentLocation = location;
+            if (currentMarker) currentMarker.setMap(null);
+            currentMarker = new google.maps.Marker({
+                position: currentLocation,
+                map: map,
+                title: "Current Location"
+            });
+            map.setCenter(currentLocation);
+            geocodeLocation(location, 'current-location');
+        }
+
+        function setDestination(location) {
+            destination = location;
+            if (destinationMarker) destinationMarker.setMap(null);
+            if (location) {
+                destinationMarker = new google.maps.Marker({
+                    position: destination,
+                    map: map,
+                    title: "Destination"
+                });
+                map.setCenter(destination);
+                geocodeLocation(location, 'destination');
+            }
+        }
+
+        function geocodeLocation(location, inputId) {
+            geocoder.geocode({ 'location': location }, function (results, status) {
+                if (status === 'OK') {
+                    if (results[0]) {
+                        document.getElementById(inputId).value = results[0].formatted_address;
+                    } else {
+                        alert('No results found');
+                    }
+                } else {
+                    alert('Geocoder failed due to: ' + status);
+                }
+            });
+        }
+
+        function calculateRoute(mode) {
+            if (!currentLocation || !destination) {
+                alert("Please select both current location and destination.");
+                return;
+            }
+
+            travelMode = mode.toLowerCase();
+
+            const request = {
+                origin: currentLocation,
+                destination: destination,
+                travelMode: mode,
+                provideRouteAlternatives: true
+            };
+
+            directionsService.route(request, function (result, status) {
+                if (status === 'OK') {
+                    directionsRenderer.setDirections(result);
+                    selectedRoute = result.routes[0];
+                    displayRouteOptions(result.routes);
+                } else {
+                    alert("Could not retrieve route.");
+                }
+            });
+        }
+
+        function displayRouteOptions(routes) {
+            const routesContainer = document.getElementById('routes');
+            routesContainer.innerHTML = '';
+            alternativeRoutes = routes;
+
+            routes.forEach((route, index) => {
+                const routeDiv = document.createElement('div');
+                routeDiv.className = 'route-option';
+                routeDiv.innerHTML = `
+                        <input type="radio" name="route" value="${index}" id="route${index}" ${index === 0 ? 'checked' : ''}>
+                        <label for="route${index}">
+                            ${route.legs[0].duration.text} via ${route.summary}
+                        </label>
+                    `;
+                routeDiv.addEventListener('click', () => {
+                    directionsRenderer.setRouteIndex(index);
+                    selectedRoute = routes[index];
+                });
+                routesContainer.appendChild(routeDiv);
+            });
+        }
+
+        function clearMap() {
+            if (currentMarker) currentMarker.setMap(null);
+            if (destinationMarker) destinationMarker.setMap(null);
+            directionsRenderer.set('directions', null);
+            currentLocation = null;
+            destination = null;
+            selectedRoute = null;
+            document.getElementById('routes').innerHTML = '';
+            document.getElementById('current-location').value = '';
+            document.getElementById('destination').value = '';
+        }
+
+        function saveRoute() {
+            if (!currentLocation || !destination) {
+                alert("Please select both current location and destination.");
+                return;
+            }
+
+            const startPoint = document.getElementById('current-location').value;
+            const endPoint = document.getElementById('destination').value;
+            const routeDetails = JSON.stringify(directionsRenderer.getDirections());
+
+            fetch('/save-route', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'startCoords': currentLocation,
+                    'endCoords': destination,
+                    'startPoint': startPoint,
+                    'endPoint': endPoint,
+                    'travelMode': travelMode,
+                    'routeDetails': routeDetails
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Route saved successfully.');
+                } else {
+                    alert('Failed to save route.');
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+    <style>
+        .route-option {
+            margin: 5px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    
+        .route-option:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body onload="initMap()">
+    <!-- Navigation bar -->
+    <header>
+        <div class="row justify-content-center fixed-top">
+            <nav class="navbar navbar-expand bg-info h4 px-4 py-3 text-white" style="min-height: 75px;">
+                <!-- Website name-->
+                <span class="fs-4 px-2"> JourneyGenie </span>
+                
+                <!-- Other pages -->
+                <div class="collapse navbar-collapse fs-5 justify-content-end">
+                    <ul class="navbar-nav">
+                      <!-- Home -->
+                      <form action="/home" method="GET">
+                            <input type="submit" value="Home" class="btn btn-dark text-white mx-2"></input> 
+                      </form> 
+
+                      <!-- Routes -->
+                      <form action="/routes" method="GET">
+                            <input type="submit" value="Routes" class="btn btn-dark text-white mx-2"></input> 
+                      </form> 
+
+                      <!-- Log out -->
+                      <form action="/logout" method="POST">
+                            <input type="submit" value="Log out" class="btn btn-danger text-white mx-2"></input> 
+                      </form> 
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Container -->
+    <main class="container" style="margin-top: 100px;">
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <h1 class="text-center mb-5">Search Your Routes</h1>
+                <div class="mb-3">
+                    <input id="current-location" type="text" placeholder="Enter current location" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <input id="destination" type="text" placeholder="Enter destination" class="form-control">
+                </div>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-3">
+                    <button onclick="calculateRoute('DRIVING')" class="btn btn-info">Car Route</button>
+                    <button onclick="calculateRoute('WALKING')" class="btn btn-info">Walking Route</button>
+                    <button onclick="calculateRoute('BICYCLING')" class="btn btn-info">Bicycling Route</button>
+                    <button onclick="calculateRoute('TRANSIT')" class="btn btn-info">Transit Route</button>
+                    <button onclick="calculateRoute('FLYING')" class="btn btn-info">Flying Route</button>
+                    <button onclick="calculateBestRoute()" class="btn btn-info">Best Route</button>
+                    <button onclick="clearMap()" class="btn btn-secondary">Clear Map</button>
+                    <button onclick="saveRoute()" class="btn btn-success">Save This Route</button>
+                </div>
+                <div id="routes"></div>
+                <div id="map" style="height: 500px; width: 100%;" class="mt-5"></div>
+                <a href="/saved-routes" class="btn btn-link mt-3">See Your Saved Routes</a>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

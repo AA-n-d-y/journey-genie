@@ -142,7 +142,7 @@ public class LoginsController {
     // Get request (redirecting to /login)
     @GetMapping("/")
     public RedirectView redirect() {
-        return new RedirectView("login");
+        return new RedirectView("/login");
     }
 
 }
