@@ -119,16 +119,6 @@ public class LoginsController {
     }
     
 
-    // Get request (displaying login page)
-    @GetMapping("/logout")
-    public String displayLogout(HttpServletResponse response, HttpServletRequest request) {
-        // Destroy the session
-        request.getSession().invalidate();
-        response.setStatus(200);
-        return "loginPage";
-    }
-
-
     // Post request (displaying login page after logging out)
     @PostMapping("/logout")
     public String userLogout(HttpServletResponse response, HttpServletRequest request) {
