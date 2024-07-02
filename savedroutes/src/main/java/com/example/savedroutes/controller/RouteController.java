@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.List;
 
@@ -28,25 +29,14 @@ public class RouteController {
     @GetMapping("/route-details/{id}")
     public String viewRouteDetails(@PathVariable Long id, Model model) {
         Route route = routeRepository.findById(id).orElse(null);
-
-        if (route.getStartPoint().contains("#")) {
-            int index = route.getStartPoint().indexOf("#");
-            StringBuilder startPoint = new StringBuilder(route.getStartPoint());
-            route.setStartPoint(startPoint.delete(index, index+6).toString());
-        }   
-        route.setStartPoint(route.getStartPoint().replace(", ", "+"));
-        route.setStartPoint(route.getStartPoint().replace(" ", "+"));
-
-        if (route.getEndPoint().contains("#")) {
-            int index = route.getEndPoint().indexOf("#");
-            StringBuilder endPoint = new StringBuilder(route.getEndPoint());
-            route.setEndPoint(endPoint.delete(index, index+6).toString());
-        }
-        route.setEndPoint(route.getEndPoint().replace(", ", "+"));
-        route.setEndPoint(route.getEndPoint().replace(" ", "+"));
-
         model.addAttribute("route", route);
         return "route-details";
+    }
+
+    @GetMapping("/delete-route/{id}")
+    public RedirectView deleteRoute(@PathVariable Long id) {
+        routeRepository.deleteById(id);
+        return new RedirectView("/saved-routes");
     }
 
     @PostMapping("/save-route")

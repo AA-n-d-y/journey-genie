@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Route Details</title>
-    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=API_KEY&libraries=places,geocoding"></script>
+    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkRHXVlE1vMgAgNQyOqFipf919uddFzmk&libraries=places,geocoding"></script>
     <script>
         let map, directionsService, directionsRenderer;
 
@@ -36,7 +36,7 @@
     <div th:text="${route.travelMode}"></div>
 
     <iframe id="map" height="500" width="100%" style="border:0" loading="lazy" allowfullscreen
-th:src="@{${'https://www.google.com/maps/embed/v1/directions?origin=' + route.startCoords + '&destination=' + route.endCoords + '&mode=' + route.travelMode + '&key=API_KEY'}}"></iframe>
+th:src="@{${'https://www.google.com/maps/embed/v1/directions?origin=' + route.startCoords + '&destination=' + route.endCoords + '&mode=' + route.travelMode + '&key=AIzaSyAkRHXVlE1vMgAgNQyOqFipf919uddFzmk'}}"></iframe>
 
     <a href="/saved-routes">Back to Saved Routes</a>
 </body>
