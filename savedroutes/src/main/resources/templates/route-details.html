@@ -36,7 +36,7 @@
     <div th:text="${route.travelMode}"></div>
 
     <iframe id="map" height="500" width="100%" style="border:0" loading="lazy" allowfullscreen
-th:src="@{${'https://www.google.com/maps/embed/v1/directions?origin=' + route.startCoords + '&destination=' + route.endCoords + '&key=API_KEY'}}"></iframe>
+th:src="@{${'https://www.google.com/maps/embed/v1/directions?origin=' + route.startCoords + '&destination=' + route.endCoords + '&mode=' + route.travelMode + '&key=API_KEY'}}"></iframe>
 
     <a href="/saved-routes">Back to Saved Routes</a>
 </body>

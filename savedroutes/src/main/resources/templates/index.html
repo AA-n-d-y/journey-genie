@@ -390,7 +390,7 @@
     <title>Saved Routes</title>
     <script src="https://maps.googleapis.com/maps/api/js?key=API_KEY&libraries=places,geocoding"></script>
     <script>
-        let map, currentLocation, destination, directionsService, directionsRenderer, geocoder;
+        let map, currentLocation, destination, directionsService, directionsRenderer, geocoder, travelMode;
         let currentMarker, destinationMarker;
         let alternativeRoutes = [];
         let selectedRoute = null;
@@ -478,6 +478,8 @@
                 return;
             }
 
+            travelMode = mode.toLowerCase();
+
             const request = {
                 origin: currentLocation,
                 destination: destination,
@@ -538,7 +540,7 @@
 
             const startPoint = document.getElementById('current-location').value;
             const endPoint = document.getElementById('destination').value;
-            const travelMode = document.querySelector('input[name="route"]:checked').value;
+            // const travelMode = document.querySelector('input[name="route"]:checked').value;
             const routeDetails = JSON.stringify(directionsRenderer.getDirections());
 
             fetch('/save-route', {
