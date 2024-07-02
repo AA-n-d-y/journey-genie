@@ -34,11 +34,15 @@ public class RouteController {
 
     @PostMapping("/save-route")
     public String saveRoute(
+            Model model,
+            @RequestParam String startCoords,
+            @RequestParam String endCoords,
             @RequestParam String startPoint,
             @RequestParam String endPoint,
             @RequestParam String travelMode,
             @RequestParam String routeDetails) {
-        Route route = new Route(startPoint, endPoint, travelMode, routeDetails);
+
+        Route route = new Route(startCoords, endCoords, startPoint, endPoint, travelMode, routeDetails);
         routeRepository.save(route);
         return "redirect:/saved-routes";
     }
