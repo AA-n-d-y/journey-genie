@@ -111,7 +111,7 @@
                  <h1 class="text-center mb-5">Route Details</h1>
                  <!-- <div id="map" style="height: 500px; width: 100%;"></div> -->
                  <iframe id="map" height="500px" width="100%" style="border:0" loading="lazy" allowfullscreen 
-th:src="@{${'https://www.google.com/maps/embed/v1/directions?origin=' + route.startCoords + '&destination=' + route.endCoords + '&mode=' + route.travelMode + '&key=API_KEY'}}"></iframe>
+                 <iframe th:inline="javascript" th:src="'https://www.google.com/maps/embed/v1/directions?origin=' + ${route.startCoords} + '&destination=' + ${route.endCoords} + '&mode=' + ${route.travelMode} + '&key=' + ${API_KEY}"></iframe>
                  <a href="/saved-routes" class="btn btn-link mt-3">Back to Saved Routes</a>
              </div>
          </div>
