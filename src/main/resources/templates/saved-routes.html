@@ -87,7 +87,7 @@
                     </thead>
                     <tbody>
                         <tr th:each="route : ${routes}">
-                            <td th:text="${route.creationDate}">Date Creation</td>
+                            <td th:text="${route.formattedCreationDate}">Date Creation</td>
                             <td th:text="${route.startPoint}">Start Point</td>
                             <td th:text="${route.endPoint}">End Point</td>
                             <td th:text="${route.travelMode}">Travel Mode</td>
@@ -102,3 +102,4 @@
     </main>
 </body>
 </html>
+

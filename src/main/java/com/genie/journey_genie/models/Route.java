@@ -2,6 +2,7 @@ package com.genie.journey_genie.models;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 public class Route {
@@ -101,5 +102,11 @@ public class Route {
 
     public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
+    }
+
+    // New method to get formatted creation date
+    public String getFormattedCreationDate() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM, yyyy, hh:mm a");
+        return this.creationDate.format(formatter);
     }
 }
