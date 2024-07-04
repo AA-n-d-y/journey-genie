@@ -104,7 +104,7 @@ public class Route {
         this.creationDate = creationDate;
     }
 
-    // New method to get formatted creation date
+    // Method to get formatted creation date
     public String getFormattedCreationDate() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM, yyyy, hh:mm a");
         return this.creationDate.format(formatter);
