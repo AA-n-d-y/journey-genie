@@ -21,8 +21,8 @@ public class RouteController {
     private RouteRepository routeRepository;
 
     // Holding the API key value
-    @Value("${API_KEY}")
-    private String API_KEY;
+    @Value("${GOOGLE_API_KEY}")
+    private String GOOGLE_API_KEY;
 
     @GetMapping("/saved-routes")
     public String viewSavedRoutes(Model model) {
@@ -35,7 +35,7 @@ public class RouteController {
     public String viewRouteDetails(@PathVariable Long id, Model model) {
         Route route = routeRepository.findById(id).orElse(null);
         model.addAttribute("route", route);
-        model.addAttribute("API_KEY", API_KEY);
+        model.addAttribute("GOOGLE_API_KEY", GOOGLE_API_KEY);
         return "route-details";
     }
 

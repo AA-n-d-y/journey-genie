@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class MapController {
     // Holding the API key value
-    @Value("${API_KEY}")
-    private String API_KEY;
+    @Value("${GOOGLE_API_KEY}")
+    private String GOOGLE_API_KEY;
 
     @GetMapping("/map")
     public String showMap(Model model) {
-        model.addAttribute("API_KEY", API_KEY);
+        model.addAttribute("GOOGLE_API_KEY", GOOGLE_API_KEY);
         return "index";
     }
 }
