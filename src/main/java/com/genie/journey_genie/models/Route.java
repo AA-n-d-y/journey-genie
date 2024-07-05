@@ -16,10 +16,6 @@ public class Route {
     private String endPoint;
     private String travelMode;
 
-    @Lob
-    @Column(length = 10000)
-    private String routeDetails;
-
     private LocalDateTime creationDate;
 
     // Default constructor
@@ -28,13 +24,13 @@ public class Route {
     }
 
     // Parameterized constructor
-    public Route(String startCoords, String endCoords, String startPoint, String endPoint, String travelMode, String routeDetails) {
+    public Route(String startCoords, String endCoords, String startPoint, String endPoint, String travelMode) {
         this.startCoords = startCoords;
         this.endCoords = endCoords;
         this.startPoint = startPoint;
         this.endPoint = endPoint;
         this.travelMode = travelMode;
-        this.routeDetails = routeDetails;
+        // this.routeDetails = routeDetails;
         this.creationDate = LocalDateTime.now();
     }
 
@@ -85,14 +81,6 @@ public class Route {
 
     public void setTravelMode(String travelMode) {
         this.travelMode = travelMode;
-    }
-
-    public String getRouteDetails() {
-        return routeDetails;
-    }
-
-    public void setRouteDetails(String routeDetails) {
-        this.routeDetails = routeDetails;
     }
 
     public LocalDateTime getCreationDate() {
