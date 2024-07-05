@@ -11,14 +11,11 @@
     <script th:inline="javascript" th:src="'https://maps.googleapis.com/maps/api/js?key=' + ${API_KEY} + '&libraries=places,geocoding'"></script>
 
     <script>
-        let map, currentLocation, destination, directionsService, directionsRenderer, geocoder, travelMode;
-        let currentMarker, destinationMarker;
+        let map, directionsService, directionsRenderer, geocoder, travelMode;
         let alternativeRoutes = [];
         let selectedRoute = null;
         let locations = [];
         let markers = [];
-
-
 
         function initMap() {
             directionsService = new google.maps.DirectionsService();
@@ -45,6 +42,36 @@
             for (let i = 0; i < 2; i++) {
                 addLocation()
             }
+        }
+
+        function addLocation() {
+            const refDiv = document.getElementById("endOfLocations");
+
+            const newElement = document.createElement('input')
+            newElement.className = 'intermediate form-control mb-3';
+            newElement.setAttribute('type', 'text');
+            newElement.setAttribute('placeholder', 'Enter location');
+            newElement.id = 'im-' + document.getElementsByClassName('intermediate').length;
+            document.getElementById('locationsParent').insertBefore(newElement, refDiv);
+
+            const autocompleteNew = new google.maps.places.Autocomplete(newElement);
+
+            autocompleteNew.addListener('place_changed', function () {
+                setLocation(autocompleteNew.getPlace().geometry.location, newElement);
+            });
+        }
+
+        function setLocation(location, element) {
+            let locId = parseInt(element.id.substring(3));
+            locations[locId] = location;
+            if (markers[locId]) markers[locId].setMap(null);
+            markers[locId] = new google.maps.Marker({
+                position: locations[locId],
+                map: map,
+                title: "Location"
+            });
+            map.setCenter(locations[locId]);
+            geocodeLocation(location, element.id);
         }
 
         function geocodeLocation(location, inputId) {
@@ -123,25 +150,34 @@
         }
 
         function clearMap() {
-            if (currentMarker) currentMarker.setMap(null);
-            if (destinationMarker) destinationMarker.setMap(null);
+            for (let i in markers) {
+                markers[i].setMap(null)
+            }
             directionsRenderer.set('directions', null);
-            currentLocation = null;
-            destination = null;
             selectedRoute = null;
             document.getElementById('routes').innerHTML = '';
-            document.getElementById('current-location').value = '';
-            document.getElementById('destination').value = '';
+            for (let i in locations) {
+                document.getElementById('im-'+i).value = ''
+            }
+            for (let i in locations) {
+                locations[i] = null
+            }
         }
 
         function saveRoute() {
-            if (!currentLocation || !destination) {
-                alert("Please select both current location and destination.");
-                return;
+            for (let i in locations) {
+                if (!locations[i]) {
+                    alert("Please fill in all locations.");
+                    return;
+                }
             }
 
-            const startPoint = document.getElementById('current-location').value;
-            const endPoint = document.getElementById('destination').value;
+            const routePoints = []
+            for (let i in locations) {
+                routePoints[i] = document.getElementById('im-'+i).value;
+            }
+            // const startPoint = document.getElementById('current-location').value;
+            // const endPoint = document.getElementById('destination').value;
             const routeDetails = JSON.stringify(directionsRenderer.getDirections());
 
             fetch('/save-route', {
@@ -150,10 +186,12 @@
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
                 body: new URLSearchParams({
-                    'startCoords': currentLocation,
-                    'endCoords': destination,
-                    'startPoint': startPoint,
-                    'endPoint': endPoint,
+                    // 'startCoords': currentLocation,
+                    // 'endCoords': destination,
+                    // 'startPoint': startPoint,
+                    // 'endPoint': endPoint,
+                    'Coords': locations,
+                    'Points': routePoints,
                     'travelMode': travelMode,
                     'routeDetails': routeDetails
                 })
@@ -168,36 +206,6 @@
                 .catch((error) => {
                     console.error('Error:', error);
                 });
-        }
-
-        function addLocation() {
-            const refDiv = document.getElementById("endOfLocations");
-
-            const newElement = document.createElement('input')
-            newElement.className = 'intermediate form-control mb-3';
-            newElement.setAttribute('type', 'text');
-            newElement.setAttribute('placeholder', 'Enter location');
-            newElement.id = 'im-' + document.getElementsByClassName('intermediate').length;
-            document.getElementById('locationsParent').insertBefore(newElement, refDiv);
-
-            const autocompleteNew = new google.maps.places.Autocomplete(newElement);
-
-            autocompleteNew.addListener('place_changed', function () {
-                setLocation(autocompleteNew.getPlace().geometry.location, newElement);
-            });
-        }
-
-        function setLocation(location, element) {
-            let locId = parseInt(element.id.substring(3));
-            locations[locId] = location;
-            if (markers[locId]) markers[locId].setMap(null);
-            markers[locId] = new google.maps.Marker({
-                position: locations[locId],
-                map: map,
-                title: "Location"
-            });
-            map.setCenter(locations[locId]);
-            geocodeLocation(location, element.id);
         }
     </script>
     <style>
