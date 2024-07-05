@@ -31,55 +31,19 @@
             });
             directionsRenderer.setMap(map);
 
-            google.maps.event.addListener(map, 'click', function (event) {
-                if (!currentLocation) {
-                    setCurrentLocation(event.latLng);
-                } else if (!destination) {
-                    setDestination(event.latLng);
-                } else {
-                    setCurrentLocation(event.latLng);
-                    setDestination(null);
-                }
-            });
+            // google.maps.event.addListener(map, 'click', function (event) {
+            //     if (!currentLocation) {
+            //         setCurrentLocation(event.latLng);
+            //     } else if (!destination) {
+            //         setDestination(event.latLng);
+            //     } else {
+            //         setCurrentLocation(event.latLng);
+            //         setDestination(null);
+            //     }
+            // });
 
-            const inputCurrent = document.getElementById("current-location");
-            const inputDestination = document.getElementById("destination");
-
-            const autocompleteCurrent = new google.maps.places.Autocomplete(inputCurrent);
-            const autocompleteDestination = new google.maps.places.Autocomplete(inputDestination);
-
-            autocompleteCurrent.addListener('place_changed', function () {
-                setCurrentLocation(autocompleteCurrent.getPlace().geometry.location);
-            });
-
-            autocompleteDestination.addListener('place_changed', function () {
-                setDestination(autocompleteDestination.getPlace().geometry.location);
-            });
-        }
-
-        function setCurrentLocation(location) {
-            currentLocation = location;
-            if (currentMarker) currentMarker.setMap(null);
-            currentMarker = new google.maps.Marker({
-                position: currentLocation,
-                map: map,
-                title: "Current Location"
-            });
-            map.setCenter(currentLocation);
-            geocodeLocation(location, 'current-location');
-        }
-
-        function setDestination(location) {
-            destination = location;
-            if (destinationMarker) destinationMarker.setMap(null);
-            if (location) {
-                destinationMarker = new google.maps.Marker({
-                    position: destination,
-                    map: map,
-                    title: "Destination"
-                });
-                map.setCenter(destination);
-                geocodeLocation(location, 'destination');
+            for (let i = 0; i < 2; i++) {
+                addLocation()
             }
         }
 
@@ -98,18 +62,31 @@
         }
 
         function calculateRoute(mode) {
-            if (!currentLocation || !destination) {
-                alert("Please select both current location and destination.");
-                return;
+            for (let i in locations) {
+                if (!locations[i]) {
+                    alert("Please fill in all locations.");
+                    return;
+                }
+            }
+
+            let waypointArr = []
+            if (locations.length > 2) {
+                for (let i in locations.slice(1, locations.length - 1)) {
+                    waypointArr[i] = {
+                        location: locations.slice(1, locations.length - 1)[i],
+                        stopover: true
+                    }
+                }
             }
 
             travelMode = mode.toLowerCase();
 
             const request = {
-                origin: currentLocation,
-                destination: destination,
+                origin: locations[0],
+                destination: locations[locations.length-1],
                 travelMode: mode,
-                provideRouteAlternatives: true
+                provideRouteAlternatives: true,
+                waypoints: waypointArr
             };
 
             directionsService.route(request, function (result, status) {
@@ -194,14 +171,14 @@
         }
 
         function addLocation() {
-            const inputDestination = document.getElementById("destination");
+            const refDiv = document.getElementById("endOfLocations");
 
             const newElement = document.createElement('input')
             newElement.className = 'intermediate form-control mb-3';
             newElement.setAttribute('type', 'text');
             newElement.setAttribute('placeholder', 'Enter location');
             newElement.id = 'im-' + document.getElementsByClassName('intermediate').length;
-            document.getElementsByClassName("col-12")[0].insertBefore(newElement, inputDestination);
+            document.getElementById('locationsParent').insertBefore(newElement, refDiv);
 
             const autocompleteNew = new google.maps.places.Autocomplete(newElement);
 
@@ -271,10 +248,9 @@
     <!-- Container -->
     <main class="container" style="margin-top: 100px;">
         <div class="row justify-content-center">
-            <div class="col-12">
+            <div id="locationsParent" class="col-12">
                 <h1 class="text-center mb-5">Search Your Routes</h1>
-                    <input id="current-location" type="text" placeholder="Enter current location" class="form-control mb-3">
-                    <input id="destination" type="text" placeholder="Enter destination" class="form-control mb-3">
+                <div id="endOfLocations"></div>
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-3">
                     <button onclick="addLocation()" class="btn btn-primary">Add Location</button>
                     <button onclick="calculateRoute('DRIVING')" class="btn btn-info">Car Route</button>
