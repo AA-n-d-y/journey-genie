@@ -89,7 +89,37 @@
         }
 
         // TODO: Fix doubled location points displayed on map
-        function calculateRoute(mode) {
+        function calculateRoute(mode, index) {
+            if (index === 0) {
+                map.setCenter(locations[index]);
+            }
+
+            if (!locations[index] || !locations[index-1]) {
+                alert("Please select both start and end location.");
+                return;
+            }
+
+            travelMode = mode.toLowerCase();
+
+            const request = {
+                origin: locations[index-1],
+                destination: locations[index],
+                travelMode: mode,
+                provideRouteAlternatives: true
+            };
+
+            directionsService.route(request, function (result, status) {
+                if (status === 'OK') {
+                    directionsRenderer.setDirections(result);
+                    selectedRoute = result.routes[0];
+                    displayRouteOptions(result.routes);
+                } else {
+                    alert("Could not retrieve route.");
+                }
+            });
+        }
+
+        function calculateRouteAll(mode) {
             for (let i in locations) {
                 if (!locations[i]) {
                     alert("Please fill in all locations.");
