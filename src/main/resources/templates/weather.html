@@ -375,14 +375,14 @@
         }
         .container {
           display: flex;
-          flex-direction: column;
-          align-items: center;
+          /* flex-direction: column;
+          align-items: center; */
           gap: 35px;
           padding: 30px;
         }
         .weather-input {
           width: 100%;
-          max-width: 600px;
+          max-width: 550px;
         }
         .weather-input input {
           height: 46px;
@@ -438,17 +438,17 @@
         }
         .weather-data {
           width: 100%;
-          max-width: 600px;
+          /* max-width: 600px; */
         }
         .weather-data .current-weather {
           color: #fff;
           background: #5372F0;
           border-radius: 5px;
-          padding: 20px;
+          padding: 20px 70px 20px 20px;
           display: flex;
           justify-content: space-between;
-          flex-direction: column;
-          align-items: center;
+          /* flex-direction: column;
+          align-items: center; */
         }
         .current-weather h2 {
           font-weight: 700;
@@ -473,23 +473,23 @@
         .days-forecast h2 {
           margin: 20px 0;
           font-size: 1.5rem;
-          text-align: center;
+          /* text-align: center; */
         }
         .days-forecast .weather-cards {
           display: flex;
           gap: 20px;
-          justify-content: center;
-          flex-wrap: wrap;
+          /* justify-content: center;
+          flex-wrap: wrap; */
         }
         .weather-cards .card {
           color: #fff;
           padding: 18px 16px;
           list-style: none;
-          width: calc(100% / 2 - 10px);
-          max-width: 250px;
+          width: calc(100% / 5);
+          /* max-width: 250px; */
           background: #6C757D;
           border-radius: 5px;
-          text-align: center;
+          /* text-align: center; */
         }
         .weather-cards .card h3 {
           font-size: 1.3rem;
@@ -518,7 +518,7 @@
         }
         @media (max-width: 950px) {
           .weather-input {
-            width: 100%;
+            width: 450px;
           }
           .weather-cards .card {
             width: calc(100% / 2 - 10px);
@@ -549,7 +549,7 @@
             const currentWeatherDiv = document.querySelector(".current-weather");
             const weatherCardsDiv = document.querySelector(".weather-cards");
 
-            const API_KEY = "5b282770ca42211f29aa471cb94d0e98"; // API key for OpenWeatherMap API
+            const API_KEY = "API_KEY"; // API key for OpenWeatherMap API
 
             const createWeatherCard = (cityName, weatherItem, index) => {
                 if(index === 0) { // HTML for the main weather card
@@ -691,7 +691,7 @@
             <div class="separator"></div>
             <button class="location-btn btn btn-secondary text-white">Use Current Location</button>
         </div>
-        <div class="weather-data mt-4">
+        <div class="weather-data">
             <div class="current-weather">
                 <div class="details">
                     <h2>_______ ( ______ )</h2>
@@ -740,4 +740,3 @@
 </body>
 </html>
 
-<!-- commiting -->
