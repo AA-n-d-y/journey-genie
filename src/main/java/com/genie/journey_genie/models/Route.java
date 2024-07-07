@@ -30,7 +30,6 @@ public class Route {
         this.startPoint = startPoint;
         this.endPoint = endPoint;
         this.travelMode = travelMode;
-        // this.routeDetails = routeDetails;
         this.creationDate = LocalDateTime.now();
     }
 

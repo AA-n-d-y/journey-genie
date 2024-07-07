@@ -11,7 +11,7 @@
     <script th:inline="javascript" th:src="'https://maps.googleapis.com/maps/api/js?key=API_KEY&libraries=places,geocoding'"></script>
 
     <script defer>
-        let map, currentLocation, destination, directionsService, directionsRenderer, geocoder, travelMode;
+        let map, currentLocation, destination, directionsService, directionsRenderer, geocoder, travelMode, iframe, mapElement;
         let currentMarker, destinationMarker;
         let alternativeRoutes = [];
         let selectedRoute = null;
@@ -20,6 +20,8 @@
             directionsService = new google.maps.DirectionsService();
             directionsRenderer = new google.maps.DirectionsRenderer();
             geocoder = new google.maps.Geocoder();
+
+            iframe = document.getElementById("iframe");
 
             map = new google.maps.Map(document.getElementById("map"), {
                 center: { lat: 49.2827, lng: -123.1207 },
@@ -103,24 +105,40 @@
                 return;
             }
 
+            mapElement = document.getElementById("map");
             travelMode = mode.toLowerCase();
 
-            const request = {
-                origin: currentLocation,
-                destination: destination,
-                travelMode: mode,
-                provideRouteAlternatives: true
-            };
-
-            directionsService.route(request, function (result, status) {
-                if (status === 'OK') {
-                    directionsRenderer.setDirections(result);
-                    selectedRoute = result.routes[0];
-                    displayRouteOptions(result.routes);
-                } else {
-                    alert("Could not retrieve route.");
+            if (mode == "FLYING") {
+                console.log("flying");
+                if (iframe.style.display == "none") {
+                    iframe.style.display = "block";
+                    mapElement.style.display = "none";
                 }
-            });
+                iframe.setAttribute("src", "https://www.google.com/maps/embed/v1/directions?origin=" + currentLocation.toString() + "&destination=" + destination.toString() + "&mode=" + travelMode + "&key=API_KEY");
+            } else {
+
+                if (mapElement.style.display == "none") {
+                    mapElement.style.display = "block";
+                    iframe.style.display = "none";
+                }
+                const request = {
+                    origin: currentLocation,
+                    destination: destination,
+                    travelMode: mode,
+                    provideRouteAlternatives: true
+                };
+
+                directionsService.route(request, function (result, status) {
+                    if (status === 'OK') {
+                        directionsRenderer.setDirections(result);
+                        selectedRoute = result.routes[0];
+                        displayRouteOptions(result.routes);
+                    } else {
+                        alert("Could not retrieve route.");
+                    }
+                });
+            }
+           
         }
 
         function displayRouteOptions(routes) {
@@ -265,6 +283,7 @@
                 </div>
                 <div id="routes"></div>
                 <div id="map" style="height: 500px; width: 100%;" class="mt-5"></div>
+                <iframe id="iframe" height="500px" width="100%" style="border:0; display:none" loading="lazy" allowfullscreen th:inline="javascript"></iframe>
                 <a href="/saved-routes" class="btn btn-link mt-3">See Your Saved Routes</a>
             </div>
         </div>
