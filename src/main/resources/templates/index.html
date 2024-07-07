@@ -11,7 +11,8 @@
             th:src="'https://maps.googleapis.com/maps/api/js?key=' + ${API_KEY} + '&libraries=places,geocoding'"></script>
 
     <script>
-        let map, directionsService, directionsRenderer, geocoder, travelMode;
+        let map, directionsService, directionsRenderer, geocoder;
+        let travelMode = "driving";
         let alternativeRoutes = [];
         let selectedRoute = null;
         let locations = [];
@@ -44,14 +45,22 @@
             }
         }
 
+        function setTravelMode(mode) {
+            document.getElementById(travelMode).toggleAttribute('checked')
+            document.getElementById(travelMode).parentElement.classList.toggle('active')
+            travelMode = mode.toLowerCase();
+            document.getElementById(travelMode).toggleAttribute('checked')
+            document.getElementById(travelMode).parentElement.classList.toggle('active')
+        }
+
         function addLocation() {
             const refDiv = document.getElementById("endOfLocations");
 
             const newElement = document.createElement('input')
-            newElement.className = 'intermediate form-control mb-3';
+            newElement.className = 'location form-control mb-3';
             newElement.setAttribute('type', 'text');
             newElement.setAttribute('placeholder', 'Enter location');
-            newElement.id = 'im-' + document.getElementsByClassName('intermediate').length;
+            newElement.id = 'im-' + document.getElementsByClassName('location').length;
             document.getElementById('locationsParent').insertBefore(newElement, refDiv);
 
             const autocompleteNew = new google.maps.places.Autocomplete(newElement);
@@ -89,7 +98,7 @@
         }
 
         // TODO: Fix doubled location points displayed on map
-        function calculateRoute(mode, index) {
+        function calculateRoute(index) {
             if (index === 0) {
                 map.setCenter(locations[index]);
             }
@@ -99,12 +108,10 @@
                 return;
             }
 
-            travelMode = mode.toLowerCase();
-
             const request = {
                 origin: locations[index-1],
                 destination: locations[index],
-                travelMode: mode,
+                travelMode: travelMode.toUpperCase(),
                 provideRouteAlternatives: true
             };
 
@@ -119,7 +126,7 @@
             });
         }
 
-        function calculateRouteAll(mode) {
+        function calculateRouteAll() {
             for (let i in locations) {
                 if (!locations[i]) {
                     alert("Please fill in all locations.");
@@ -137,12 +144,10 @@
                 }
             }
 
-            travelMode = mode.toLowerCase();
-
             const request = {
                 origin: locations[0],
                 destination: locations[locations.length - 1],
-                travelMode: mode,
+                travelMode: travelMode.toUpperCase(),
                 provideRouteAlternatives: true,
                 waypoints: waypointArr
             };
@@ -292,12 +297,25 @@
             <div id="endOfLocations"></div>
             <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-3">
                 <button onclick="addLocation()" class="btn btn-primary">Add Location</button>
-                <button onclick="calculateRoute('DRIVING')" class="btn btn-info">Car Route</button>
-                <button onclick="calculateRoute('WALKING')" class="btn btn-info">Walking Route</button>
-                <button onclick="calculateRoute('BICYCLING')" class="btn btn-info">Bicycling Route</button>
-                <button onclick="calculateRoute('TRANSIT')" class="btn btn-info">Transit Route</button>
-                <button onclick="calculateRoute('FLYING')" class="btn btn-info">Flying Route</button>
+                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                    <label class="btn btn-info active">
+                        <input type="radio" style="scale: 0; position: absolute" name="options" id="driving" onclick="setTravelMode('DRIVING')" checked>Car Route
+                    </label>
+                    <label class="btn btn-info">
+                        <input type="radio" style="scale: 0; position: absolute" name="options" id="walking" onclick="setTravelMode('WALKING')">Walking Route
+                    </label>
+                    <label class="btn btn-info">
+                        <input type="radio" style="scale: 0; position: absolute" name="options" id="bicycling" onclick="setTravelMode('BICYCLING')">Bicycling Route
+                    </label>
+                    <label class="btn btn-info">
+                        <input type="radio" style="scale: 0; position: absolute" name="options" id="transit" onclick="setTravelMode('TRANSIT')">Transit Route
+                    </label>
+                    <label class="btn btn-info">
+                        <input type="radio" style="scale: 0; position: absolute" name="options" id="flying" onclick="setTravelMode('FLYING')">Flying Route
+                    </label>
+                </div>
                 <!-- <button onclick="calculateBestRoute()" class="btn btn-info">Best Route</button> -->
+                <button onclick="calculateRouteAll()" class="btn btn-primary">Display Full Route</button>
                 <button onclick="clearMap()" class="btn btn-secondary">Clear Map</button>
                 <button onclick="saveRoute()" class="btn btn-success">Save This Route</button>
             </div>
