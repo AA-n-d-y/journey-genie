@@ -375,14 +375,11 @@
         }
         .container {
           display: flex;
-          /* flex-direction: column;
-          align-items: center; */
           gap: 35px;
           padding: 30px;
         }
         .weather-input {
-          width: 100%;
-          max-width: 550px;
+          width: 550px;
         }
         .weather-input input {
           height: 46px;
@@ -407,7 +404,7 @@
           align-items: center;
           justify-content: center;
         }
-        .weather-input .separator::before{
+        .weather-input .separator::before {
           content: "or";
           color: #6C757D;
           font-size: 1.18rem;
@@ -438,7 +435,6 @@
         }
         .weather-data {
           width: 100%;
-          /* max-width: 600px; */
         }
         .weather-data .current-weather {
           color: #fff;
@@ -447,8 +443,6 @@
           padding: 20px 70px 20px 20px;
           display: flex;
           justify-content: space-between;
-          /* flex-direction: column;
-          align-items: center; */
         }
         .current-weather h2 {
           font-weight: 700;
@@ -473,23 +467,18 @@
         .days-forecast h2 {
           margin: 20px 0;
           font-size: 1.5rem;
-          /* text-align: center; */
         }
         .days-forecast .weather-cards {
           display: flex;
           gap: 20px;
-          /* justify-content: center;
-          flex-wrap: wrap; */
         }
         .weather-cards .card {
           color: #fff;
           padding: 18px 16px;
           list-style: none;
           width: calc(100% / 5);
-          /* max-width: 250px; */
           background: #6C757D;
           border-radius: 5px;
-          /* text-align: center; */
         }
         .weather-cards .card h3 {
           font-size: 1.3rem;
@@ -499,7 +488,7 @@
           max-width: 70px;
           margin: 5px 0 -12px 0;
         }
-
+        
         @media (max-width: 1400px) {
           .weather-data .current-weather {
             padding: 20px;
@@ -541,6 +530,9 @@
           }
         }
     </style>
+    <script th:inline="javascript">
+        var WEATHER_API_KEY = /*[[${weatherApiKey}]]*/ 'DEFAULT_KEY';
+    </script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const cityInput = document.querySelector(".city-input");
@@ -548,8 +540,6 @@
             const locationButton = document.querySelector(".location-btn");
             const currentWeatherDiv = document.querySelector(".current-weather");
             const weatherCardsDiv = document.querySelector(".weather-cards");
-
-            const API_KEY = "API_KEY"; // API key for OpenWeatherMap API
 
             const createWeatherCard = (cityName, weatherItem, index) => {
                 if(index === 0) { // HTML for the main weather card
@@ -575,7 +565,7 @@
             }
 
             const getWeatherDetails = (cityName, latitude, longitude) => {
-                const WEATHER_API_URL = `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${API_KEY}`;
+                const WEATHER_API_URL = `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${WEATHER_API_KEY}`;
 
                 fetch(WEATHER_API_URL).then(response => response.json()).then(data => {
                     // Filter the forecasts to get only one forecast per day
@@ -609,7 +599,7 @@
             const getCityCoordinates = () => {
                 const cityName = cityInput.value.trim();
                 if (cityName === "") return;
-                const API_URL = `https://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=1&appid=${API_KEY}`;
+                const API_URL = `https://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=1&appid=${WEATHER_API_KEY}`;
                 
                 // Get entered city coordinates (latitude, longitude, and name) from the API response
                 fetch(API_URL).then(response => response.json()).then(data => {
@@ -626,7 +616,7 @@
                     position => {
                         const { latitude, longitude } = position.coords; // Get coordinates of user location
                         // Get city name from coordinates using reverse geocoding API
-                        const API_URL = `https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${API_KEY}`;
+                        const API_URL = `https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${WEATHER_API_KEY}`;
                         fetch(API_URL).then(response => response.json()).then(data => {
                             const { name } = data[0];
                             getWeatherDetails(name, latitude, longitude);
@@ -652,28 +642,28 @@
 <body>
     <!-- Navigation bar -->
     <header>
-        <div class = "row justify-content-center fixed-top">
-            <nav class = "navbar navbar-expand bg-info h4 px-4 py-3 text-white" style = "min-height: 75px;">
+        <div class="row justify-content-center fixed-top">
+            <nav class="navbar navbar-expand bg-info h4 px-4 py-3 text-white" style="min-height: 75px;">
                 <!-- Website name-->
-                <span class = "fs-4 px-2"> JourneyGenie </span>
+                <span class="fs-4 px-2"> JourneyGenie </span>
                 
                 <!-- Other pages -->
                 <div class="collapse navbar-collapse fs-5 justify-content-end">
                     <ul class="navbar-nav">
 
                       <!-- Home -->
-                      <form action = "/home" method = "GET">
-                            <input type = "submit" value = "Home" class = "btn btn-dark text-white mx-2"></input> 
+                      <form action="/home" method="GET">
+                            <input type="submit" value="Home" class="btn btn-dark text-white mx-2"></input> 
                       </form> 
 
                       <!-- Routes -->
-                      <form action = "/map" method = "GET">
-                            <input type = "submit" value = "Routes" class = "btn btn-dark text-white mx-2"></input> 
+                      <form action="/map" method="GET">
+                            <input type="submit" value="Routes" class="btn btn-dark text-white mx-2"></input> 
                       </form> 
 
                       <!-- Log out -->
-                      <form action = "/logout" method = "POST">
-                            <input type = "submit" value = "Log out" class = "btn btn-danger text-white mx-2"></input> 
+                      <form action="/logout" method="POST">
+                            <input type="submit" value="Log out" class="btn btn-danger text-white mx-2"></input> 
                       </form> 
                       
                     </ul>
@@ -691,7 +681,7 @@
             <div class="separator"></div>
             <button class="location-btn btn btn-secondary text-white">Use Current Location</button>
         </div>
-        <div class="weather-data">
+        <div class="weather-data ">
             <div class="current-weather">
                 <div class="details">
                     <h2>_______ ( ______ )</h2>
@@ -739,4 +729,3 @@
     </div>
 </body>
 </html>
-
