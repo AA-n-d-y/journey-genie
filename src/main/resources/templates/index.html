@@ -16,7 +16,7 @@
         function initMap() {
 
             map = document.getElementById("map");
-            map.setAttribute("src", "https://www.google.com/maps/embed/v1/view?key=API_KEY&zoom=2&center=0,0")
+            map.setAttribute("src", "https://www.google.com/maps/embed/v1/view?key=AIzaSyAkRHXVlE1vMgAgNQyOqFipf919uddFzmk&zoom=2&center=0,0")
 
             geocoder = new google.maps.Geocoder();
 
@@ -40,7 +40,7 @@
             if (location) {
                 let origin = currentLocation.toString();
                 let center = origin.substring(1, origin.length-2);
-                map.setAttribute("src", "https://www.google.com/maps/embed/v1/place?key=API_KEY&zoom=10&center=" + center + "&q=" + origin);         
+                map.setAttribute("src", "https://www.google.com/maps/embed/v1/place?key=AIzaSyAkRHXVlE1vMgAgNQyOqFipf919uddFzmk&zoom=10&center=" + center + "&q=" + origin);         
                 geocodeLocation(location, 'current-location');  
             }     
         }
@@ -50,7 +50,7 @@
             if (location) {
                 let end = destination.toString();
                 let center = end.substring(1, end.length-2);
-                map.setAttribute("src", "https://www.google.com/maps/embed/v1/place?key=API_KEY&zoom=10&center=" + center + "&q=" + end);         
+                map.setAttribute("src", "https://www.google.com/maps/embed/v1/place?key=AIzaSyAkRHXVlE1vMgAgNQyOqFipf919uddFzmk&zoom=10&center=" + center + "&q=" + end);         
                 geocodeLocation(location, 'destination');  
             } 
         }
@@ -73,7 +73,7 @@
             travelMode = mode;
             let center = destination.toString();
             center = center.substring(1, center.length-2);
-            map.setAttribute("src", "https://www.google.com/maps/embed/v1/directions?key=API_KEY&zoom=10&center=" + center + "&mode=" + mode + "&origin=" + currentLocation.toString() + "&destination=" + destination.toString());
+            map.setAttribute("src", "https://www.google.com/maps/embed/v1/directions?key=AIzaSyAkRHXVlE1vMgAgNQyOqFipf919uddFzmk&zoom=10&center=" + center + "&mode=" + mode + "&origin=" + currentLocation.toString() + "&destination=" + destination.toString());
         }
 
         function clearMap() {
@@ -82,7 +82,7 @@
             travelMode = null;
             document.getElementById('current-location').value = '';
             document.getElementById('destination').value = '';
-            map.setAttribute("src", "https://www.google.com/maps/embed/v1/view?key=API_KEY&zoom=2&center=0,0")
+            map.setAttribute("src", "https://www.google.com/maps/embed/v1/view?key=AIzaSyAkRHXVlE1vMgAgNQyOqFipf919uddFzmk&zoom=2&center=0,0")
         }
 
         function saveRoute() {
