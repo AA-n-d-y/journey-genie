@@ -11,20 +11,42 @@
     <script th:inline="javascript" th:src="'https://maps.googleapis.com/maps/api/js?key=API_KEY&libraries=places,geocoding'"></script>
 
     <script defer>
-        let map, currentLocation, destination, geocoder, travelMode;
+        let map, currentLocation, destination, directionsService, directionsRenderer, geocoder, travelMode;
+        let currentMarker, destinationMarker;
+        let alternativeRoutes = [];
+        let selectedRoute = null;
 
         function initMap() {
-
-            map = document.getElementById("map");
-            map.setAttribute("src", "https://www.google.com/maps/embed/v1/view?key=AIzaSyAkRHXVlE1vMgAgNQyOqFipf919uddFzmk&zoom=2&center=0,0")
-
+            directionsService = new google.maps.DirectionsService();
+            directionsRenderer = new google.maps.DirectionsRenderer();
             geocoder = new google.maps.Geocoder();
+
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: 49.2827, lng: -123.1207 },
+                zoom: 8,
+            });
+            directionsRenderer.setMap(map);
+
+            
+
+            google.maps.event.addListener(map, 'click', function (event) {
+                if (!currentLocation) {
+                    setCurrentLocation(event.latLng);
+                } else if (!destination) {
+                    setDestination(event.latLng);
+                } else {
+                    setCurrentLocation(event.latLng);
+                    setDestination(null);
+                }
+            });
 
             const inputCurrent = document.getElementById("current-location");
             const inputDestination = document.getElementById("destination");
 
             const autocompleteCurrent = new google.maps.places.Autocomplete(inputCurrent);
+            autocompleteCurrent.bindTo("bounds", map);
             const autocompleteDestination = new google.maps.places.Autocomplete(inputDestination);
+            autocompleteDestination.bindTo("bounds", map);
 
             autocompleteCurrent.addListener('place_changed', function () {
                 setCurrentLocation(autocompleteCurrent.getPlace().geometry.location);
@@ -37,22 +59,28 @@
 
         function setCurrentLocation(location) {
             currentLocation = location;
-            if (location) {
-                let origin = currentLocation.toString();
-                let center = origin.substring(1, origin.length-2);
-                map.setAttribute("src", "https://www.google.com/maps/embed/v1/place?key=AIzaSyAkRHXVlE1vMgAgNQyOqFipf919uddFzmk&zoom=10&center=" + center + "&q=" + origin);         
-                geocodeLocation(location, 'current-location');  
-            }     
+            if (currentMarker) currentMarker.setMap(null);
+            currentMarker = new google.maps.Marker({
+                position: currentLocation,
+                map: map,
+                title: "Current Location"
+            });
+            map.setCenter(currentLocation);
+            geocodeLocation(location, 'current-location');
         }
 
         function setDestination(location) {
             destination = location;
+            if (destinationMarker) destinationMarker.setMap(null);
             if (location) {
-                let end = destination.toString();
-                let center = end.substring(1, end.length-2);
-                map.setAttribute("src", "https://www.google.com/maps/embed/v1/place?key=AIzaSyAkRHXVlE1vMgAgNQyOqFipf919uddFzmk&zoom=10&center=" + center + "&q=" + end);         
-                geocodeLocation(location, 'destination');  
-            } 
+                destinationMarker = new google.maps.Marker({
+                    position: destination,
+                    map: map,
+                    title: "Destination"
+                });
+                map.setCenter(destination);
+                geocodeLocation(location, 'destination');
+            }
         }
 
         function geocodeLocation(location, inputId) {
@@ -70,19 +98,63 @@
         }
 
         function calculateRoute(mode) {
-            travelMode = mode;
-            let center = destination.toString();
-            center = center.substring(1, center.length-2);
-            map.setAttribute("src", "https://www.google.com/maps/embed/v1/directions?key=AIzaSyAkRHXVlE1vMgAgNQyOqFipf919uddFzmk&zoom=10&center=" + center + "&mode=" + mode + "&origin=" + currentLocation.toString() + "&destination=" + destination.toString());
+            if (!currentLocation || !destination) {
+                alert("Please select both current location and destination.");
+                return;
+            }
+
+            travelMode = mode.toLowerCase();
+
+            const request = {
+                origin: currentLocation,
+                destination: destination,
+                travelMode: mode,
+                provideRouteAlternatives: true
+            };
+
+            directionsService.route(request, function (result, status) {
+                if (status === 'OK') {
+                    directionsRenderer.setDirections(result);
+                    selectedRoute = result.routes[0];
+                    displayRouteOptions(result.routes);
+                } else {
+                    alert("Could not retrieve route.");
+                }
+            });
+        }
+
+        function displayRouteOptions(routes) {
+            const routesContainer = document.getElementById('routes');
+            routesContainer.innerHTML = '';
+            alternativeRoutes = routes;
+
+            routes.forEach((route, index) => {
+                const routeDiv = document.createElement('div');
+                routeDiv.className = 'route-option';
+                routeDiv.innerHTML = `
+                        <input type="radio" name="route" value="${index}" id="route${index}" ${index === 0 ? 'checked' : ''}>
+                        <label for="route${index}">
+                            ${route.legs[0].duration.text} via ${route.summary}
+                        </label>
+                    `;
+                routeDiv.addEventListener('click', () => {
+                    directionsRenderer.setRouteIndex(index);
+                    selectedRoute = routes[index];
+                });
+                routesContainer.appendChild(routeDiv);
+            });
         }
 
         function clearMap() {
+            if (currentMarker) currentMarker.setMap(null);
+            if (destinationMarker) destinationMarker.setMap(null);
+            directionsRenderer.set('directions', null);
             currentLocation = null;
             destination = null;
-            travelMode = null;
+            selectedRoute = null;
+            document.getElementById('routes').innerHTML = '';
             document.getElementById('current-location').value = '';
             document.getElementById('destination').value = '';
-            map.setAttribute("src", "https://www.google.com/maps/embed/v1/view?key=AIzaSyAkRHXVlE1vMgAgNQyOqFipf919uddFzmk&zoom=2&center=0,0")
         }
 
         function saveRoute() {
@@ -182,17 +254,17 @@
                     <input id="destination" type="text" placeholder="Enter destination" class="form-control">
                 </div>
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-3">
-                    <button onclick="calculateRoute('driving')" class="btn btn-info">Car Route</button>
-                    <button onclick="calculateRoute('walking')" class="btn btn-info">Walking Route</button>
-                    <button onclick="calculateRoute('bicycling')" class="btn btn-info">Bicycling Route</button>
-                    <button onclick="calculateRoute('transit')" class="btn btn-info">Transit Route</button>
-                    <button onclick="calculateRoute('flying')" class="btn btn-info">Flying Route</button>
+                    <button onclick="calculateRoute('DRIVING')" class="btn btn-info">Car Route</button>
+                    <button onclick="calculateRoute('WALKING')" class="btn btn-info">Walking Route</button>
+                    <button onclick="calculateRoute('BICYCLING')" class="btn btn-info">Bicycling Route</button>
+                    <button onclick="calculateRoute('TRANSIT')" class="btn btn-info">Transit Route</button>
+                    <button onclick="calculateRoute('FLYING')" class="btn btn-info">Flying Route</button>
                     <!-- <button onclick="calculateBestRoute()" class="btn btn-info">Best Route</button> -->
                     <button onclick="clearMap()" class="btn btn-secondary">Clear Map</button>
                     <button onclick="saveRoute()" class="btn btn-success">Save This Route</button>
                 </div>
-                <iframe id="map" height="500px" width="100%" style="border:0" loading="lazy" allowfullscreen 
-                 th:inline="javascript"></iframe>
+                <div id="routes"></div>
+                <div id="map" style="height: 500px; width: 100%;" class="mt-5"></div>
                 <a href="/saved-routes" class="btn btn-link mt-3">See Your Saved Routes</a>
             </div>
         </div>
