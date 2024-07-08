@@ -1,4 +1,3 @@
-// Java file for running the application
 
 package com.genie.journey_genie;
 
