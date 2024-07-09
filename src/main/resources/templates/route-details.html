@@ -42,18 +42,17 @@
         <div class="row justify-content-center">
             <div class="col-12">
                 <h1 class="text-center mb-5">Route Details</h1>
+                <!-- Map -->
                 <iframe id="map" height="500px" width="100%" style="border:0" loading="lazy" allowfullscreen 
-                    th:inline="javascript" 
-                    th:src="'https://www.google.com/maps/embed/v1/directions?origin=' + ${route.startCoords} + '&destination=' + ${route.endCoords} + '&mode=' + ${route.travelMode} + '&key=' + ${API_KEY}">
-                </iframe>
+                <iframe th:inline="javascript" th:src="'https://www.google.com/maps/embed/v1/directions?origin=' + ${route.startCoords} + '&destination=' + ${route.endCoords} + '&mode=' + ${route.travelMode} + '&key=' + ${API_KEY}"></iframe>
                 <a href="/saved-routes" class="btn btn-link mt-3">Back to Saved Routes</a>
-                <a th:href="@{'/add-note/' + ${route.id}}" class="btn btn-primary mt-3">Add Notes</a>
+
+                <!-- Notes -->
                 <h2 class="mt-5">Notes</h2>
-                <ul class="list-group mt-3">
-                    <li th:each="note : ${notes}" class="list-group-item">
-                        <div th:utext="${note.content}"></div>
-                    </li>
+                <ul th:each="note : ${notes}">
+                    <li th:utext="${note.content}"></li>
                 </ul>
+                <a th:href="@{'/add-note/' + ${route.id}}" class="btn btn-primary mt-3">Add Note</a>
             </div>
         </div>
     </main>

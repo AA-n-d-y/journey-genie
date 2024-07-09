@@ -1,10 +1,10 @@
 package com.genie.journey_genie.models;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 public class Note {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -14,17 +14,10 @@ public class Note {
     private Route route;
 
     @Lob
-    @Column(columnDefinition = "TEXT")
+    @Column(length = 10000)
     private String content;
 
-    private LocalDateTime creationDate;
-
-    // Default constructor
-    public Note() {
-        this.creationDate = LocalDateTime.now();
-    }
-
-    // Getters and setters
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -47,13 +40,5 @@ public class Note {
 
     public void setContent(String content) {
         this.content = content;
-    }
-
-    public LocalDateTime getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(LocalDateTime creationDate) {
-        this.creationDate = creationDate;
     }
 }
