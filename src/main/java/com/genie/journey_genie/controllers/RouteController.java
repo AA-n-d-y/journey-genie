@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -91,6 +88,37 @@ public class RouteController {
             note.setContent("<h2>" + noteHeadline + "</h2><p>" + noteContent + "</p>");
             noteRepository.save(note);
         }
+        return new RedirectView("/route-details/" + routeId);
+    }
+
+    @GetMapping("/edit-note/{noteId}")
+    public String editNotePage(@PathVariable Long noteId, Model model) {
+        Note note = noteRepository.findById(noteId).orElse(null);
+        model.addAttribute("note", note);
+        return "edit_note";
+    }
+
+    @PostMapping("/update-note")
+    @Transactional
+    public RedirectView updateNote(
+            @RequestParam Long noteId,
+            @RequestParam String noteHeadline,
+            @RequestParam String noteContent) {
+
+        Note note = noteRepository.findById(noteId).orElse(null);
+        if (note != null) {
+            note.setContent("<h2>" + noteHeadline + "</h2><p>" + noteContent + "</p>");
+            noteRepository.save(note);
+        }
+        return new RedirectView("/route-details/" + note.getRoute().getId());
+    }
+
+    @GetMapping("/delete-note/{noteId}")
+    @Transactional
+    public RedirectView deleteNote(@PathVariable Long noteId) {
+        Note note = noteRepository.findById(noteId).orElse(null);
+        Long routeId = note.getRoute().getId();
+        noteRepository.deleteById(noteId);
         return new RedirectView("/route-details/" + routeId);
     }
 }
