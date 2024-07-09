@@ -1,0 +1,5 @@
+DB_URL = jdbc:postgresql://dpg-cpvqeauehbks73e1m7h0-a.oregon-postgres.render.com/journeygeniedatabase
+DB_USERNAME = journeygeniedatabase_user
+DB_PASSWORD = AxNE5MPd2DJcJLZqJHXOWeUdyYxLuvSR
+
+GOOGLE_API_KEY = AIzaSyCX-Ukm1kWZZt1ZQnKaiteVcl2OxoCH5S8
