@@ -56,17 +56,20 @@
         function addLocation() {
             const refDiv = document.getElementById("endOfLocations");
 
-            const newElement = document.createElement('input')
-            newElement.className = 'location form-control mb-3';
-            newElement.setAttribute('type', 'text');
-            newElement.setAttribute('placeholder', 'Enter location');
-            newElement.id = 'im-' + document.getElementsByClassName('location').length;
+            const newElement = document.createElement('div')
+            newElement.innerHTML = "<input class='location form-control mb-3' id='im-" + document.getElementsByClassName('location').length +
+                "' type='text' placeholder='Enter location'>" +
+                "<button onclick='calculateRoute(" + document.getElementsByClassName('location').length + ")' class='btn btn-info'>Display</button>"
+            newElement.className = 'container bg-primary rounded p-2 mb-2'
+
             document.getElementById('locationsParent').insertBefore(newElement, refDiv);
 
-            const autocompleteNew = new google.maps.places.Autocomplete(newElement);
+            const textBox = newElement.getElementsByClassName('location')[0]
+
+            const autocompleteNew = new google.maps.places.Autocomplete(textBox);
 
             autocompleteNew.addListener('place_changed', function () {
-                setLocation(autocompleteNew.getPlace().geometry.location, newElement);
+                setLocation(autocompleteNew.getPlace().geometry.location, textBox);
             });
         }
 
@@ -101,6 +104,7 @@
         function calculateRoute(index) {
             if (index === 0) {
                 map.setCenter(locations[index]);
+                return;
             }
 
             if (!locations[index] || !locations[index-1]) {
@@ -290,11 +294,11 @@
 </header>
 
 <!-- Container -->
-<main class="container" style="margin-top: 100px;">
-    <div class="row justify-content-center">
-        <div id="locationsParent" class="col-12">
-            <h1 class="text-center mb-5">Search Your Routes</h1>
-            <div id="endOfLocations"></div>
+<main class="container-fluid row mx-0" style="margin-top: 100px;">
+    <div class="col-4" id="locationsParent">
+        <div id="endOfLocations"></div>
+    </div>
+    <div class="col-8 justify-content-center">
             <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-3">
                 <button onclick="addLocation()" class="btn btn-primary">Add Location</button>
                 <div class="btn-group btn-group-toggle" data-toggle="buttons">
