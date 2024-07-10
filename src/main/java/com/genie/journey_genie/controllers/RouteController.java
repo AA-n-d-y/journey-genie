@@ -100,6 +100,7 @@ public class RouteController {
         Route route = new Route(startCoords, endCoords, startPoint, endPoint, travelMode, routeDetails);
         routeRepository.save(route);
         return "redirect:/saved-routes";
+        
     }
 
 }
