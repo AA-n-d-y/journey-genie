@@ -1,5 +1,6 @@
 package com.genie.journey_genie.controllers;
 
+import com.genie.journey_genie.models.*;
 import com.genie.journey_genie.models.Route;
 import com.genie.journey_genie.models.RouteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.beans.factory.annotation.Value;
 
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
 import java.util.List;
+
 
 @Controller
 public class RouteController {
@@ -24,26 +29,63 @@ public class RouteController {
     @Value("${GOOGLE_API_KEY}")
     private String GOOGLE_API_KEY;
 
+
     @GetMapping("/saved-routes")
-    public String viewSavedRoutes(Model model) {
+    public String viewSavedRoutes(Model model, HttpServletResponse response, HttpSession session) {
+        // Finding the session
+        User user = (User) session.getAttribute("sessionUser");
+
+        // If it does not exist, redirect them to the login page
+        if (user == null) {
+            response.setStatus(401);
+            return "loginPage";
+        }
+
+        // Else
         List<Route> routes = routeRepository.findAll();
         model.addAttribute("routes", routes);
+        response.setStatus(200);
         return "saved-routes";
     }
 
+
     @GetMapping("/route-details/{id}")
-    public String viewRouteDetails(@PathVariable Long id, Model model) {
+    public String viewRouteDetails(@PathVariable Long id, Model model, HttpServletResponse response, HttpSession session) {
+        // Finding the session
+        User user = (User) session.getAttribute("sessionUser");
+
+        // If it does not exist, redirect them to the login page
+        if (user == null) {
+            response.setStatus(401);
+            return "loginPage";
+        }
+
+        // Else
         Route route = routeRepository.findById(id).orElse(null);
         model.addAttribute("route", route);
         model.addAttribute("GOOGLE_API_KEY", GOOGLE_API_KEY);
+        response.setStatus(200);
         return "route-details";
     }
 
+
     @GetMapping("/delete-route/{id}")
-    public RedirectView deleteRoute(@PathVariable Long id) {
+    public RedirectView deleteRoute(@PathVariable Long id, HttpServletResponse response, HttpSession session) {
+        // Finding the session
+        User user = (User) session.getAttribute("sessionUser");
+
+        // If it does not exist, redirect them to the login page
+        if (user == null) {
+            response.setStatus(401);
+            return new RedirectView("/login");
+        }
+
+        // Else
         routeRepository.deleteById(id);
+        response.setStatus(200);
         return new RedirectView("/saved-routes");
     }
+
 
     @PostMapping("/save-route")
     public String saveRoute(
@@ -59,4 +101,5 @@ public class RouteController {
         routeRepository.save(route);
         return "redirect:/saved-routes";
     }
+
 }

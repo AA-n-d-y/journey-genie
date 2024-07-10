@@ -57,7 +57,6 @@ public class UserController {
     // Post request (creating a new user)
     @PostMapping("/register")
     public String registerUser(@RequestParam Map<String, String> newUser, Model model, HttpServletResponse response){
-        // NEED TO ACCOUNT FOR A DUPLICATE USER
 
         // Creating a new user
         String firstname = newUser.get("firstname");
