@@ -18,18 +18,23 @@ public class Route2 {
     private String travelMode;
     private LocalDateTime creationDate;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     // Default constructor
     public Route2() {
         this.creationDate = LocalDateTime.now();
     }
 
     // Parameterized constructor
-    public Route2(String startCoords, String endCoords, String startPoint, String endPoint, String travelMode) {
+    public Route2(String startCoords, String endCoords, String startPoint, String endPoint, String travelMode, User user) {
         this.startCoords = startCoords;
         this.endCoords = endCoords;
         this.startPoint = startPoint;
         this.endPoint = endPoint;
         this.travelMode = travelMode;
+        this.user = user;
         this.creationDate = LocalDateTime.now();
     }
 
@@ -88,6 +93,14 @@ public class Route2 {
 
     public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getFormattedCreationDate() {

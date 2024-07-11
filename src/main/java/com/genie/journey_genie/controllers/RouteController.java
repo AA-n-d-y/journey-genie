@@ -36,13 +36,18 @@ public class RouteController {
         return user != null;
     }
 
+    private User getLoggedInUser(HttpSession session) {
+        return (User) session.getAttribute("sessionUser");
+    }
+
     @GetMapping("/saved-routes")
     public String viewSavedRoutes(Model model, HttpServletResponse response, HttpServletRequest request, HttpSession session) {
         if (!isUserLoggedIn(session)) {
             response.setStatus(401); // Unauthorized
             return "loginPage";
         }
-        List<Route2> routes = route2Repository.findAll();
+        User user = getLoggedInUser(session);
+        List<Route2> routes = route2Repository.findByUser(user);
         model.addAttribute("routes", routes);
         return "saved-routes";
     }
@@ -89,7 +94,8 @@ public class RouteController {
             return "loginPage";
         }
 
-        Route2 route = new Route2(startCoords, endCoords, startPoint, endPoint, travelMode);
+        User user = getLoggedInUser(session);
+        Route2 route = new Route2(startCoords, endCoords, startPoint, endPoint, travelMode, user);
         route2Repository.save(route);
         return "redirect:/saved-routes";
     }
