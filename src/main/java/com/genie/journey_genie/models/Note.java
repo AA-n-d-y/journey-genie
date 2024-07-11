@@ -10,8 +10,8 @@ public class Note {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "route_id")
-    private Route route;
+    @JoinColumn(name = "route2_id")
+    private Route2 route;
 
     @Lob
     @Column(length = 10000)
@@ -26,11 +26,11 @@ public class Note {
         this.id = id;
     }
 
-    public Route getRoute() {
+    public Route2 getRoute() {
         return route;
     }
 
-    public void setRoute(Route route) {
+    public void setRoute(Route2 route) {
         this.route = route;
     }
 

@@ -1,7 +1,7 @@
 package com.genie.journey_genie.controllers;
 
-import com.genie.journey_genie.models.Route;
-import com.genie.journey_genie.models.RouteRepository;
+import com.genie.journey_genie.models.Route2;
+import com.genie.journey_genie.models.Route2Repository;
 import com.genie.journey_genie.models.Note;
 import com.genie.journey_genie.models.NoteRepository;
 import com.genie.journey_genie.models.User;
@@ -23,12 +23,11 @@ import java.util.List;
 public class RouteController {
 
     @Autowired
-    private RouteRepository routeRepository;
+    private Route2Repository route2Repository;
 
     @Autowired
     private NoteRepository noteRepository;
 
-    // Holding the API key value
     @Value("${API_KEY}")
     private String API_KEY;
 
@@ -43,7 +42,7 @@ public class RouteController {
             response.setStatus(401); // Unauthorized
             return "loginPage";
         }
-        List<Route> routes = routeRepository.findAll();
+        List<Route2> routes = route2Repository.findAll();
         model.addAttribute("routes", routes);
         return "saved-routes";
     }
@@ -55,7 +54,7 @@ public class RouteController {
             response.setStatus(401); // Unauthorized
             return "loginPage";
         }
-        Route route = routeRepository.findById(id).orElse(null);
+        Route2 route = route2Repository.findById(id).orElse(null);
         List<Note> notes = noteRepository.findByRouteId(id);
         model.addAttribute("route", route);
         model.addAttribute("notes", notes);
@@ -70,7 +69,7 @@ public class RouteController {
             response.setStatus(401); // Unauthorized
             return new RedirectView("/loginPage");
         }
-        routeRepository.deleteById(id);
+        route2Repository.deleteById(id);
         return new RedirectView("/saved-routes");
     }
 
@@ -83,7 +82,6 @@ public class RouteController {
             @RequestParam String startPoint,
             @RequestParam String endPoint,
             @RequestParam String travelMode,
-            @RequestParam String routeDetails,
             HttpServletResponse response, HttpServletRequest request, HttpSession session) {
 
         if (!isUserLoggedIn(session)) {
@@ -91,8 +89,8 @@ public class RouteController {
             return "loginPage";
         }
 
-        Route route = new Route(startCoords, endCoords, startPoint, endPoint, travelMode, routeDetails);
-        routeRepository.save(route);
+        Route2 route = new Route2(startCoords, endCoords, startPoint, endPoint, travelMode);
+        route2Repository.save(route);
         return "redirect:/saved-routes";
     }
 
@@ -119,7 +117,7 @@ public class RouteController {
             return new RedirectView("/loginPage");
         }
 
-        Route route = routeRepository.findById(routeId).orElse(null);
+        Route2 route = route2Repository.findById(routeId).orElse(null);
         if (route != null) {
             Note note = new Note();
             note.setRoute(route);

@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Entity
-public class Route {
+public class Route2 {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,26 +16,20 @@ public class Route {
     private String startPoint;
     private String endPoint;
     private String travelMode;
-
-    @Lob
-    @Column(length = 10000)
-    private String routeDetails;
-
     private LocalDateTime creationDate;
 
     // Default constructor
-    public Route() {
+    public Route2() {
         this.creationDate = LocalDateTime.now();
     }
 
     // Parameterized constructor
-    public Route(String startCoords, String endCoords, String startPoint, String endPoint, String travelMode, String routeDetails) {
+    public Route2(String startCoords, String endCoords, String startPoint, String endPoint, String travelMode) {
         this.startCoords = startCoords;
         this.endCoords = endCoords;
         this.startPoint = startPoint;
         this.endPoint = endPoint;
         this.travelMode = travelMode;
-        this.routeDetails = routeDetails;
         this.creationDate = LocalDateTime.now();
     }
 
@@ -88,14 +82,6 @@ public class Route {
         this.travelMode = travelMode;
     }
 
-    public String getRouteDetails() {
-        return routeDetails;
-    }
-
-    public void setRouteDetails(String routeDetails) {
-        this.routeDetails = routeDetails;
-    }
-
     public LocalDateTime getCreationDate() {
         return creationDate;
     }
@@ -104,7 +90,6 @@ public class Route {
         this.creationDate = creationDate;
     }
 
-    // Method to get formatted creation date
     public String getFormattedCreationDate() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM, yyyy, hh:mm a");
         return this.creationDate.format(formatter);
