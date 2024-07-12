@@ -57,7 +57,7 @@
             const refDiv = document.getElementById("endOfLocations");
 
             const newElement = document.createElement('div')
-            newElement.innerHTML = "<input class='location form-control mb-3' id='im-" + document.getElementsByClassName('location').length +
+            newElement.innerHTML = "<input class='location form-control mb-3' id='loc-" + document.getElementsByClassName('location').length +
                 "' type='text' placeholder='Enter location'>" +
                 "<button onclick='calculateRoute(" + document.getElementsByClassName('location').length + ")' class='btn btn-info'>Display</button>"
             newElement.className = 'container bg-primary rounded p-2 mb-2'
@@ -197,7 +197,7 @@
             selectedRoute = null;
             document.getElementById('routes').innerHTML = '';
             for (let i in locations) {
-                document.getElementById('im-' + i).value = ''
+                document.getElementById('loc-' + i).value = ''
             }
             for (let i in locations) {
                 locations[i] = null
@@ -214,7 +214,7 @@
 
             const routePoints = []
             for (let i in locations) {
-                routePoints[i] = document.getElementById('im-' + i).value;
+                routePoints[i] = document.getElementById('loc-' + i).value;
             }
             // const startPoint = document.getElementById('current-location').value;
             // const endPoint = document.getElementById('destination').value;
