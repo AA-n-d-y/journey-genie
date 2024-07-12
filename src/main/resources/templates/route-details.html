@@ -1,212 +1,238 @@
- <!DOCTYPE html>
- <html lang="en">
- <head>
-     <meta charset="UTF-8">
-     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <title>Route Details</title>
-     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-     <script th:inline="javascript" th:src="'https://maps.googleapis.com/maps/api/js?key=' + ${GOOGLE_API_KEY} + '&libraries=places,geocoding'"></script>
-    </head>
- <body onload="initMap()">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Route Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <script th:inline="javascript" th:src="'https://maps.googleapis.com/maps/api/js?key=' + ${GOOGLE_API_KEY} + '&libraries=places,geocoding'"></script>
+    <style>
+        .weather-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: white;
+        }
+        .weather-icon {
+            font-size: 2rem;
+        }
+    </style>
+
+</head>
+<body onload="initMap()">
     <!-- Navigation bar -->
     <header>
-            <nav class = "navbar navbar-expand-md bg-info h4 px-4 py-3 text-white" style = "min-height: 75px;">
+        <div class="row justify-content-center fixed-top">
+            <nav class="navbar navbar-expand bg-info h4 px-4 py-3 text-white" style="min-height: 75px;">
                 <!-- Website name-->
-                <span class = "fs-4 px-2"> JourneyGenie </span>
+                <span class="fs-4 px-2"> JourneyGenie </span>
                 
                 <!-- Other pages -->
-                <div class="navbar-collapse fs-5 d-flex justify-content-md-end justify-content-center">
+                <div class="collapse navbar-collapse fs-5 justify-content-end">
                     <ul class="navbar-nav">
-
                       <!-- Home -->
-                      <form action = "/home" method = "GET">
-                            <input type = "submit" value = "Home" class = "btn btn-dark text-white mx-2"></input> 
+                      <form action="/home" method="GET">
+                            <input type="submit" value="Home" class="btn btn-dark text-white mx-2"></input> 
                       </form> 
 
                       <!-- Routes -->
-                      <form action = "/map" method = "GET">
-                            <input type = "submit" value = "Routes" class = "btn btn-dark text-white mx-2"></input> 
+                      <form action="/map" method="GET">
+                            <input type="submit" value="Routes" class="btn btn-dark text-white mx-2"></input> 
                       </form> 
 
                       <!-- Log out -->
-                      <form action = "/logout" method = "POST">
-                            <input type = "submit" value = "Log out" class = "btn btn-danger text-white mx-2"></input> 
+                      <form action="/logout" method="POST">
+                            <input type="submit" value="Log out" class="btn btn-danger text-white mx-2"></input> 
                       </form> 
-                      
                     </ul>
                 </div>
             </nav>
-    </header>   
-    
- 
-     <!-- Container -->
-     <main class="container" style="margin-top: 100px;">
-         <div class="row justify-content-center">
-             <div class="col-12">
+        </div>
+    </header>
 
-                <!-- Route details map -->
-                 <h1 class="text-center mb-5">Route Details</h1>
-                 <div class = "mb-5">
+    <!-- Container -->
+    <main class="container" style="margin-top: 100px;">
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <h1 class="text-center mb-5">Route Details</h1>
+                <!-- Map -->
+                <div class="mb-5">
                     <iframe id="map" height="500px" width="100%" style="border:0" loading="lazy" allowfullscreen
                     <iframe th:inline="javascript" th:src="'https://www.google.com/maps/embed/v1/directions?origin=' + ${route.startCoords} + '&destination=' + ${route.endCoords} + '&mode=' + ${route.travelMode} + '&key=' + ${GOOGLE_API_KEY}"></iframe>
-                </div> 
+                </div>
+                <!-- <a href="/saved-routes" class="btn btn-link mt-3">Back to Saved Routes</a> -->
 
+                <!-- <a href="/weather" class="btn btn-primary mt-3 btn-lg btn-block"> See weather</a> -->
+                <div class="d-flex justify-content-between">
+                    <a href="/saved-routes" class="btn btn-link mt-3">Back to Saved Routes</a>
+                    <a href="/weather" class="btn btn-primary btn-lg mt-3 weather-button">
+                        <i class="bi bi-cloud-sun weather-icon"></i>
+                        <span>See Weather</span>
+                    </a>
+                </div>>
 
-                <!-- Local places map -->
-                <h1 class="text-center mb-5">Local Places</h1>
-                <div id = "map2" class = "mb-3" style = "min-height: 500px; width: 100%;"> </div>
+                <!-- Local Places -->
+                <h1 class="text-center mb-5 mt-5">Local Places</h1>
+                <div id="map2" style="min-height: 500px; width: 100%;"></div>
 
-
-                <!-- Local places table -->
-                <table id = "eventsTable" class = "table table-bordered">
-                    <!-- Table headers -->
-                    <tr>
-                        <th> Place Name </th>
-                    </tr>
-
+                <!-- Local Places Table -->
+                <table id="eventsTable" class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Place Name</th>
+                            <th>Add to Checklist</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Places will be dynamically added here -->
+                    </tbody>
                 </table>
-                <a href="/saved-routes" class="btn btn-link mt-4 mb-5">Back to Saved Routes</a>
                 
+                <!-- Notes -->
+                <h2 class="mt-5">Notes</h2>
+                <ul th:each="note : ${notes}">
+                    <li th:utext="${note.content}"></li>
+                    <a th:href="@{'/edit-note/' + ${note.id}}" class="btn btn-warning mt-1">Edit</a>
+                    <a th:href="@{'/delete-note/' + ${note.id}}" class="btn btn-danger mt-1">Delete</a>
+                </ul>
+                <a th:href="@{'/add-note/' + ${route.id}}" class="btn btn-primary mt-3">Add Note</a> 
+                <!-- <a href="/saved-routes" class="btn btn-link mb-5">Back to Saved Routes</a> -->
+                <!-- <a href="/weather" class="btn btn-primary mt-3 btn-lg btn-block"> See weather</a>  -->
+            </div>
+        </div>
+    </main>
 
-                <!-- Local events map functions --> 
-                 <script th:inline = "javascript">
-                    let map;
+    <script th:inline="javascript">
+        let map;
+
+        // Destination marker calculations
+        let destinationCoords = /*[[ ${route.endCoords} ]]*/'';
+
+        let latIndexStart = destinationCoords.indexOf("(") + 1;
+        let latIndexEnd = destinationCoords.indexOf(",");
+        let destinationLat = parseFloat(destinationCoords.substring(latIndexStart, latIndexEnd));
+
+        let longitIndexStart = destinationCoords.indexOf(",") + 2;
+        let longitIndexEnd = destinationCoords.indexOf(")");
+        let destinationLongit = parseFloat(destinationCoords.substring(longitIndexStart, longitIndexEnd));
+        
+        // Destination marker
+        let destinationMarker;
+
+        let directionsService = new google.maps.DirectionsService();
+        let directionsRenderer = new google.maps.DirectionsRenderer();
+        directionsRenderer.setMap(map);
+
+        async function initMap() {
+            const { Map, InfoWindow } = await google.maps.importLibrary("maps");
+
+            // Creating the map
+            map = new Map(document.getElementById("map2"), {
+                zoom: 13,
+                center: { lat: destinationLat, lng: destinationLongit },
+                mapId: "PLACES_MAP",
+            });
+
+            // Displaying the destination by using a marker
+            destinationMarker = new google.maps.Marker({
+                position: { lat: destinationLat, lng: destinationLongit },
+                map: map,
+                title: "Destination"
+            });
+            
+            // Adding an info window to the destination marker
+            let infoWindow = new google.maps.InfoWindow({
+                content: "<h5> Destination </h5>"
+            });
+            destinationMarker.addListener("click", () => {
+                infoWindow.open(map, destinationMarker);
+            });
+
+            // Displaying nearby places
+            nearbyPlaces();
+        }
+
+        async function nearbyPlaces() {
+            // Getting Stuff
+            const { Place, SearchNearbyRankPreference } = await google.maps.importLibrary(
+                "places",
+            );
+
+            // Making the request
+            let position = new google.maps.LatLng(destinationLat, destinationLongit);
+            const request = {
+                fields: ["displayName", "location", "businessStatus"],
+                locationRestriction: {
+                center: position,
+                radius: 10000,
+                },
+                includedPrimaryTypes: ["tourist_attraction", "historical_landmark", "park", "museum"],
+                maxResultCount: 20,
+                rankPreference: SearchNearbyRankPreference.POPULARITY
+            };
+
+            // Checking if there are places found
+            const { places } = await Place.searchNearby(request);
+            if (places.length) {
+                console.log(places);
+
+                const { LatLngBounds } = await google.maps.importLibrary("core");
+                const bounds = new LatLngBounds();
+
+                // Loop through the places and adding markers on the map
+                places.forEach((place) => {
+                    const placeMarker = new google.maps.Marker({
+                        map: map,
+                        position: place.location,
+                        title: place.displayName,
+                        icon: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+                    });
+
+                    // Adding an info window to each marker
+                    let infoWindow = new google.maps.InfoWindow({});
+                    windowContent = "<h5>" + placeMarker.title + "</h5>";
+                    infoWindow.setContent(windowContent);
+                    placeMarker.addListener("click", () => {
+                        infoWindow.open(map, placeMarker);
+                    });
                     
-                    // Destination marker calculations
-                    let destinationCoords = /*[[ ${route.endCoords} ]]*/'';
-
-                    let latIndexStart = destinationCoords.indexOf("(") + 1;
-                    let latIndexEnd = destinationCoords.indexOf(",");
-                    let destinationLat = parseFloat(destinationCoords.substring(latIndexStart, latIndexEnd));
-
-                    let longitIndexStart = destinationCoords.indexOf(",") + 2;
-                    let longitIndexEnd = destinationCoords.indexOf(")");
-                    let destinationLongit = parseFloat(destinationCoords.substring(longitIndexStart, longitIndexEnd));
+                    bounds.extend(place.location);
+                    console.log(place);
                     
-                    // Destination marker
-                    let destinationMarker;
+                    // Appending the place to the table
+                    let table = document.getElementById("eventsTable");
 
-                    let directionsService = new google.maps.DirectionsService();
-                    let directionsRenderer = new google.maps.DirectionsRenderer();
-                    directionsRenderer.setMap(map);
+                    let tableRow = document.createElement("tr");
 
+                    let placeName = document.createElement("td");
+                    placeName.innerText = placeMarker.title;
+                    tableRow.appendChild(placeName);
 
-                    async function initMap() {
-                        const { Map, InfoWindow } = await google.maps.importLibrary("maps");
-
-                        // Creating the map
-                        map = new Map(document.getElementById("map2"), {
-                            zoom: 13,
-                            center: { lat: destinationLat, lng: destinationLongit },
-                            mapId: "PLACES_MAP",
-                        });
-
-                        // Displaying the destination by using a marker
-                        destinationMarker = new google.maps.Marker({
-                            position: { lat: destinationLat, lng: destinationLongit },
-                            map: map,
-                            title: "Destination"
-                        });
-                        
-                        // Adding an info window to the destination marker
-                        let infoWindow = new google.maps.InfoWindow({
-                            content: "<h5> Destination </h5>"
-                        });
-                        destinationMarker.addListener("click", () => {
-                            infoWindow.open(map, destinationMarker);
-                        });
-                        
-
-                        // Displaying nearby places
-                        nearbyPlaces();
-                    }
-
-
-                    async function nearbyPlaces() {
-                        // Getting Stuff
-                        const { Place, SearchNearbyRankPreference } = await google.maps.importLibrary(
-                            "places",
-                        );
-
-                        // Making the request
-                        let position = new google.maps.LatLng(destinationLat, destinationLongit);
-                        const request = {
-                            fields: ["displayName", "location", "businessStatus"],
-                            locationRestriction: {
-                            center: position,
-                            radius: 10000,
-                            },
-                            includedPrimaryTypes: ["tourist_attraction", "historical_landmark", "park", "museum"],
-                            maxResultCount: 20,
-                            rankPreference: SearchNearbyRankPreference.POPULARITY
-                        };
-
-                        // Checking if there are places found
-                        const { places } = await Place.searchNearby(request);
-                        if (places.length) {
-                            console.log(places);
-
-                            const { LatLngBounds } = await google.maps.importLibrary("core");
-                            const bounds = new LatLngBounds();
-
-                            // Loop through the places and adding markers on the map
-                            places.forEach((place) => {
-                                const placeMarker = new google.maps.Marker({
-                                    map: map,
-                                    position: place.location,
-                                    title: place.displayName,
-                                    icon: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png"
-                                });
-
-                                // Adding an info window to each marker
-                                let infoWindow = new google.maps.InfoWindow({});
-                                windowContent = "<h5>" + placeMarker.title + "</h5>";
-                                infoWindow.setContent(windowContent);
-                                placeMarker.addListener("click", () => {
-                                    infoWindow.open(map, placeMarker);
-                                });
-                                
-                                bounds.extend(place.location);
-                                console.log(place);
-                                
-                                // Appending the place to the table
-                                let table = document.getElementById("eventsTable");
-
-                                let tableRow = document.createElement("tr");
-
-                                let placeName = document.createElement("td");
-                                placeName.innerText = placeMarker.title;
-                                tableRow.appendChild(placeName);
-
-                                let addPlace = document.createElement("td");
-                                let addForm = document.createElement("form");
-                                addForm.setAttribute("action", "/home");                // NEED TO FIX
-                                addForm.setAttribute("method", "GET");                  // NEED TO FIX
-                                let formButton = document.createElement("input");
-                                formButton.setAttribute("name", placeMarker.title);
-                                formButton.setAttribute("type", "submit");
-                                formButton.setAttribute("value", "Add to checklist");
-                                formButton.classList.add("btn", "btn-white", "text-info", "text-decoration-underline");
-                                addForm.appendChild(formButton);
-                                addPlace.appendChild(addForm);
-                                tableRow.appendChild(addPlace);
-                                
-                                table.appendChild(tableRow);
-                            });
-                            map.fitBounds(bounds);
-                        } 
-                        // Else no places found
-                        else {
-                            console.log("No places found");
-                        }
-                        
-                    }
-
-                 </script>
-
-             </div>
-         </div>
-     </main>
- </body>
- </html>
- 
+                    let addPlace = document.createElement("td");
+                    let addForm = document.createElement("form");
+                    addForm.setAttribute("action", "/home");                // NEED TO FIX
+                    addForm.setAttribute("method", "GET");                  // NEED TO FIX
+                    let formButton = document.createElement("input");
+                    formButton.setAttribute("name", placeMarker.title);
+                    formButton.setAttribute("type", "submit");
+                    formButton.setAttribute("value", "Add to checklist");
+                    formButton.classList.add("btn", "btn-white", "text-info", "text-decoration-underline");
+                    addForm.appendChild(formButton);
+                    addPlace.appendChild(addForm);
+                    tableRow.appendChild(addPlace);
+                    
+                    table.appendChild(tableRow);
+                });
+                map.fitBounds(bounds);
+            } 
+            // Else no places found
+            else {
+                console.log("No places found");
+            }
+            
+        }
+    </script>
+</body>
+</html>

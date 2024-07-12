@@ -7,14 +7,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.genie.journey_genie.models.*;
 
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-
 
 @Controller
 public class MapController {
     // Holding the API key value
     @Value("${GOOGLE_API_KEY}")
     private String GOOGLE_API_KEY;
+
+    private boolean isUserLoggedIn(HttpSession session) {
+        User user = (User) session.getAttribute("sessionUser");
+        return user != null;
+    }
 
     @GetMapping("/map")
     public String showMap(Model model, HttpServletResponse response, HttpSession session) {
