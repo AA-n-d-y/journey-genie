@@ -11,23 +11,24 @@ import jakarta.servlet.http.HttpSession;
 import com.genie.journey_genie.models.User;
 
 @Controller
-public class MapController {
-    // Holding the API key value
-    @Value("${GOOGLE_API_KEY}")
-    private String GOOGLE_API_KEY;
+public class WeatherController {
 
-    private boolean isUserLoggedIn(HttpSession session) {
+    @Value("${WEATHER_API_KEY}")
+    private String weatherApiKey;
+
+    @GetMapping("/weather")
+    public String showWeatherDashboard(Model model, HttpServletResponse response, HttpServletRequest request, HttpSession session) {
+        // Finding the session
         User user = (User) session.getAttribute("sessionUser");
-        return user != null;
-    }
 
-    @GetMapping("/map")
-    public String showMap(Model model, HttpServletResponse response, HttpServletRequest request, HttpSession session) {
-        if (!isUserLoggedIn(session)) {
+        // If user is null, return the login page
+        if (user == null) {
             response.setStatus(401); // Unauthorized
             return "loginPage";
         }
-        model.addAttribute("GOOGLE_API_KEY", GOOGLE_API_KEY);
-        return "index";
+
+        // Else show the weather dashboard
+        model.addAttribute("weatherApiKey", weatherApiKey);
+        return "weather";
     }
 }

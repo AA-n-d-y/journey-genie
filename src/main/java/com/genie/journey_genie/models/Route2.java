@@ -2,9 +2,10 @@ package com.genie.journey_genie.models;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Entity
-public class Route {
+public class Route2 {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,26 +16,25 @@ public class Route {
     private String startPoint;
     private String endPoint;
     private String travelMode;
-
-    @Lob
-    @Column(length = 10000)
-    private String routeDetails;
-
     private LocalDateTime creationDate;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     // Default constructor
-    public Route() {
+    public Route2() {
         this.creationDate = LocalDateTime.now();
     }
 
     // Parameterized constructor
-    public Route(String startCoords, String endCoords, String startPoint, String endPoint, String travelMode, String routeDetails) {
+    public Route2(String startCoords, String endCoords, String startPoint, String endPoint, String travelMode, User user) {
         this.startCoords = startCoords;
         this.endCoords = endCoords;
         this.startPoint = startPoint;
         this.endPoint = endPoint;
         this.travelMode = travelMode;
-        this.routeDetails = routeDetails;
+        this.user = user;
         this.creationDate = LocalDateTime.now();
     }
 
@@ -87,19 +87,24 @@ public class Route {
         this.travelMode = travelMode;
     }
 
-    public String getRouteDetails() {
-        return routeDetails;
-    }
-
-    public void setRouteDetails(String routeDetails) {
-        this.routeDetails = routeDetails;
-    }
-
     public LocalDateTime getCreationDate() {
         return creationDate;
     }
 
     public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public String getFormattedCreationDate() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM, yyyy, hh:mm a");
+        return this.creationDate.format(formatter);
     }
 }
