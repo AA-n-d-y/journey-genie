@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <main class="container" style="margin-top: 100px;">
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <h1 class="text-center mb-5">Make Checklist</h1>
+                <form th:action="@{/makeChecklist/{id}(id=${route.id})}" method="POST">
+                    <input type="text" name="activity" placeholder = "activity" class = "form-control mb-3" required>
+
+                    <div>
+                        <input type="submit" value="Save" class = "btn btn-info text-white w-100 mt-2 mb-4"></input>
+                    </div>
+                </form>
+                
+            </div>
+
+            <div>
+                
+            </div>
+        </div>
+    </main>
+</body>
+</html>

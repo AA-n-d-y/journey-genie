@@ -15,6 +15,8 @@ public class Route {
     private String startPoint;
     private String endPoint;
     private String travelMode;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Checklist checklist;
 
     @Lob
     @Column(length = 10000)
@@ -101,5 +103,13 @@ public class Route {
 
     public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public void setChecklist(Checklist checklist) {
+        this.checklist = checklist;
+    }
+
+    public Checklist getChecklist() {
+        return checklist;
     }
 }
