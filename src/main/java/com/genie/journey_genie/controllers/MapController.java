@@ -13,8 +13,8 @@ import com.genie.journey_genie.models.User;
 @Controller
 public class MapController {
     // Holding the API key value
-    @Value("${API_KEY}")
-    private String API_KEY;
+    @Value("${GOOGLE_API_KEY}")
+    private String GOOGLE_API_KEY;
 
     private boolean isUserLoggedIn(HttpSession session) {
         User user = (User) session.getAttribute("sessionUser");
@@ -27,7 +27,7 @@ public class MapController {
             response.setStatus(401); // Unauthorized
             return "loginPage";
         }
-        model.addAttribute("API_KEY", API_KEY);
+        model.addAttribute("GOOGLE_API_KEY", GOOGLE_API_KEY);
         return "index";
     }
 }

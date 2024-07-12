@@ -28,8 +28,8 @@ public class RouteController {
     @Autowired
     private NoteRepository noteRepository;
 
-    @Value("${API_KEY}")
-    private String API_KEY;
+    @Value("${GOOGLE_API_KEY}")
+    private String GOOGLE_API_KEY;
 
     private boolean isUserLoggedIn(HttpSession session) {
         User user = (User) session.getAttribute("sessionUser");
@@ -63,7 +63,7 @@ public class RouteController {
         List<Note> notes = noteRepository.findByRouteId(id);
         model.addAttribute("route", route);
         model.addAttribute("notes", notes);
-        model.addAttribute("API_KEY", API_KEY);
+        model.addAttribute("GOOGLE_API_KEY", GOOGLE_API_KEY);
         return "route-details";
     }
 

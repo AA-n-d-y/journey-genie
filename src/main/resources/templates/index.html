@@ -9,7 +9,7 @@
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://cdn.materialdesignicons.com/5.4.55/css/materialdesignicons.min.css" rel="stylesheet">
     <script th:inline="javascript"
-        th:src="'https://maps.googleapis.com/maps/api/js?key=' + ${API_KEY} + '&libraries=places,geocoding'"></script>
+        th:src="'https://maps.googleapis.com/maps/api/js?key=' + ${GOOGLE_API_KEY} + '&libraries=places,geocoding'"></script>
 
     <script>
         let map, currentLocation, destination, directionsService, directionsRenderer, geocoder, travelMode;
