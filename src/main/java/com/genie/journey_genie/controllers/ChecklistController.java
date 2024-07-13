@@ -49,7 +49,10 @@ public class ChecklistController {
 
         Route routeForAssocChecklist = routeRepository.findById(id).orElse(null);
         routeForAssocChecklist.setChecklist(checklist);
-        System.out.println(routeForAssocChecklist.getChecklist() + "test");
+
+        System.out.println("TEST");
+        System.out.println(routeForAssocChecklist.getChecklist().getActivities());
+        System.out.println("TEST");
 
         routeRepository.save(routeForAssocChecklist);
 

@@ -13,8 +13,18 @@ public class Checklist {
 
     public Checklist() {
     }
-    
+
     public Checklist(String activities) {
         this.activities = activities;
     }
+
+    public String getActivities() {
+        return activities;
+    }
+
+    public void setActivities(String activities) {
+        this.activities = activities;
+    }
+
+    
 }
