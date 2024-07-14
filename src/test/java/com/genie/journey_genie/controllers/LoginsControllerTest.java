@@ -1,8 +1,11 @@
+// Java file for testing the logins controller
+
 package com.genie.journey_genie.controllers;
 
 import org.junit.jupiter.api.Test;
 
 public class LoginsControllerTest {
+
     @Test
     void testDisplayLogin() {
 
@@ -32,4 +35,5 @@ public class LoginsControllerTest {
     void testUserLogout() {
 
     }
+
 }

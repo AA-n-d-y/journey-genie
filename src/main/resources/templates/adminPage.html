@@ -47,7 +47,7 @@
                 <h1 class = "text-center mb-5"> Users </h1>
                 <ul>
                     <li th:each="user:${users}" class = "mb-4">
-                        <span th:text="'Username: ' + ${user.getUsername()}"></span> <br>
+                        <span th:text="'Email: ' + ${user.getEmail()}"></span> <br>
                         <span th:text="'First name: ' + ${user.getFirstName()}"></span> <br>
                         <span th:text="'Last name: ' + ${user.getLastName()}"></span> <br>
                         <span th:text="'User type: ' + ${user.getType()}"></span> <br>
