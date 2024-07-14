@@ -50,7 +50,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="noteContent" class="form-label">Note Content</label>
-                        <textarea class="form-control" id="noteContent" name="noteContent" rows="10" th:text="${#strings.substring(note.content, #strings.indexOf(note.content, '</h2>') + 5, note.content.length() - 4)}" required></textarea>
+                        <textarea class="form-control" id="noteContent" name="noteContent" rows="10" th:text="${strippedContent}" required></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary">Update Note</button>
                 </form>

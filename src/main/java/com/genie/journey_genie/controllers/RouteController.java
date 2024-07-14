@@ -140,7 +140,11 @@ public class RouteController {
             return "loginPage";
         }
         Note note = noteRepository.findById(noteId).orElse(null);
-        model.addAttribute("note", note);
+        if (note != null) {
+            String strippedContent = stripHtml(note.getContent());
+            model.addAttribute("note", note);
+            model.addAttribute("strippedContent", strippedContent);
+        }
         return "edit_note";
     }
 
@@ -176,5 +180,9 @@ public class RouteController {
         Long routeId = note.getRoute().getId();
         noteRepository.deleteById(noteId);
         return new RedirectView("/route-details/" + routeId);
+    }
+
+    private String stripHtml(String html) {
+        return html.replaceAll("<[^>]*>", "");
     }
 }
