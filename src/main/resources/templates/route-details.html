@@ -56,7 +56,7 @@
             <div class="col-12">
                 <h1 class="text-center mb-5">Route Details</h1>
                 <!-- Map -->
-                <div class="mb-5">
+                <div class="mb-2">
                     <iframe id="map" height="500px" width="100%" style="border:0" loading="lazy" allowfullscreen
                     <iframe th:inline="javascript" th:src="'https://www.google.com/maps/embed/v1/directions?origin=' + ${route.startCoords} + '&destination=' + ${route.endCoords} + '&mode=' + ${route.travelMode} + '&key=' + ${GOOGLE_API_KEY}"></iframe>
                 </div>
@@ -76,7 +76,7 @@
                 <div id="map2" style="min-height: 500px; width: 100%;"></div>
 
                 <!-- Local Places Table -->
-                <table id="eventsTable" class="table table-bordered">
+                <table id="eventsTable" class="table table-bordered mt-3">
                     <thead>
                         <tr>
                             <th>Place Name</th>
@@ -95,7 +95,7 @@
                     <a th:href="@{'/edit-note/' + ${note.id}}" class="btn btn-warning mt-1">Edit</a>
                     <a th:href="@{'/delete-note/' + ${note.id}}" class="btn btn-danger mt-1">Delete</a>
                 </ul>
-                <a th:href="@{'/add-note/' + ${route.id}}" class="btn btn-primary mt-3">Add Note</a> 
+                <a th:href="@{'/add-note/' + ${route.id}}" class="btn btn-primary mt-3 mb-5">Add Note</a> 
                 <!-- <a href="/saved-routes" class="btn btn-link mb-5">Back to Saved Routes</a> -->
                 <!-- <a href="/weather" class="btn btn-primary mt-3 btn-lg btn-block"> See weather</a>  -->
             </div>
@@ -210,8 +210,8 @@
 
                     let addPlace = document.createElement("td");
                     let addForm = document.createElement("form");
-                    addForm.setAttribute("action", "/home");                // NEED TO FIX
-                    addForm.setAttribute("method", "GET");                  // NEED TO FIX
+                    addForm.setAttribute("action", "/home");                // NEED TO FIX THIS TO SAVE THE PLACE TO THE CHECKLIST
+                    addForm.setAttribute("method", "GET");                  // NEED TO FIX THIS TO SAVE THE PLACE TO THE CHECKLIST
                     let formButton = document.createElement("input");
                     formButton.setAttribute("name", placeMarker.title);
                     formButton.setAttribute("type", "submit");
