@@ -6,7 +6,18 @@
     <title>Route Details</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <script th:inline="javascript" th:src="'https://maps.googleapis.com/maps/api/js?key=' + ${GOOGLE_API_KEY} + '&libraries=places,geocoding'"></script>
     <style>
+        .weather-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: white;
+        }
+        .weather-icon {
+            font-size: 2rem;
+        }
         .note-card {
             background-color: #fff;
             border: 1px solid #ddd;
@@ -17,13 +28,13 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            flex: 1 1 auto;
         }
         .note-card h2 {
             font-size: 1.5rem;
         }
         .note-card p {
             white-space: pre-wrap;
-            flex-grow: 1;
         }
         .notes-container {
             display: flex;
@@ -31,8 +42,9 @@
             gap: 10px;
         }
     </style>
+
 </head>
-<body>
+<body onload="initMap()">
     <!-- Navigation bar -->
     <header>
         <div class="row justify-content-center fixed-top">
@@ -73,6 +85,9 @@
                     <iframe id="map" height="500px" width="100%" style="border:0" loading="lazy" allowfullscreen
                     <iframe th:inline="javascript" th:src="'https://www.google.com/maps/embed/v1/directions?origin=' + ${route.startCoords} + '&destination=' + ${route.endCoords} + '&mode=' + ${route.travelMode} + '&key=' + ${GOOGLE_API_KEY}"></iframe>
                 </div>
+                <!-- <a href="/saved-routes" class="btn btn-link mt-3">Back to Saved Routes</a> -->
+
+                <!-- <a href="/weather" class="btn btn-primary mt-3 btn-lg btn-block"> See weather</a> -->
                 <div class="d-flex justify-content-between">
                     <a href="/saved-routes" class="btn btn-link mt-3">Back to Saved Routes</a>
                     <a href="/weather" class="btn btn-primary btn-lg mt-3 weather-button">
@@ -81,6 +96,23 @@
                     </a>
                 </div>
 
+                <!-- Local Places -->
+                <h1 class="text-center mb-5 mt-5">Local Places</h1>
+                <div id="map2" style="min-height: 500px; width: 100%;"></div>
+
+                <!-- Local Places Table -->
+                <table id="eventsTable" class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Place Name</th>
+                            <th>Add to Checklist</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Places will be dynamically added here -->
+                    </tbody>
+                </table>
+                
                 <!-- Notes -->
                 <h2 class="mt-5">Notes</h2>
                 <div class="notes-container">
@@ -89,7 +121,7 @@
                             <h2 th:utext="${note.content.substring(4, note.content.indexOf('</h2>'))}"></h2>
                             <p th:utext="${note.content.substring(note.content.indexOf('</h2>') + 5)}"></p>
                         </div>
-                        <div>
+                        <div class="mt-2">
                             <a th:href="@{'/edit-note/' + ${note.id}}" class="btn btn-warning mt-1">Edit</a>
                             <a th:href="@{'/delete-note/' + ${note.id}}" class="btn btn-danger mt-1">Delete</a>
                         </div>
@@ -188,7 +220,7 @@
 
                     // Adding an info window to each marker
                     let infoWindow = new google.maps.InfoWindow({});
-                    windowContent = "<h5>" + placeMarker.title + "</h5>";
+                    let windowContent = "<h5>" + placeMarker.title + "</h5>";
                     infoWindow.setContent(windowContent);
                     placeMarker.addListener("click", () => {
                         infoWindow.open(map, placeMarker);
