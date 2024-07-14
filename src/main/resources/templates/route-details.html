@@ -208,12 +208,17 @@
                     placeName.innerText = placeMarker.title;
                     tableRow.appendChild(placeName);
 
+
                     let addPlace = document.createElement("td");
                     let addForm = document.createElement("form");
                     addForm.setAttribute("action", "/home");                // NEED TO FIX THIS TO SAVE THE PLACE TO THE CHECKLIST
                     addForm.setAttribute("method", "GET");                  // NEED TO FIX THIS TO SAVE THE PLACE TO THE CHECKLIST
+                    let placeData = document.createElement("input");
+                    placeData.setAttribute("type", "hidden");
+                    placeData.setAttribute("value", placeMarker.title);
+                    placeData.setAttribute("name", "placeTitle");
+                    addForm.appendChild(placeData);
                     let formButton = document.createElement("input");
-                    formButton.setAttribute("name", placeMarker.title);
                     formButton.setAttribute("type", "submit");
                     formButton.setAttribute("value", "Add to checklist");
                     formButton.classList.add("btn", "btn-white", "text-info", "text-decoration-underline");
