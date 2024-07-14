@@ -3,36 +3,48 @@
 package com.genie.journey_genie.controllers;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.web.servlet.MockMvc;
 
+@SpringBootTest
+@AutoConfigureMockMvc
 public class LoginsControllerTest {
 
+    @Autowired
+    MockMvc mockMvc;
+
+    @Autowired
+    private LoginsController controller;
+
     @Test
-    void testDisplayLogin() {
+    void displayLoginTest() {
 
     }
 
     @Test
-    void testDisplayLogout() {
+    void displayLogoutTest() {
 
     }
 
     @Test
-    void testDisplayUserPage() {
+    void displayUserPageTest() {
 
     }
 
     @Test
-    void testDisplayUserPageG() {
+    void displayUserPageGTest() {
 
     }
 
     @Test
-    void testRedirect() {
+    void redirectTest() {
 
     }
 
     @Test
-    void testUserLogout() {
+    void userLogoutTest() {
 
     }
 
