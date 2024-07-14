@@ -14,12 +14,21 @@
             padding: 15px;
             margin: 10px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
         .note-card h2 {
             font-size: 1.5rem;
         }
         .note-card p {
             white-space: pre-wrap;
+            flex-grow: 1;
+        }
+        .notes-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
         }
     </style>
 </head>
@@ -74,11 +83,13 @@
 
                 <!-- Notes -->
                 <h2 class="mt-5">Notes</h2>
-                <div class="row">
-                    <div th:each="note : ${notes}" class="col-lg-3 col-md-4 col-sm-6">
-                        <div class="note-card">
+                <div class="notes-container">
+                    <div th:each="note : ${notes}" class="note-card col-lg-3 col-md-4 col-sm-6">
+                        <div>
                             <h2 th:utext="${note.content.substring(4, note.content.indexOf('</h2>'))}"></h2>
                             <p th:utext="${note.content.substring(note.content.indexOf('</h2>') + 5)}"></p>
+                        </div>
+                        <div>
                             <a th:href="@{'/edit-note/' + ${note.id}}" class="btn btn-warning mt-1">Edit</a>
                             <a th:href="@{'/delete-note/' + ${note.id}}" class="btn btn-danger mt-1">Delete</a>
                         </div>
