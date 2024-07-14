@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.genie.journey_genie.models.Checklist;
 import com.genie.journey_genie.models.ChecklistRepository;
-import com.genie.journey_genie.models.Route;
-import com.genie.journey_genie.models.RouteRepository;
+import com.genie.journey_genie.models.Route2;
+import com.genie.journey_genie.models.Route2Repository;
 
 //import com.genie.journey_genie.models.Checklist;
 import java.util.List;
@@ -23,20 +23,20 @@ public class ChecklistController {
     // @Autowired
     // private RouteController routeController;
     @Autowired
-    private RouteRepository routeRepository;
+    private Route2Repository routeRepository;
     @Autowired
     private ChecklistRepository checklistRepository;
 
     @GetMapping("/checklist/{id}")
     public String displayChecklist(Model model, @PathVariable Long id) {
-        Route routeForAssocChecklist = routeRepository.findById(id).orElse(null);
+        Route2 routeForAssocChecklist = routeRepository.findById(id).orElse(null);
         model.addAttribute("route", routeForAssocChecklist);
         return "checklist";
     }
 
     @GetMapping("/makeChecklist/{id}")
     public String makeChecklist(Model model, @PathVariable Long id) {
-        Route routeForAssocChecklist = routeRepository.findById(id).orElse(null);
+        Route2 routeForAssocChecklist = routeRepository.findById(id).orElse(null);
         model.addAttribute("route", routeForAssocChecklist);
         return "makeChecklist";
     }
@@ -47,7 +47,7 @@ public class ChecklistController {
         Checklist checklist = new Checklist(activity);
         checklist = checklistRepository.save(checklist); // Save the Checklist object
 
-        Route routeForAssocChecklist = routeRepository.findById(id).orElse(null);
+        Route2 routeForAssocChecklist = routeRepository.findById(id).orElse(null);
         routeForAssocChecklist.setChecklist(checklist);
 
         System.out.println("TEST");
