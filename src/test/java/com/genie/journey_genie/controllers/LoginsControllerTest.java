@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.when;
 import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.allOf;
 
 import org.hamcrest.Matchers;
 import java.nio.charset.Charset;
@@ -45,12 +46,29 @@ public class LoginsControllerTest {
     @MockBean
     private UserRepository repository;
 
-    
+    // Controller
+    @Autowired
+    private LoginsController controller;
+
+
     /// Testing our functionality
+
+    // Testing our controller
+    @Test
+    void controllerTest() throws Exception {
+        assertThat(controller).isNotNull();
+    }
+
 
     // Testing getting the login page when not logged in
     @Test
     void getLoginPageTest() throws Exception {
+        
+        // Mock the get request
+        mockMvc.perform(MockMvcRequestBuilders.get("/login"))
+
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.view().name("loginPage")); 
 
     }
 

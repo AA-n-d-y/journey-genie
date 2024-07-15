@@ -41,8 +41,19 @@ public class ErrorsControllerTest {
     @Autowired
     MockMvc mockMvc;
 
+    // Controller
+    @Autowired
+    private ErrorsController controller;
+
 
     /// Testing our functionality
+
+    // Testing our controller
+    @Test
+    void controllerTest() throws Exception {
+        assertThat(controller).isNotNull();
+    }
+
 
     // Testing a get request to a route that doesn't exist
     @Test

@@ -44,8 +44,19 @@ public class UserControllerTest {
     @MockBean
     private UserRepository repository;
 
-    
+    // Controller
+    @Autowired
+    private UserController controller;
+
+
     /// Testing our functionality
+
+    // Testing our controller
+    @Test
+    void controllerTest() throws Exception {
+        assertThat(controller).isNotNull();
+    }
+
 
     // Getting the registration page when logged out
     @Test
