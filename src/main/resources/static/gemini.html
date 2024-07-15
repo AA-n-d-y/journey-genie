@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Generative AI Example</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    #output {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      background-color: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+  <h1>Generative AI Example</h1>
+  <input type="text" id="userInput" placeholder="Enter your prompt">
+  <button id="generateButton">Generate</button>
+  <div id="output"></div>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "@google/generative-ai": "https://esm.run/@google/generative-ai"
+      }
+    }
+  </script>
+  <script type="module">
+    import { GoogleGenerativeAI } from "@google/generative-ai";
+
+ 
+    const API_KEY = ""; // Add your API key here
+   
+
+ 
+    const genAI = new GoogleGenerativeAI(API_KEY);
+
+  
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+
+    async function generateContent(prompt) {
+      try {
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const text = await response.text();
+        return text;
+      } catch (error) {
+        console.error('Error generating content:', error);
+        return 'Failed to generate content';
+      }
+    }
+
+
+    document.getElementById('generateButton').addEventListener('click', async () => {
+      const userInput = document.getElementById('userInput').value;
+      const outputDiv = document.getElementById('output');
+      outputDiv.textContent = 'Generating...';
+
+      const generatedText = await generateContent(userInput);
+      outputDiv.textContent = generatedText;
+    });
+  </script>
+</body>
+</html>

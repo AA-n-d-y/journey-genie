@@ -9,13 +9,12 @@
 <body>
     <!-- Navigation bar -->
     <header>
-        <div class = "row justify-content-center fixed-top">
-            <nav class = "navbar navbar-expand bg-info h4 px-4 py-3 text-white" style = "min-height: 75px;">
+            <nav class = "navbar navbar-expand-md bg-info h4 px-4 py-3 text-white" style = "min-height: 75px;">
                 <!-- Website name-->
                 <span class = "fs-4 px-2"> JourneyGenie </span>
                 
                 <!-- Other pages -->
-                <div class="collapse navbar-collapse fs-5 justify-content-end">
+                <div class="navbar-collapse fs-5 d-flex justify-content-md-end justify-content-center">
                     <ul class="navbar-nav">
 
                       <!-- Home -->
@@ -36,20 +35,19 @@
                     </ul>
                 </div>
             </nav>
-        </div>
     </header>  
 
 
     <!-- Container -->
     <main class = "container"> 
-        <div class = "row justify-content-center" style = "margin-top: 150px;">
+        <div class = "row justify-content-center" style = "margin-top: 100px;">
             <div class = "col-6"> 
 
                  <!-- Users -->
                 <h1 class = "text-center mb-5"> Users </h1>
                 <ul>
                     <li th:each="user:${users}" class = "mb-4">
-                        <span th:text="'Username: ' + ${user.getUsername()}"></span> <br>
+                        <span th:text="'Email: ' + ${user.getEmail()}"></span> <br>
                         <span th:text="'First name: ' + ${user.getFirstName()}"></span> <br>
                         <span th:text="'Last name: ' + ${user.getLastName()}"></span> <br>
                         <span th:text="'User type: ' + ${user.getType()}"></span> <br>

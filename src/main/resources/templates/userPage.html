@@ -9,13 +9,12 @@
 <body>
     <!-- Navigation bar -->
     <header>
-        <div class = "row justify-content-center fixed-top">
-            <nav class = "navbar navbar-expand bg-info h4 px-4 py-3 text-white" style = "min-height: 75px;">
+            <nav class = "navbar navbar-expand-md bg-info h4 px-4 py-3 text-white" style = "min-height: 75px;">
                 <!-- Website name-->
                 <span class = "fs-4 px-2"> JourneyGenie </span>
                 
                 <!-- Other pages -->
-                <div class="collapse navbar-collapse fs-5 justify-content-end">
+                <div class="navbar-collapse fs-5 d-flex justify-content-md-end justify-content-center">
                     <ul class="navbar-nav">
 
                       <!-- Home -->
@@ -34,9 +33,8 @@
                       </form> 
                       
                     </ul>
-                  </div>
+                </div>
             </nav>
-        </div>
     </header>  
 
 
@@ -44,7 +42,7 @@
     <main class = "container">
 
         <!-- Welcome -->
-        <div class = "row" style = "margin-top: 125px;"> 
+        <div class = "row" style = "margin-top: 100px;"> 
             <div class = "col-12">
                 <div class = "h2 px-5 mb-4"> Welcome, </div>
                 <div th:text = "${user.getFirstName()}" class = "text-primary fs-3 px-5"> </div>

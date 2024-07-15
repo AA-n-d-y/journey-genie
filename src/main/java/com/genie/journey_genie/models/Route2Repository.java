@@ -1,9 +1,11 @@
 package com.genie.journey_genie.models;
 
-import com.genie.journey_genie.models.Route;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
-public interface RouteRepository extends JpaRepository<Route, Long> {
+public interface Route2Repository extends JpaRepository<Route2, Long> {
+    List<Route2> findByUser(User user);
 }
