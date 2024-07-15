@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -34,6 +35,10 @@ public class RouteController {
     @GetMapping("/route-details/{id}")
     public String viewRouteDetails(@PathVariable Long id, Model model) {
         Route route = routeRepository.findById(id).orElse(null);
+        if (route != null && route.getCoords().length > 2) {
+            String[] subArr = Arrays.copyOfRange(route.getCoords(), 1 , route.getCoords().length-2);
+            model.addAttribute("subArr", subArr);
+        }
         model.addAttribute("route", route);
         model.addAttribute("API_KEY", API_KEY);
         return "route-details";
@@ -48,14 +53,12 @@ public class RouteController {
     @PostMapping("/save-route")
     public String saveRoute(
             Model model,
-            @RequestParam String startCoords,
-            @RequestParam String endCoords,
-            @RequestParam String startPoint,
-            @RequestParam String endPoint,
+            @RequestParam String[] coords,
+            @RequestParam String[] points,
             @RequestParam String travelMode,
             @RequestParam String routeDetails) {
 
-        Route route = new Route(startCoords, endCoords, startPoint, endPoint, travelMode, routeDetails);
+        Route route = new Route(coords, points, travelMode, routeDetails);
         routeRepository.save(route);
         return "redirect:/saved-routes";
     }
