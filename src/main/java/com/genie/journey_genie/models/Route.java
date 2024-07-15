@@ -1,5 +1,6 @@
 package com.genie.journey_genie.models;
 
+import io.hypersistence.utils.hibernate.type.array.StringArrayType;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Type;
 
@@ -12,12 +13,12 @@ public class Route {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(columnDefinition = "text[]")
-    @Type(value = com.genie.journey_genie.models.CustomStringArrayType.class)
+    @Column(columnDefinition = "varchar(255)[]")
+    @Type(StringArrayType.class)
     private String[] coords;
 
-    @Column(columnDefinition = "text[]")
-    @Type(value = com.genie.journey_genie.models.CustomStringArrayType.class)
+    @Column(columnDefinition = "varchar(255)[]")
+    @Type(StringArrayType.class)
     private String[] points;
 
     private String travelMode;

@@ -36,7 +36,7 @@ public class RouteController {
     public String viewRouteDetails(@PathVariable int id, Model model) {
         Route route = routeRepository.findById(id);
         if (route != null && route.getCoords().length > 2) {
-            String[] subArr = Arrays.copyOfRange(route.getCoords(), 1 , route.getCoords().length-2);
+            String[] subArr = Arrays.copyOfRange(route.getCoords(), 1 , route.getCoords().length-1);
             model.addAttribute("subArr", subArr);
         }
         model.addAttribute("route", route);

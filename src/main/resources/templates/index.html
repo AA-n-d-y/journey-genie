@@ -74,7 +74,7 @@
         }
 
         function setLocation(location, element) {
-            let locId = parseInt(element.id.substring(3));
+            let locId = parseInt(element.id.substring(4));
             locations[locId] = location;
             if (markers[locId]) markers[locId].setMap(null);
             markers[locId] = new google.maps.Marker({
@@ -216,9 +216,11 @@
             for (let i in locations) {
                 routePoints[i] = document.getElementById('loc-' + i).value;
             }
-            // const startPoint = document.getElementById('current-location').value;
-            // const endPoint = document.getElementById('destination').value;
-            const routeDetails = JSON.stringify(directionsRenderer.getDirections());
+
+            const coords = []
+            for (let i in locations) {
+                coords[i] = locations[i].lat() + '%2C' + locations[i].lng()
+            }
 
             fetch('/save-route', {
                 method: 'POST',
@@ -226,7 +228,7 @@
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
                 body: new URLSearchParams({
-                    'coords': locations,
+                    'coords': coords,
                     'points': routePoints,
                     'travelMode': travelMode,
                 })
