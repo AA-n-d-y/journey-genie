@@ -22,10 +22,6 @@ public class Route {
 
     private String travelMode;
 
-    @Lob
-    @Column(length = 10000)
-    private String routeDetails;
-
     private LocalDateTime creationDate;
 
     // Default constructor
@@ -38,7 +34,6 @@ public class Route {
         this.coords = coords;
         this.points = points;
         this.travelMode = travelMode;
-        this.routeDetails = routeDetails;
         this.creationDate = LocalDateTime.now();
     }
 
@@ -87,14 +82,6 @@ public class Route {
 
     public void setTravelMode(String travelMode) {
         this.travelMode = travelMode;
-    }
-
-    public String getRouteDetails() {
-        return routeDetails;
-    }
-
-    public void setRouteDetails(String routeDetails) {
-        this.routeDetails = routeDetails;
     }
 
     public LocalDateTime getCreationDate() {

@@ -55,10 +55,9 @@ public class RouteController {
             Model model,
             @RequestParam String[] coords,
             @RequestParam String[] points,
-            @RequestParam String travelMode,
-            @RequestParam String routeDetails) {
+            @RequestParam String travelMode) {
 
-        Route route = new Route(coords, points, travelMode, routeDetails);
+        Route route = new Route(coords, points, travelMode);
         routeRepository.save(route);
         return "redirect:/saved-routes";
     }

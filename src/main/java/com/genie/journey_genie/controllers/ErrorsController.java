@@ -2,10 +2,8 @@
 
 package com.genie.journey_genie.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import com.genie.journey_genie.models.*;
 
 import jakarta.servlet.http.HttpServletResponse;
 
