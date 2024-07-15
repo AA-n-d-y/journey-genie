@@ -20,6 +20,7 @@
         function initMap() {
             directionsService = new google.maps.DirectionsService();
             directionsRenderer = new google.maps.DirectionsRenderer();
+            
             geocoder = new google.maps.Geocoder();
 
             map = new google.maps.Map(document.getElementById("map"), {
@@ -220,13 +221,12 @@
 <body onload="initMap()">
     <!-- Navigation bar -->
     <header>
-        <div class="row justify-content-center fixed-top">
-            <nav class="navbar navbar-expand bg-info h4 px-4 py-3 text-white" style="min-height: 75px;">
+            <nav class = "navbar navbar-expand-md bg-info h4 px-4 py-3 text-white" style = "min-height: 75px;">
                 <!-- Website name-->
                 <span class="fs-4 px-2"> JourneyGenie </span>
 
                 <!-- Other pages -->
-                <div class="collapse navbar-collapse fs-5 justify-content-end">
+                <div class="navbar-collapse fs-5 d-flex justify-content-md-end justify-content-center">
                     <ul class="navbar-nav">
                         <!-- Home -->
                         <form action="/home" method="GET">
@@ -245,8 +245,8 @@
                     </ul>
                 </div>
             </nav>
-        </div>
-    </header>
+    </header>  
+    
 
     <!-- Container -->
     <main class="container" style="margin-top: 100px;">
@@ -272,7 +272,7 @@
                 </div>
                 <div id="routes"></div>
                 <div id="map" style="height: 500px; width: 100%;" class="mt-5"></div>
-                <a href="/saved-routes" class="btn btn-link mt-3">See Your Saved Routes</a>
+                <a href="/saved-routes" class="btn btn-link mt-3 mb-5">See Your Saved Routes</a>
             </div>
         </div>
     </main>

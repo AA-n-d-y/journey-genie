@@ -45,35 +45,33 @@
 
 </head>
 <body onload="initMap()">
-    <!-- Navigation bar -->
+<!-- Navigation bar -->
     <header>
-        <div class="row justify-content-center fixed-top">
-            <nav class="navbar navbar-expand bg-info h4 px-4 py-3 text-white" style="min-height: 75px;">
+            <nav class = "navbar navbar-expand-md bg-info h4 px-4 py-3 text-white" style = "min-height: 75px;">
                 <!-- Website name-->
                 <span class="fs-4 px-2"> JourneyGenie </span>
-                
+
                 <!-- Other pages -->
-                <div class="collapse navbar-collapse fs-5 justify-content-end">
+                <div class="navbar-collapse fs-5 d-flex justify-content-md-end justify-content-center">
                     <ul class="navbar-nav">
-                      <!-- Home -->
-                      <form action="/home" method="GET">
-                            <input type="submit" value="Home" class="btn btn-dark text-white mx-2"></input> 
-                      </form> 
+                        <!-- Home -->
+                        <form action="/home" method="GET">
+                            <input type="submit" value="Home" class="btn btn-dark text-white mx-2"></input>
+                        </form>
 
-                      <!-- Routes -->
-                      <form action="/map" method="GET">
-                            <input type="submit" value="Routes" class="btn btn-dark text-white mx-2"></input> 
-                      </form> 
+                        <!-- Routes -->
+                        <form action="/map" method="GET">
+                            <input type="submit" value="Routes" class="btn btn-dark text-white mx-2"></input>
+                        </form>
 
-                      <!-- Log out -->
-                      <form action="/logout" method="POST">
-                            <input type="submit" value="Log out" class="btn btn-danger text-white mx-2"></input> 
-                      </form> 
+                        <!-- Log out -->
+                        <form action="/logout" method="POST">
+                            <input type="submit" value="Log out" class="btn btn-danger text-white mx-2"></input>
+                        </form>
                     </ul>
                 </div>
             </nav>
-        </div>
-    </header>
+    </header>  
 
     <!-- Container -->
     <main class="container" style="margin-top: 100px;">
@@ -81,7 +79,7 @@
             <div class="col-12">
                 <h1 class="text-center mb-5">Route Details</h1>
                 <!-- Map -->
-                <div class="mb-5">
+                <div class="mb-2">
                     <iframe id="map" height="500px" width="100%" style="border:0" loading="lazy" allowfullscreen
                     <iframe th:inline="javascript" th:src="'https://www.google.com/maps/embed/v1/directions?origin=' + ${route.startCoords} + '&destination=' + ${route.endCoords} + '&mode=' + ${route.travelMode} + '&key=' + ${GOOGLE_API_KEY}"></iframe>
                 </div>
@@ -101,7 +99,7 @@
                 <div id="map2" style="min-height: 500px; width: 100%;"></div>
 
                 <!-- Local Places Table -->
-                <table id="eventsTable" class="table table-bordered">
+                <table id="eventsTable" class="table table-bordered mt-3">
                     <thead>
                         <tr>
                             <th>Place Name</th>
@@ -238,12 +236,17 @@
                     placeName.innerText = placeMarker.title;
                     tableRow.appendChild(placeName);
 
+
                     let addPlace = document.createElement("td");
                     let addForm = document.createElement("form");
-                    addForm.setAttribute("action", "/home");                // NEED TO FIX
-                    addForm.setAttribute("method", "GET");                  // NEED TO FIX
+                    addForm.setAttribute("action", "/home");                // NEED TO FIX THIS TO SAVE THE PLACE TO THE CHECKLIST
+                    addForm.setAttribute("method", "GET");                  // NEED TO FIX THIS TO SAVE THE PLACE TO THE CHECKLIST
+                    let placeData = document.createElement("input");
+                    placeData.setAttribute("type", "hidden");
+                    placeData.setAttribute("value", placeMarker.title);
+                    placeData.setAttribute("name", "placeTitle");           // EXTRACT THIS IN THE ENDPOINT BY USING MAP
+                    addForm.appendChild(placeData);
                     let formButton = document.createElement("input");
-                    formButton.setAttribute("name", placeMarker.title);
                     formButton.setAttribute("type", "submit");
                     formButton.setAttribute("value", "Add to checklist");
                     formButton.classList.add("btn", "btn-white", "text-info", "text-decoration-underline");

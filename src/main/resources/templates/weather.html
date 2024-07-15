@@ -293,37 +293,34 @@
 <body>
     <!-- Navigation bar -->
     <header>
-        <div class="row justify-content-center fixed-top">
-            <nav class="navbar navbar-expand bg-info h4 px-4 py-3 text-white" style="min-height: 75px;">
+            <nav class = "navbar navbar-expand-md bg-info h4 px-4 py-3 text-white" style = "min-height: 75px;">
                 <!-- Website name-->
                 <span class="fs-4 px-2"> JourneyGenie </span>
-                
+
                 <!-- Other pages -->
-                <div class="collapse navbar-collapse fs-5 justify-content-end">
+                <div class="navbar-collapse fs-5 d-flex justify-content-md-end justify-content-center">
                     <ul class="navbar-nav">
+                        <!-- Home -->
+                        <form action="/home" method="GET">
+                            <input type="submit" value="Home" class="btn btn-dark text-white mx-2"></input>
+                        </form>
 
-                      <!-- Home -->
-                      <form action="/home" method="GET">
-                            <input type="submit" value="Home" class="btn btn-dark text-white mx-2"></input> 
-                      </form> 
+                        <!-- Routes -->
+                        <form action="/map" method="GET">
+                            <input type="submit" value="Routes" class="btn btn-dark text-white mx-2"></input>
+                        </form>
 
-                      <!-- Routes -->
-                      <form action="/map" method="GET">
-                            <input type="submit" value="Routes" class="btn btn-dark text-white mx-2"></input> 
-                      </form> 
-
-                      <!-- Log out -->
-                      <form action="/logout" method="POST">
-                            <input type="submit" value="Log out" class="btn btn-danger text-white mx-2"></input> 
-                      </form> 
-                      
+                        <!-- Log out -->
+                        <form action="/logout" method="POST">
+                            <input type="submit" value="Log out" class="btn btn-danger text-white mx-2"></input>
+                        </form>
                     </ul>
                 </div>
             </nav>
-        </div>
-    </header>  
+    </header>   
 
-    <h1 class="mt-5 pt-5">Weather Dashboard</h1>
+
+    <h1 class="pt-5">Weather Dashboard</h1>
     <div class="container">
         <div class="weather-input">
             <h3>Enter a City Name</h3>
