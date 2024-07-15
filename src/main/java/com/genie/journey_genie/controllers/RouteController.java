@@ -33,8 +33,8 @@ public class RouteController {
     }
 
     @GetMapping("/route-details/{id}")
-    public String viewRouteDetails(@PathVariable Long id, Model model) {
-        Route route = routeRepository.findById(id).orElse(null);
+    public String viewRouteDetails(@PathVariable int id, Model model) {
+        Route route = routeRepository.findById(id);
         if (route != null && route.getCoords().length > 2) {
             String[] subArr = Arrays.copyOfRange(route.getCoords(), 1 , route.getCoords().length-2);
             model.addAttribute("subArr", subArr);
@@ -45,7 +45,7 @@ public class RouteController {
     }
 
     @GetMapping("/delete-route/{id}")
-    public RedirectView deleteRoute(@PathVariable Long id) {
+    public RedirectView deleteRoute(@PathVariable int id) {
         routeRepository.deleteById(id);
         return new RedirectView("/saved-routes");
     }

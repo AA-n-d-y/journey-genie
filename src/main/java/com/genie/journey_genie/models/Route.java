@@ -10,7 +10,7 @@ public class Route {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     @Column(columnDefinition = "text[]")
     @Type(value = com.genie.journey_genie.models.CustomStringArrayType.class)
@@ -30,7 +30,7 @@ public class Route {
     }
 
     // Parameterized constructor
-    public Route(String[] coords, String[] points, String travelMode, String routeDetails) {
+    public Route(String[] coords, String[] points, String travelMode) {
         this.coords = coords;
         this.points = points;
         this.travelMode = travelMode;
@@ -38,11 +38,11 @@ public class Route {
     }
 
     // Getters and Setters
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
