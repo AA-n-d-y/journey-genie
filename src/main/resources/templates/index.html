@@ -12,16 +12,17 @@
         th:src="'https://maps.googleapis.com/maps/api/js?key=' + ${GOOGLE_API_KEY} + '&libraries=places,geocoding'"></script>
 
     <script defer>
-        let map, currentLocation, destination, directionsService, directionsRenderer, geocoder, travelMode, iframe, mapElement;
-        let currentMarker, destinationMarker;
+        let map, directionsService, directionsRenderer, geocoder, iframe, mapElement;
+        let travelMode = "driving";
         let alternativeRoutes = [];
         let selectedRoute = null;
+        let locations = [];
+        let markers = [];
         let API_KEY = "[[${GOOGLE_API_KEY}]]";
 
         function initMap() {
             directionsService = new google.maps.DirectionsService();
             directionsRenderer = new google.maps.DirectionsRenderer();
-            
             geocoder = new google.maps.Geocoder();
 
             iframe = document.getElementById("iframe");
@@ -32,60 +33,50 @@
             });
             directionsRenderer.setMap(map);
 
-            
-
-            google.maps.event.addListener(map, 'click', function (event) {
-                if (!currentLocation) {
-                    setCurrentLocation(event.latLng);
-                } else if (!destination) {
-                    setDestination(event.latLng);
-                } else {
-                    setCurrentLocation(event.latLng);
-                    setDestination(null);
-                }
-            });
-
-            const inputCurrent = document.getElementById("current-location");
-            const inputDestination = document.getElementById("destination");
-
-            const autocompleteCurrent = new google.maps.places.Autocomplete(inputCurrent);
-            autocompleteCurrent.bindTo("bounds", map);
-            const autocompleteDestination = new google.maps.places.Autocomplete(inputDestination);
-            autocompleteDestination.bindTo("bounds", map);
-
-            autocompleteCurrent.addListener('place_changed', function () {
-                setCurrentLocation(autocompleteCurrent.getPlace().geometry.location);
-            });
-
-            autocompleteDestination.addListener('place_changed', function () {
-                setDestination(autocompleteDestination.getPlace().geometry.location);
-            });
-        }
-
-        function setCurrentLocation(location) {
-            currentLocation = location;
-            if (currentMarker) currentMarker.setMap(null);
-            currentMarker = new google.maps.Marker({
-                position: currentLocation,
-                map: map,
-                title: "Current Location"
-            });
-            map.setCenter(currentLocation);
-            geocodeLocation(location, 'current-location');
-        }
-
-        function setDestination(location) {
-            destination = location;
-            if (destinationMarker) destinationMarker.setMap(null);
-            if (location) {
-                destinationMarker = new google.maps.Marker({
-                    position: destination,
-                    map: map,
-                    title: "Destination"
-                });
-                map.setCenter(destination);
-                geocodeLocation(location, 'destination');
+            for (let i = 0; i < 2; i++) {
+                addLocation()
             }
+        }
+
+        function setTravelMode(mode) {
+            document.getElementById(travelMode).toggleAttribute('checked')
+            document.getElementById(travelMode).parentElement.classList.toggle('active')
+            travelMode = mode.toLowerCase();
+            document.getElementById(travelMode).toggleAttribute('checked')
+            document.getElementById(travelMode).parentElement.classList.toggle('active')
+        }
+
+        function addLocation() {
+            const refDiv = document.getElementById("endOfLocations");
+
+            const newElement = document.createElement('div')
+            newElement.innerHTML = "<input class='location form-control mb-3' id='loc-" + document.getElementsByClassName('location').length +
+                "' type='text' placeholder='Enter location'>" +
+                "<button onclick='calculateRoute(" + document.getElementsByClassName('location').length + ")' class='btn btn-info'>Display</button>"
+            newElement.className = 'container bg-primary rounded p-2 mb-2'
+
+            document.getElementById('locationsParent').insertBefore(newElement, refDiv);
+
+            const textBox = newElement.getElementsByClassName('location')[0]
+
+            const autocompleteNew = new google.maps.places.Autocomplete(textBox);
+
+            autocompleteNew.addListener('place_changed', function () {
+                setLocation(autocompleteNew.getPlace().geometry.location, textBox);
+            });
+        }
+
+        function setLocation(location, element) {
+            let locId = parseInt(element.id.substring(4));
+            locations[locId] = location;
+            if (markers[locId]) markers[locId].setMap(null);
+            markers[locId] = new google.maps.Marker({
+                position: locations[locId],
+                map: map,
+                title: "Location"
+            });
+            map.setCenter(locations[locId]);
+            geocodeLocation(location, element.id);
         }
 
         function geocodeLocation(location, inputId) {
@@ -102,21 +93,26 @@
             });
         }
 
-        function calculateRoute(mode) {
-            if (!currentLocation || !destination) {
-                alert("Please select both current location and destination.");
+        // TODO: Fix doubled location points displayed on map
+        function calculateRoute(index) {
+            if (index === 0) {
+                map.setCenter(locations[index]);
                 return;
             }
 
+            if (!locations[index] || !locations[index-1]) {
+                alert("Please select both start and end location.");
+                return;
+            }
             mapElement = document.getElementById("map");
-            travelMode = mode.toLowerCase();
 
-            if (mode == "FLYING") {
+            if (travelMode === "flying") {
                 console.log("flying");
-                if (iframe.style.display == "none") {
+                if (iframe.style.display === "none") {
                     iframe.style.display = "block";
                     mapElement.style.display = "none";
                 }
+                // TODO: Change src to work with locations array
                 iframe.setAttribute("src", "https://www.google.com/maps/embed/v1/directions?origin=" + currentLocation.toString() + "&destination=" + destination.toString() + "&mode=" + travelMode + "&key=" + API_KEY);
             } else {
 
@@ -124,24 +120,59 @@
                     mapElement.style.display = "block";
                     iframe.style.display = "none";
                 }
-                const request = {
-                    origin: currentLocation,
-                    destination: destination,
-                    travelMode: mode,
-                    provideRouteAlternatives: true
-                };
+            const request = {
+                origin: locations[index-1],
+                destination: locations[index],
+                travelMode: travelMode.toUpperCase(),
+                provideRouteAlternatives: true
+            };
 
-                directionsService.route(request, function (result, status) {
-                    if (status === 'OK') {
-                        directionsRenderer.setDirections(result);
-                        selectedRoute = result.routes[0];
-                        displayRouteOptions(result.routes);
-                    } else {
-                        alert("Could not retrieve route.");
-                    }
-                });
+            directionsService.route(request, function (result, status) {
+                if (status === 'OK') {
+                    directionsRenderer.setDirections(result);
+                    selectedRoute = result.routes[0];
+                    displayRouteOptions(result.routes);
+                } else {
+                    alert("Could not retrieve route.");
+                }
+            });
+        }
+
+        function calculateRouteAll() {
+            for (let i in locations) {
+                if (!locations[i]) {
+                    alert("Please fill in all locations.");
+                    return;
+                }
             }
-           
+
+            let waypointArr = []
+            if (locations.length > 2) {
+                for (let i in locations.slice(1, locations.length - 1)) {
+                    waypointArr[i] = {
+                        location: locations.slice(1, locations.length - 1)[i],
+                        stopover: true
+                    }
+                }
+            }
+
+            const request = {
+                origin: locations[0],
+                destination: locations[locations.length - 1],
+                travelMode: travelMode.toUpperCase(),
+                provideRouteAlternatives: true,
+                waypoints: waypointArr
+            };
+
+            directionsService.route(request, function (result, status) {
+                if (status === 'OK') {
+                    directionsRenderer.setDirections(result);
+                    selectedRoute = result.routes[0];
+                    displayRouteOptions(result.routes);
+                } else {
+                    alert("Could not retrieve route.");
+                }
+            });
         }
 
         function displayRouteOptions(routes) {
@@ -167,31 +198,37 @@
         }
 
         function clearMap() {
-            if (currentMarker) currentMarker.setMap(null);
-            if (destinationMarker) destinationMarker.setMap(null);
+            for (let i in markers) {
+                markers[i].setMap(null)
+            }
             directionsRenderer.set('directions', null);
-            currentLocation = null;
-            destination = null;
             selectedRoute = null;
             document.getElementById('routes').innerHTML = '';
-            document.getElementById('current-location').value = '';
-            document.getElementById('destination').value = '';
+            for (let i in locations) {
+                document.getElementById('loc-' + i).value = ''
+            }
+            for (let i in locations) {
+                locations[i] = null
+            }
         }
 
         function saveRoute() {
-            if (!currentLocation || !destination) {
-                alert("Please select both current location and destination.");
-                return;
+            for (let i in locations) {
+                if (!locations[i]) {
+                    alert("Please fill in all locations.");
+                    return;
+                }
             }
 
-            const startPoint = document.getElementById('current-location').value;
-            const endPoint = document.getElementById('destination').value;
+            const routePoints = []
+            for (let i in locations) {
+                routePoints[i] = document.getElementById('loc-' + i).value;
+            }
 
-            console.log(startPoint);
-            console.log(endPoint);
-            console.log(currentLocation.toString());
-            console.log(destination.toString());
-            console.log(travelMode);
+            const coords = []
+            for (let i in locations) {
+                coords[i] = locations[i].lat() + '%2C' + locations[i].lng()
+            }
 
             fetch('/save-route', {
                 method: 'POST',
@@ -199,10 +236,8 @@
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
                 body: new URLSearchParams({
-                    'startCoords': currentLocation.toString(),
-                    'endCoords': destination.toString(),
-                    'startPoint': startPoint,
-                    'endPoint': endPoint,
+                    'coords': coords,
+                    'points': routePoints,
                     'travelMode': travelMode,
                 })
             })
@@ -216,7 +251,7 @@
                 .catch((error) => {
                     console.error('Error:', error);
                 });
-        }
+        }}
     </script>
     <style>
         .route-option {
@@ -226,7 +261,7 @@
             border-radius: 5px;
             cursor: pointer;
         }
-
+    
         .route-option:hover {
             background-color: #f0f0f0;
         }
@@ -243,67 +278,78 @@
         }
     </style>
 </head>
-
-
 <body onload="initMap()">
-    <!-- Navigation bar -->
-    <header>
-            <nav class = "navbar navbar-expand-md bg-info h4 px-4 py-3 text-white" style = "min-height: 75px;">
-                <!-- Website name-->
-                <span class="fs-4 px-2"> JourneyGenie </span>
+<!-- Navigation bar -->
+<header>
+    <div class="row justify-content-center fixed-top">
+        <nav class="navbar navbar-expand bg-info h4 px-4 py-3 text-white" style="min-height: 75px;">
+            <!-- Website name-->
+            <span class="fs-4 px-2"> JourneyGenie </span>
 
-                <!-- Other pages -->
-                <div class="navbar-collapse fs-5 d-flex justify-content-md-end justify-content-center">
-                    <ul class="navbar-nav">
-                        <!-- Home -->
-                        <form action="/home" method="GET">
-                            <input type="submit" value="Home" class="btn btn-dark text-white mx-2"></input>
-                        </form>
+            <!-- Other pages -->
+            <div class="collapse navbar-collapse fs-5 justify-content-end">
+                <ul class="navbar-nav">
+                    <!-- Home -->
+                    <form action="/home" method="GET">
+                        <input type="submit" value="Home" class="btn btn-dark text-white mx-2"></input>
+                    </form>
 
-                        <!-- Routes -->
-                        <form action="/map" method="GET">
-                            <input type="submit" value="Routes" class="btn btn-dark text-white mx-2"></input>
-                        </form>
+                    <!-- Routes -->
+                    <form action="/map" method="GET">
+                        <input type="submit" value="Routes" class="btn btn-dark text-white mx-2"></input>
+                    </form>
 
-                        <!-- Log out -->
-                        <form action="/logout" method="POST">
-                            <input type="submit" value="Log out" class="btn btn-danger text-white mx-2"></input>
-                        </form>
-                    </ul>
-                </div>
-            </nav>
-    </header>  
-    
-
-    <!-- Container -->
-    <main class="container" style="margin-top: 100px;">
-        <div class="row justify-content-center">
-            <div class="col-12">
-                <h1 class="text-center mb-5">Search Your Routes</h1>
-                <div class="mb-3">
-                    <input id="current-location" type="text" placeholder="Enter current location" class="form-control">
-                </div>
-                <div class="mb-3">
-                    <input id="destination" type="text" placeholder="Enter destination" class="form-control">
-                </div>
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-3">
-                    <i onclick="calculateRoute('DRIVING')" class="mdi mdi-car btn-icon" title="Car Route"></i>
-                    <i onclick="calculateRoute('WALKING')" class="mdi mdi-walk btn-icon" title="Walking Route"></i>
-                    <i onclick="calculateRoute('BICYCLING')" class="mdi mdi-bike btn-icon" title="Bicycling Route"></i>
-                    <i onclick="calculateRoute('TRANSIT')" class="mdi mdi-train btn-icon" title="Transit Route"></i>
-                    <i onclick="calculateRoute('FLYING')" class="mdi mdi-airplane btn-icon" title="Flying Route"></i>
-                </div>
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-3">
-                    <button onclick="clearMap()" class="btn btn-secondary">Clear Map</button>
-                    <button onclick="saveRoute()" class="btn btn-success">Save This Route</button>
-                </div>
-                <div id="routes"></div>
-                <div id="map" style="height: 500px; width: 100%;" class="mt-5"></div>
-                <iframe id="iframe" height="500px" width="100%" style="border:0; display:none" loading="lazy" allowfullscreen th:inline="javascript"></iframe>
-                <a href="/saved-routes" class="btn btn-link mt-3 mb-5">See Your Saved Routes</a>
+                    <!-- Log out -->
+                    <form action="/logout" method="POST">
+                        <input type="submit" value="Log out" class="btn btn-danger text-white mx-2"></input>
+                    </form>
+                </ul>
             </div>
-        </div>
-    </main>
-</body>
+        </nav>
+    </div>
+</header>
 
+<!-- Container -->
+<main class="container-fluid row mx-0" style="margin-top: 100px;">
+    <div class="col-4" id="locationsParent">
+        <div id="endOfLocations"></div>
+    </div>
+    <div class="col-8 justify-content-center">
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-3">
+                <button onclick="addLocation()" class="btn btn-primary">Add Location</button>
+<!--                TODO: Add icons to radio buttons-->
+<!--                <i onclick="calculateRoute('DRIVING')" class="mdi mdi-car btn-icon" title="Car Route"></i>-->
+<!--                <i onclick="calculateRoute('WALKING')" class="mdi mdi-walk btn-icon" title="Walking Route"></i>-->
+<!--                <i onclick="calculateRoute('BICYCLING')" class="mdi mdi-bike btn-icon" title="Bicycling Route"></i>-->
+<!--                <i onclick="calculateRoute('TRANSIT')" class="mdi mdi-train btn-icon" title="Transit Route"></i>-->
+<!--                <i onclick="calculateRoute('FLYING')" class="mdi mdi-airplane btn-icon" title="Flying Route"></i>-->
+                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                    <label class="btn btn-info active">
+                        <input type="radio" style="scale: 0; position: absolute" name="options" id="driving" onclick="setTravelMode('DRIVING')" checked>Car Route
+                    </label>
+                    <label class="btn btn-info">
+                        <input type="radio" style="scale: 0; position: absolute" name="options" id="walking" onclick="setTravelMode('WALKING')">Walking Route
+                    </label>
+                    <label class="btn btn-info">
+                        <input type="radio" style="scale: 0; position: absolute" name="options" id="bicycling" onclick="setTravelMode('BICYCLING')">Bicycling Route
+                    </label>
+                    <label class="btn btn-info">
+                        <input type="radio" style="scale: 0; position: absolute" name="options" id="transit" onclick="setTravelMode('TRANSIT')">Transit Route
+                    </label>
+                    <label class="btn btn-info">
+                        <input type="radio" style="scale: 0; position: absolute" name="options" id="flying" onclick="setTravelMode('FLYING')">Flying Route
+                    </label>
+                </div>
+                <!-- <button onclick="calculateBestRoute()" class="btn btn-info">Best Route</button> -->
+                <button onclick="calculateRouteAll()" class="btn btn-primary">Display Full Route</button>
+                <button onclick="clearMap()" class="btn btn-secondary">Clear Map</button>
+                <button onclick="saveRoute()" class="btn btn-success">Save This Route</button>
+            </div>
+            <div id="routes"></div>
+            <div id="map" style="height: 500px; width: 100%;" class="mt-5"></div>
+            <iframe id="iframe" height="500px" width="100%" style="border:0; display:none" loading="lazy" allowfullscreen th:inline="javascript"></iframe>
+            <a href="/saved-routes" class="btn btn-link mt-3">See Your Saved Routes</a>
+    </div>
+</main>
+</body>
 </html>

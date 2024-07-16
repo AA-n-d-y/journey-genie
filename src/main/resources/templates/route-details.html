@@ -71,7 +71,7 @@
                     </ul>
                 </div>
             </nav>
-    </header>  
+    </header>
 
     <!-- Container -->
     <main class="container" style="margin-top: 100px;">
@@ -79,10 +79,13 @@
             <div class="col-12">
                 <h1 class="text-center mb-5">Route Details</h1>
                 <!-- Map -->
-                <div class="mb-2">
-                    <iframe id="map" height="500px" width="100%" style="border:0" loading="lazy" allowfullscreen
-                     th:inline="javascript" th:src="'https://www.google.com/maps/embed/v1/directions?origin=' + ${route.startCoords} + '&destination=' + ${route.endCoords} + '&mode=' + ${route.travelMode} + '&key=' + ${GOOGLE_API_KEY}"></iframe>
-                </div>
+                <!-- If there is a duplicate ID error here, ignore it -->
+                <th:block th:if="${#ctx.containsVariable('subArr')}">
+                    <iframe id="map" height="500px" width="100%" style="border:0" loading="lazy" allowfullscreen th:inline="javascript" th:src="'https://www.google.com/maps/embed/v1/directions?origin=' + ${route.startCoords} + '&destination=' + ${route.endCoords} + '&waypoints=' + ${#strings.arrayJoin(subArr, '|')} + '&mode=' + ${route.travelMode} + '&key=' + ${API_KEY}"></iframe>
+                </th:block>
+                <th:block th:unless="${#ctx.containsVariable('subArr')}">
+                    <iframe id="map" height="500px" width="100%" style="border:0" loading="lazy" allowfullscreen th:inline="javascript" th:src="'https://www.google.com/maps/embed/v1/directions?origin=' + ${route.startCoords} + '&destination=' + ${route.endCoords} + '&mode=' + ${route.travelMode} + '&key=' + ${API_KEY}"></iframe>
+                </th:block>
                 <!-- <a href="/saved-routes" class="btn btn-link mt-3">Back to Saved Routes</a> -->
 
                 <!-- <a href="/weather" class="btn btn-primary mt-3 btn-lg btn-block"> See weather</a> -->
@@ -110,7 +113,7 @@
                         <!-- Places will be dynamically added here -->
                     </tbody>
                 </table>
-                
+
                 <!-- Notes -->
                 <h2 class="mt-5">Notes</h2>
                 <div class="notes-container">
@@ -143,7 +146,7 @@
         let longitIndexStart = destinationCoords.indexOf(",") + 2;
         let longitIndexEnd = destinationCoords.indexOf(")");
         let destinationLongit = parseFloat(destinationCoords.substring(longitIndexStart, longitIndexEnd));
-        
+
         // Destination marker
         let destinationMarker;
 
@@ -167,7 +170,7 @@
                 map: map,
                 title: "Destination"
             });
-            
+
             // Adding an info window to the destination marker
             let infoWindow = new google.maps.InfoWindow({
                 content: "<h5> Destination </h5>"
@@ -223,10 +226,10 @@
                     placeMarker.addListener("click", () => {
                         infoWindow.open(map, placeMarker);
                     });
-                    
+
                     bounds.extend(place.location);
                     console.log(place);
-                    
+
                     // Appending the place to the table
                     let table = document.getElementById("eventsTable");
 
@@ -253,16 +256,16 @@
                     addForm.appendChild(formButton);
                     addPlace.appendChild(addForm);
                     tableRow.appendChild(addPlace);
-                    
+
                     table.appendChild(tableRow);
                 });
                 map.fitBounds(bounds);
-            } 
+            }
             // Else no places found
             else {
                 console.log("No places found");
             }
-            
+
         }
     </script>
 </body>

@@ -17,6 +17,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -61,6 +62,10 @@ public class RouteController {
         }
         Route2 route = route2Repository.findById(id).orElse(null);
         List<Note> notes = noteRepository.findByRouteId(id);
+        if (route != null && route.getCoords().length > 2) {
+            String[] subArr = Arrays.copyOfRange(route.getCoords(), 1 , route.getCoords().length-1);
+            model.addAttribute("subArr", subArr);
+        }
         model.addAttribute("route", route);
         model.addAttribute("notes", notes);
         model.addAttribute("GOOGLE_API_KEY", GOOGLE_API_KEY);
@@ -82,12 +87,12 @@ public class RouteController {
     @Transactional
     public String saveRoute(
             Model model,
-            @RequestParam String startCoords,
-            @RequestParam String endCoords,
-            @RequestParam String startPoint,
-            @RequestParam String endPoint,
+            @RequestParam String[] coords,
+            @RequestParam String[] points,
             @RequestParam String travelMode,
-            HttpServletResponse response, HttpServletRequest request, HttpSession session) {
+            HttpServletResponse response,
+            HttpServletRequest request,
+            HttpSession session) {
 
         if (!isUserLoggedIn(session)) {
             response.setStatus(401); // Unauthorized
@@ -95,8 +100,8 @@ public class RouteController {
         }
 
         User user = getLoggedInUser(session);
-        Route2 route = new Route2(startCoords, endCoords, startPoint, endPoint, travelMode, user);
-        route2Repository.save(route);
+            Route2 route = new Route2(coords, points, travelMode);
+            route2Repository.save(route);
         return "redirect:/saved-routes";
     }
 
