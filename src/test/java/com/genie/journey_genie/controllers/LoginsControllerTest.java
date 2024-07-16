@@ -26,6 +26,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.MediaType.*;
 import com.genie.journey_genie.models.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.mock.web.MockHttpSession;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -75,32 +76,118 @@ public class LoginsControllerTest {
     // Testing getting the login page when logged in as a user
     @Test
     void getLoginPageUTest() throws Exception {
+        // Creating the user
+        User user = new User("John", "Smith", "testuser", "54321", "johnsmith@example.com", "user");
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute("sessionUser", user);
 
+        // Mock the get request
+        mockMvc.perform(MockMvcRequestBuilders.get("/login").session(session))
+
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized())
+            .andExpect(MockMvcResultMatchers.view().name("userPage"))
+        
+            .andExpect(MockMvcResultMatchers.model().attribute("user", 
+                allOf(
+                    hasProperty("firstName", Matchers.is("John")),
+                    hasProperty("lastName", Matchers.is("Smith")),
+                    hasProperty("username", Matchers.is("testuser")),
+                    hasProperty("password", Matchers.is("54321")),
+                    hasProperty("email", Matchers.is("johnsmith@example.com")),
+                    hasProperty("type", Matchers.is("user"))
+                )
+            ));
     }
 
     // Testing getting the login page when logged in as an admin
     @Test
     void getLoginPageATest() throws Exception {
+        // Creating the user
+        User user = new User("John", "Smith", "testuser", "54321", "johnsmith@example.com", "admin");
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute("sessionUser", user);
+        List<User> users = new ArrayList<User>();
+        users.add(user);
 
+        // When the endpoint calls findAll(), return this instead
+        when(repository.findAll()).thenReturn(users);
+
+        // Mock the get request
+        mockMvc.perform(MockMvcRequestBuilders.get("/login").session(session))
+
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized())
+            .andExpect(MockMvcResultMatchers.view().name("adminPage"))
+        
+            .andExpect(MockMvcResultMatchers.model().attribute("users", instanceOf(List.class)))
+            .andExpect(MockMvcResultMatchers.model().attribute("users", hasSize(1)))
+            .andExpect(MockMvcResultMatchers.model().attribute("users", contains(
+                       hasProperty("firstName", is("John")) 
+            )));
     }
 
 
     // Testing getting the home page when not logged in
     @Test
     void getHomePageTest() throws Exception {
+        
+        // Mock the get request
+        mockMvc.perform(MockMvcRequestBuilders.get("/home"))
+
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized())
+            .andExpect(MockMvcResultMatchers.view().name("loginPage")); 
 
     }
 
     // Testing getting the home page when logged in as a user
     @Test
     void getHomePageUTest() throws Exception {
+        // Creating the user
+        User user = new User("John", "Smith", "testuser", "54321", "johnsmith@example.com", "user");
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute("sessionUser", user);
 
+        // Mock the get request
+        mockMvc.perform(MockMvcRequestBuilders.get("/home").session(session))
+
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.view().name("userPage"))
+        
+            .andExpect(MockMvcResultMatchers.model().attribute("user", 
+                allOf(
+                    hasProperty("firstName", Matchers.is("John")),
+                    hasProperty("lastName", Matchers.is("Smith")),
+                    hasProperty("username", Matchers.is("testuser")),
+                    hasProperty("password", Matchers.is("54321")),
+                    hasProperty("email", Matchers.is("johnsmith@example.com")),
+                    hasProperty("type", Matchers.is("user"))
+                )
+            ));
     }
 
     // Testing getting the home page when logged in as an admin
     @Test
     void getHomePageATest() throws Exception {
+        // Creating the user
+        User user = new User("John", "Smith", "testuser", "54321", "johnsmith@example.com", "admin");
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute("sessionUser", user);
+        List<User> users = new ArrayList<User>();
+        users.add(user);
 
+        // When the endpoint calls findAll(), return this instead
+        when(repository.findAll()).thenReturn(users);
+
+        // Mock the get request
+        mockMvc.perform(MockMvcRequestBuilders.get("/home").session(session))
+
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.view().name("adminPage"))
+        
+            .andExpect(MockMvcResultMatchers.model().attribute("users", instanceOf(List.class)))
+            .andExpect(MockMvcResultMatchers.model().attribute("users", hasSize(1)))
+            .andExpect(MockMvcResultMatchers.model().attribute("users", contains(
+                       hasProperty("firstName", is("John")) 
+            )));
     }
 
 
@@ -138,7 +225,32 @@ public class LoginsControllerTest {
     // Testing a successful login as an admin
     @Test
     void adminLoginSuccessTest() throws Exception {
+        // Creating the user
+        User user = new User("John", "Smith", "testuser", "54321", "johnsmith@example.com", "admin");
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute("sessionUser", user);
+        List<User> users = new ArrayList<User>();
+        users.add(user);
 
+        // When the user finds by name and password, return the list instead
+        when(repository.findByUsernameAndPassword(user.getUsername(), user.getPassword())).thenReturn(users);
+
+        // When the endpoint calls findAll(), return this instead
+        when(repository.findAll()).thenReturn(users);
+
+        // Mock the post request for an admin type login
+        mockMvc.perform(MockMvcRequestBuilders.post("/home")
+            .param("username", user.getUsername())
+            .param("password", user.getPassword()))
+
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.view().name("adminPage"))
+        
+            .andExpect(MockMvcResultMatchers.model().attribute("users", instanceOf(List.class)))
+            .andExpect(MockMvcResultMatchers.model().attribute("users", hasSize(1)))
+            .andExpect(MockMvcResultMatchers.model().attribute("users", contains(
+                       hasProperty("firstName", is("John")) 
+            )));
     }
     
     // Testing an unsuccessful login
@@ -163,20 +275,32 @@ public class LoginsControllerTest {
     // Testing getting the login page after going to the log out endpoint
     @Test
     void logoutTest() throws Exception {
+        // Mock the get request
+        mockMvc.perform(MockMvcRequestBuilders.get("/logout"))
 
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.view().name("loginPage"));
     }
 
     // Testing getting the login page after clicking log out
     @Test
     void logoutUTest() throws Exception {
+        // Mock the post request
+        mockMvc.perform(MockMvcRequestBuilders.post("/logout"))
 
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.view().name("loginPage"));
     }
 
 
     // Testing the redirect endpoint
     @Test
     void redirectTest() throws Exception {
+        // Mock the get request
+        mockMvc.perform(MockMvcRequestBuilders.get("/"))
 
+            .andExpect(MockMvcResultMatchers.redirectedUrl("/login"));
     }
 
+    
 }

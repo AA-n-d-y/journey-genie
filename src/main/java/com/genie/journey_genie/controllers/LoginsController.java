@@ -66,7 +66,7 @@ public class LoginsController {
 
        // If user is null, return the login page
         if (user == null) {
-           response.setStatus(200);
+           response.setStatus(401);
            return "loginPage";
         }
 
@@ -75,12 +75,12 @@ public class LoginsController {
            // Finding all the users and rendering the admin page
            List<User> users = repo.findAll();
            model.addAttribute("users", users);
-           response.setStatus(401);
+           response.setStatus(200);
            return "adminPage";
         }
         else {
            model.addAttribute("user", user);
-           response.setStatus(401);
+           response.setStatus(200);
            return "userPage";
         }
        

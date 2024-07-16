@@ -25,6 +25,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.MediaType.*;
 import com.genie.journey_genie.models.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.mock.web.MockHttpSession;
 import java.util.List;
 import java.util.ArrayList;
 

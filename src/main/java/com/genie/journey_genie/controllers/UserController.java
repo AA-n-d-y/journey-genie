@@ -69,6 +69,7 @@ public class UserController {
 
         // If the user exists already
         if (repo.findByUsername(username).size() > 0) {
+            response.setStatus(409);
             return "userExists";
         }
         // Else
