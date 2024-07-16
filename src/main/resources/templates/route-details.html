@@ -81,10 +81,10 @@
                 <!-- Map -->
                 <!-- If there is a duplicate ID error here, ignore it -->
                 <th:block th:if="${#ctx.containsVariable('subArr')}">
-                    <iframe id="map" height="500px" width="100%" style="border:0" loading="lazy" allowfullscreen th:inline="javascript" th:src="'https://www.google.com/maps/embed/v1/directions?origin=' + ${route.startCoords} + '&destination=' + ${route.endCoords} + '&waypoints=' + ${#strings.arrayJoin(subArr, '|')} + '&mode=' + ${route.travelMode} + '&key=' + ${API_KEY}"></iframe>
+                    <iframe id="map" height="500px" width="100%" style="border:0" loading="lazy" allowfullscreen th:inline="javascript" th:src="'https://www.google.com/maps/embed/v1/directions?origin=' + ${route.startCoords} + '&destination=' + ${route.endCoords} + '&waypoints=' + ${#strings.arrayJoin(subArr, '|')} + '&mode=' + ${route.travelMode} + '&key=' + ${GOOGLE_API_KEY}"></iframe>
                 </th:block>
                 <th:block th:unless="${#ctx.containsVariable('subArr')}">
-                    <iframe id="map" height="500px" width="100%" style="border:0" loading="lazy" allowfullscreen th:inline="javascript" th:src="'https://www.google.com/maps/embed/v1/directions?origin=' + ${route.startCoords} + '&destination=' + ${route.endCoords} + '&mode=' + ${route.travelMode} + '&key=' + ${API_KEY}"></iframe>
+                    <iframe id="map" height="500px" width="100%" style="border:0" loading="lazy" allowfullscreen th:inline="javascript" th:src="'https://www.google.com/maps/embed/v1/directions?origin=' + ${route.startCoords} + '&destination=' + ${route.endCoords} + '&mode=' + ${route.travelMode} + '&key=' + ${GOOGLE_API_KEY}"></iframe>
                 </th:block>
                 <!-- <a href="/saved-routes" class="btn btn-link mt-3">Back to Saved Routes</a> -->
 
@@ -137,15 +137,14 @@
         let map;
 
         // Destination marker calculations
-        let destinationCoords = /*[[ ${route.endCoords} ]]*/'';
+        let destinationCoords = [[ ${route.endCoords} ]];
 
-        let latIndexStart = destinationCoords.indexOf("(") + 1;
-        let latIndexEnd = destinationCoords.indexOf(",");
+        let latIndexStart = 0;
+        let latIndexEnd = destinationCoords.indexOf("%");
         let destinationLat = parseFloat(destinationCoords.substring(latIndexStart, latIndexEnd));
 
-        let longitIndexStart = destinationCoords.indexOf(",") + 2;
-        let longitIndexEnd = destinationCoords.indexOf(")");
-        let destinationLongit = parseFloat(destinationCoords.substring(longitIndexStart, longitIndexEnd));
+        let longitIndexStart = destinationCoords.indexOf("C") + 1;
+        let destinationLongit = parseFloat(destinationCoords.substring(longitIndexStart));
 
         // Destination marker
         let destinationMarker;

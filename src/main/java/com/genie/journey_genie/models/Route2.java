@@ -36,7 +36,7 @@ public class Route2 {
     }
 
     // Parameterized constructor
-    public Route2(String[] coords, String[] points, String travelMode) {
+    public Route2(String[] coords, String[] points, String travelMode, User user) {
         this.coords = coords;
         this.points = points;
         this.travelMode = travelMode;

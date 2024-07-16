@@ -100,7 +100,7 @@ public class RouteController {
         }
 
         User user = getLoggedInUser(session);
-            Route2 route = new Route2(coords, points, travelMode);
+            Route2 route = new Route2(coords, points, travelMode, user);
             route2Repository.save(route);
         return "redirect:/saved-routes";
     }

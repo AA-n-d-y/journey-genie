@@ -11,7 +11,7 @@
     <script th:inline="javascript"
         th:src="'https://maps.googleapis.com/maps/api/js?key=' + ${GOOGLE_API_KEY} + '&libraries=places,geocoding'"></script>
 
-    <script defer>
+    <script>
         let map, directionsService, directionsRenderer, geocoder, iframe, mapElement;
         let travelMode = "driving";
         let alternativeRoutes = [];
@@ -100,7 +100,7 @@
                 return;
             }
 
-            if (!locations[index] || !locations[index-1]) {
+            if (!locations[index] || !locations[index - 1]) {
                 alert("Please select both start and end location.");
                 return;
             }
@@ -112,30 +112,30 @@
                     iframe.style.display = "block";
                     mapElement.style.display = "none";
                 }
-                // TODO: Change src to work with locations array
-                iframe.setAttribute("src", "https://www.google.com/maps/embed/v1/directions?origin=" + currentLocation.toString() + "&destination=" + destination.toString() + "&mode=" + travelMode + "&key=" + API_KEY);
+                iframe.setAttribute("src", "https://www.google.com/maps/embed/v1/directions?origin=" + locations[index - 1].toString() + "&destination=" + locations[index].toString() + "&mode=flying" + "&key=" + API_KEY);
             } else {
 
-                if (mapElement.style.display == "none") {
+                if (mapElement.style.display === "none") {
                     mapElement.style.display = "block";
                     iframe.style.display = "none";
                 }
-            const request = {
-                origin: locations[index-1],
-                destination: locations[index],
-                travelMode: travelMode.toUpperCase(),
-                provideRouteAlternatives: true
-            };
+                const request = {
+                    origin: locations[index - 1],
+                    destination: locations[index],
+                    travelMode: travelMode.toUpperCase(),
+                    provideRouteAlternatives: true
+                };
 
-            directionsService.route(request, function (result, status) {
-                if (status === 'OK') {
-                    directionsRenderer.setDirections(result);
-                    selectedRoute = result.routes[0];
-                    displayRouteOptions(result.routes);
-                } else {
-                    alert("Could not retrieve route.");
-                }
-            });
+                directionsService.route(request, function (result, status) {
+                    if (status === 'OK') {
+                        directionsRenderer.setDirections(result);
+                        selectedRoute = result.routes[0];
+                        displayRouteOptions(result.routes);
+                    } else {
+                        alert("Could not retrieve route.");
+                    }
+                });
+            }
         }
 
         function calculateRouteAll() {
@@ -145,34 +145,52 @@
                     return;
                 }
             }
+            mapElement = document.getElementById("map");
 
-            let waypointArr = []
-            if (locations.length > 2) {
-                for (let i in locations.slice(1, locations.length - 1)) {
-                    waypointArr[i] = {
-                        location: locations.slice(1, locations.length - 1)[i],
-                        stopover: true
+            // This doesn't actually do work because you can't have a flying route with waypoints in the middle
+            // I just did it for the sake of consistency
+            if (travelMode === "flying") {
+                console.log("flying");
+                if (iframe.style.display === "none") {
+                    iframe.style.display = "block";
+                    mapElement.style.display = "none";
+                }
+                iframe.setAttribute("src", "https://www.google.com/maps/embed/v1/directions?origin=" + locations[0].toString() + "&destination=" + locations[locations.length - 1].toString() + "&waypoints=" + locations.slice(1, locations.length - 1).join('|') + "&mode=flying" + "&key=" + API_KEY);
+            } else {
+
+                if (mapElement.style.display === "none") {
+                    mapElement.style.display = "block";
+                    iframe.style.display = "none";
+                }
+
+                let waypointArr = []
+                if (locations.length > 2) {
+                    for (let i in locations.slice(1, locations.length - 1)) {
+                        waypointArr[i] = {
+                            location: locations.slice(1, locations.length - 1)[i],
+                            stopover: true
+                        }
                     }
                 }
+
+                const request = {
+                    origin: locations[0],
+                    destination: locations[locations.length - 1],
+                    travelMode: travelMode.toUpperCase(),
+                    provideRouteAlternatives: true,
+                    waypoints: waypointArr
+                };
+
+                directionsService.route(request, function (result, status) {
+                    if (status === 'OK') {
+                        directionsRenderer.setDirections(result);
+                        selectedRoute = result.routes[0];
+                        displayRouteOptions(result.routes);
+                    } else {
+                        alert("Could not retrieve route.");
+                    }
+                });
             }
-
-            const request = {
-                origin: locations[0],
-                destination: locations[locations.length - 1],
-                travelMode: travelMode.toUpperCase(),
-                provideRouteAlternatives: true,
-                waypoints: waypointArr
-            };
-
-            directionsService.route(request, function (result, status) {
-                if (status === 'OK') {
-                    directionsRenderer.setDirections(result);
-                    selectedRoute = result.routes[0];
-                    displayRouteOptions(result.routes);
-                } else {
-                    alert("Could not retrieve route.");
-                }
-            });
         }
 
         function displayRouteOptions(routes) {
@@ -251,7 +269,7 @@
                 .catch((error) => {
                     console.error('Error:', error);
                 });
-        }}
+        }
     </script>
     <style>
         .route-option {
@@ -325,13 +343,13 @@
 <!--                <i onclick="calculateRoute('FLYING')" class="mdi mdi-airplane btn-icon" title="Flying Route"></i>-->
                 <div class="btn-group btn-group-toggle" data-toggle="buttons">
                     <label class="btn btn-info active">
-                        <input type="radio" style="scale: 0; position: absolute" name="options" id="driving" onclick="setTravelMode('DRIVING')" checked>Car Route
+                        <input type="radio" style="scale: 0; position: absolute" name="options" id="driving" onclick="setTravelMode('DRIVING')" checked>Driving Route
                     </label>
                     <label class="btn btn-info">
                         <input type="radio" style="scale: 0; position: absolute" name="options" id="walking" onclick="setTravelMode('WALKING')">Walking Route
                     </label>
                     <label class="btn btn-info">
-                        <input type="radio" style="scale: 0; position: absolute" name="options" id="bicycling" onclick="setTravelMode('BICYCLING')">Bicycling Route
+                        <input type="radio" style="scale: 0; position: absolute" name="options" id="bicycling" onclick="setTravelMode('BICYCLING')">Cycling Route
                     </label>
                     <label class="btn btn-info">
                         <input type="radio" style="scale: 0; position: absolute" name="options" id="transit" onclick="setTravelMode('TRANSIT')">Transit Route
