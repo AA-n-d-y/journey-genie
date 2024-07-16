@@ -58,7 +58,7 @@
                 <!-- Map -->
                 <div class="mb-2">
                     <iframe id="map" height="500px" width="100%" style="border:0" loading="lazy" allowfullscreen
-                    <iframe th:inline="javascript" th:src="'https://www.google.com/maps/embed/v1/directions?origin=' + ${route.startCoords} + '&destination=' + ${route.endCoords} + '&mode=' + ${route.travelMode} + '&key=' + ${GOOGLE_API_KEY}"></iframe>
+                    th:inline="javascript" th:src="'https://www.google.com/maps/embed/v1/directions?origin=' + ${route.startCoords} + '&destination=' + ${route.endCoords} + '&mode=' + ${route.travelMode} + '&key=' + ${GOOGLE_API_KEY}"></iframe>
                 </div>
                 <!-- <a href="/saved-routes" class="btn btn-link mt-3">Back to Saved Routes</a> -->
 

@@ -11,11 +11,12 @@
     <script th:inline="javascript"
         th:src="'https://maps.googleapis.com/maps/api/js?key=' + ${GOOGLE_API_KEY} + '&libraries=places,geocoding'"></script>
 
-    <script>
-        let map, currentLocation, destination, directionsService, directionsRenderer, geocoder, travelMode;
+    <script defer>
+        let map, currentLocation, destination, directionsService, directionsRenderer, geocoder, travelMode, iframe, mapElement;
         let currentMarker, destinationMarker;
         let alternativeRoutes = [];
         let selectedRoute = null;
+        let API_KEY = "[[${GOOGLE_API_KEY}]]";
 
         function initMap() {
             directionsService = new google.maps.DirectionsService();
@@ -23,11 +24,15 @@
             
             geocoder = new google.maps.Geocoder();
 
+            iframe = document.getElementById("iframe");
+
             map = new google.maps.Map(document.getElementById("map"), {
                 center: { lat: 49.2827, lng: -123.1207 },
                 zoom: 8,
             });
             directionsRenderer.setMap(map);
+
+            
 
             google.maps.event.addListener(map, 'click', function (event) {
                 if (!currentLocation) {
@@ -44,7 +49,9 @@
             const inputDestination = document.getElementById("destination");
 
             const autocompleteCurrent = new google.maps.places.Autocomplete(inputCurrent);
+            autocompleteCurrent.bindTo("bounds", map);
             const autocompleteDestination = new google.maps.places.Autocomplete(inputDestination);
+            autocompleteDestination.bindTo("bounds", map);
 
             autocompleteCurrent.addListener('place_changed', function () {
                 setCurrentLocation(autocompleteCurrent.getPlace().geometry.location);
@@ -101,24 +108,40 @@
                 return;
             }
 
+            mapElement = document.getElementById("map");
             travelMode = mode.toLowerCase();
 
-            const request = {
-                origin: currentLocation,
-                destination: destination,
-                travelMode: mode,
-                provideRouteAlternatives: true
-            };
-
-            directionsService.route(request, function (result, status) {
-                if (status === 'OK') {
-                    directionsRenderer.setDirections(result);
-                    selectedRoute = result.routes[0];
-                    displayRouteOptions(result.routes);
-                } else {
-                    alert("Could not retrieve route.");
+            if (mode == "FLYING") {
+                console.log("flying");
+                if (iframe.style.display == "none") {
+                    iframe.style.display = "block";
+                    mapElement.style.display = "none";
                 }
-            });
+                iframe.setAttribute("src", "https://www.google.com/maps/embed/v1/directions?origin=" + currentLocation.toString() + "&destination=" + destination.toString() + "&mode=" + travelMode + "&key=" + API_KEY);
+            } else {
+
+                if (mapElement.style.display == "none") {
+                    mapElement.style.display = "block";
+                    iframe.style.display = "none";
+                }
+                const request = {
+                    origin: currentLocation,
+                    destination: destination,
+                    travelMode: mode,
+                    provideRouteAlternatives: true
+                };
+
+                directionsService.route(request, function (result, status) {
+                    if (status === 'OK') {
+                        directionsRenderer.setDirections(result);
+                        selectedRoute = result.routes[0];
+                        displayRouteOptions(result.routes);
+                    } else {
+                        alert("Could not retrieve route.");
+                    }
+                });
+            }
+           
         }
 
         function displayRouteOptions(routes) {
@@ -163,7 +186,12 @@
 
             const startPoint = document.getElementById('current-location').value;
             const endPoint = document.getElementById('destination').value;
-            const routeDetails = JSON.stringify(directionsRenderer.getDirections());
+
+            console.log(startPoint);
+            console.log(endPoint);
+            console.log(currentLocation.toString());
+            console.log(destination.toString());
+            console.log(travelMode);
 
             fetch('/save-route', {
                 method: 'POST',
@@ -171,12 +199,11 @@
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
                 body: new URLSearchParams({
-                    'startCoords': currentLocation,
-                    'endCoords': destination,
+                    'startCoords': currentLocation.toString(),
+                    'endCoords': destination.toString(),
                     'startPoint': startPoint,
                     'endPoint': endPoint,
                     'travelMode': travelMode,
-                    'routeDetails': routeDetails
                 })
             })
                 .then(response => {
@@ -272,6 +299,7 @@
                 </div>
                 <div id="routes"></div>
                 <div id="map" style="height: 500px; width: 100%;" class="mt-5"></div>
+                <iframe id="iframe" height="500px" width="100%" style="border:0; display:none" loading="lazy" allowfullscreen th:inline="javascript"></iframe>
                 <a href="/saved-routes" class="btn btn-link mt-3 mb-5">See Your Saved Routes</a>
             </div>
         </div>

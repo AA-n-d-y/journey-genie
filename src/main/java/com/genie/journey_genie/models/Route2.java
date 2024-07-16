@@ -16,6 +16,7 @@ public class Route2 {
     private String startPoint;
     private String endPoint;
     private String travelMode;
+
     private LocalDateTime creationDate;
 
     @ManyToOne
