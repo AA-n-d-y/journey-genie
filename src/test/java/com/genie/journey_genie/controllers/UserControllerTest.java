@@ -163,6 +163,6 @@ public class UserControllerTest {
             .andExpect(MockMvcResultMatchers.status().isConflict())
             .andExpect(MockMvcResultMatchers.view().name("userExists"));
     }
-
+    
 
 }
