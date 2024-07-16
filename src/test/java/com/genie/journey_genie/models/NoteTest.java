@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class NoteTest {
 
+    // Testing the Note class
     @Test
     void noteTest() {
         // Creating a Route2 object to associate with the Note
@@ -49,5 +50,17 @@ public class NoteTest {
         note.setContent("Updated test note.");
         assertEquals("Updated test note.", note.getContent());
     }   
+
+    // Testing the default constructor
+    // checking that Note class's default constructor can successfully create a new instance of the Note class.
+    @Test
+    void testDefaultConstructor() {
+        Note note = new Note(); //creates a new instance of the Note class using its default constructor. 
+                                //default constructor is the no-argument constructor that initializes an object with default values.
+        assertNotNull(note); // assertNotNull method checks that the note object is not null.
+        //If the note object is not null, the assertion will pass, indicating that the 
+        //default constructor successfully created an instance of the Note class.
+    }
     
+
 }
