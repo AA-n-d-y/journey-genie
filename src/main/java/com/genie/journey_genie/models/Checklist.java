@@ -1,5 +1,6 @@
 package com.genie.journey_genie.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.*;
@@ -9,22 +10,26 @@ public class Checklist {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int checklistID;
-    private String activities;
+    @ElementCollection
+    private List<String> activities = new ArrayList<>();
+    //private List<String> place;
 
     public Checklist() {
     }
 
-    public Checklist(String activities) {
-        this.activities = activities;
-    }
-
-    public String getActivities() {
+    public List<String> getActivities() {
         return activities;
     }
 
-    public void setActivities(String activities) {
+    public void setActivities(List<String> activities) {
         this.activities = activities;
     }
 
+    // public Checklist(String activities) {
+    //     this.activities = activities;
+    // }
+
+    
+    
     
 }

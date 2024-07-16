@@ -27,10 +27,11 @@ public class ChecklistController {
     @Autowired
     private ChecklistRepository checklistRepository;
 
-    @GetMapping("/checklist/{id}")
+    @GetMapping("/makeChecklist/checklist/{id}")
     public String displayChecklist(Model model, @PathVariable Long id) {
         Route2 routeForAssocChecklist = routeRepository.findById(id).orElse(null);
-        model.addAttribute("route", routeForAssocChecklist);
+        List<String> activities = routeForAssocChecklist.getChecklist().getActivities();
+        model.addAttribute("act", activities);
         return "checklist";
     }
 
@@ -42,21 +43,24 @@ public class ChecklistController {
     }
 
     @PostMapping("/makeChecklist/{id}")
-    public String saveChecklist(@RequestParam Map<String, String> newChecklist, @PathVariable Long id) {
+    public String addToChecklist(@RequestParam Map<String, String> newChecklist, @PathVariable Long id) {
         String activity = newChecklist.get("activity");
-        Checklist checklist = new Checklist(activity);
+        Route2 routeForAssocChecklist = routeRepository.findById(id).orElse(null);
+        
+        if(routeForAssocChecklist.getChecklist() == null){
+            routeForAssocChecklist.setChecklist(new Checklist());
+        }
+        Checklist checklist = routeForAssocChecklist.getChecklist(); // Get the Checklist object from the Route object
+        checklist.getActivities().add(activity); // Add the activity to the Checklist object
         checklist = checklistRepository.save(checklist); // Save the Checklist object
 
-        Route2 routeForAssocChecklist = routeRepository.findById(id).orElse(null);
+        
         routeForAssocChecklist.setChecklist(checklist);
 
-        System.out.println("TEST");
-        System.out.println(routeForAssocChecklist.getChecklist().getActivities());
-        System.out.println("TEST");
 
         routeRepository.save(routeForAssocChecklist);
 
-        return "redirect:/checklist/{id}";
+        return "redirect:/makeChecklist/" + id;
     }
 
     // @GetMapping("/viewChecklist/{id}")

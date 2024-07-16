@@ -211,8 +211,8 @@
 
                     let addPlace = document.createElement("td");
                     let addForm = document.createElement("form");
-                    addForm.setAttribute("action", "/home");                // NEED TO FIX THIS TO SAVE THE PLACE TO THE CHECKLIST
-                    addForm.setAttribute("method", "GET");                  // NEED TO FIX THIS TO SAVE THE PLACE TO THE CHECKLIST
+                    addForm.setAttribute("action", "/addplace");                // NEED TO FIX THIS TO SAVE THE PLACE TO THE CHECKLIST
+                    addForm.setAttribute("method", "POST");                  // NEED TO FIX THIS TO SAVE THE PLACE TO THE CHECKLIST
                     let placeData = document.createElement("input");
                     placeData.setAttribute("type", "hidden");
                     placeData.setAttribute("value", placeMarker.title);
