@@ -127,7 +127,7 @@ public class RouteController {
         if (route != null) {
             Note note = new Note();
             note.setRoute(route);
-            note.setContent("<h2>" + noteHeadline + "</h2><p>" + noteContent + "</p>");
+            note.setContent("<h2>" + noteHeadline + "</h2><p>" + noteContent.replace("\n", "<br>") + "</p>");
             noteRepository.save(note);
         }
         return new RedirectView("/route-details/" + routeId);
@@ -140,7 +140,11 @@ public class RouteController {
             return "loginPage";
         }
         Note note = noteRepository.findById(noteId).orElse(null);
-        model.addAttribute("note", note);
+        if (note != null) {
+            String strippedContent = stripHtml(note.getContent()).replace("<br>", "\n");
+            model.addAttribute("note", note);
+            model.addAttribute("strippedContent", strippedContent);
+        }
         return "edit_note";
     }
 
@@ -159,7 +163,7 @@ public class RouteController {
 
         Note note = noteRepository.findById(noteId).orElse(null);
         if (note != null) {
-            note.setContent("<h2>" + noteHeadline + "</h2><p>" + noteContent + "</p>");
+            note.setContent("<h2>" + noteHeadline + "</h2><p>" + noteContent.replace("\n", "<br>") + "</p>");
             noteRepository.save(note);
         }
         return new RedirectView("/route-details/" + note.getRoute().getId());
@@ -176,5 +180,9 @@ public class RouteController {
         Long routeId = note.getRoute().getId();
         noteRepository.deleteById(noteId);
         return new RedirectView("/route-details/" + routeId);
+    }
+
+    private String stripHtml(String html) {
+        return html.replaceAll("<[^>]*>", "");
     }
 }

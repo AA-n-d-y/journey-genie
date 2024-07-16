@@ -18,6 +18,29 @@
         .weather-icon {
             font-size: 2rem;
         }
+        .note-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            flex: 1 1 auto;
+        }
+        .note-card h2 {
+            font-size: 1.5rem;
+        }
+        .note-card p {
+            white-space: pre-wrap;
+        }
+        .notes-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
     </style>
 
 </head>
@@ -69,7 +92,7 @@
                         <i class="bi bi-cloud-sun weather-icon"></i>
                         <span>See Weather</span>
                     </a>
-                </div>>
+                </div>
 
                 <!-- Local Places -->
                 <h1 class="text-center mb-5 mt-5">Local Places</h1>
@@ -90,14 +113,19 @@
                 
                 <!-- Notes -->
                 <h2 class="mt-5">Notes</h2>
-                <ul th:each="note : ${notes}">
-                    <li th:utext="${note.content}"></li>
-                    <a th:href="@{'/edit-note/' + ${note.id}}" class="btn btn-warning mt-1">Edit</a>
-                    <a th:href="@{'/delete-note/' + ${note.id}}" class="btn btn-danger mt-1">Delete</a>
-                </ul>
-                <a th:href="@{'/add-note/' + ${route.id}}" class="btn btn-primary mt-3 mb-5">Add Note</a> 
-                <!-- <a href="/saved-routes" class="btn btn-link mb-5">Back to Saved Routes</a> -->
-                <!-- <a href="/weather" class="btn btn-primary mt-3 btn-lg btn-block"> See weather</a>  -->
+                <div class="notes-container">
+                    <div th:each="note : ${notes}" class="note-card col-lg-3 col-md-4 col-sm-6">
+                        <div>
+                            <h2 th:utext="${note.content.substring(4, note.content.indexOf('</h2>'))}"></h2>
+                            <p th:utext="${note.content.substring(note.content.indexOf('</h2>') + 5)}"></p>
+                        </div>
+                        <div class="mt-2">
+                            <a th:href="@{'/edit-note/' + ${note.id}}" class="btn btn-warning mt-1">Edit</a>
+                            <a th:href="@{'/delete-note/' + ${note.id}}" class="btn btn-danger mt-1">Delete</a>
+                        </div>
+                    </div>
+                </div>
+                <a th:href="@{'/add-note/' + ${route.id}}" class="btn btn-primary mt-3">Add Note</a>
             </div>
         </div>
     </main>
@@ -190,7 +218,7 @@
 
                     // Adding an info window to each marker
                     let infoWindow = new google.maps.InfoWindow({});
-                    windowContent = "<h5>" + placeMarker.title + "</h5>";
+                    let windowContent = "<h5>" + placeMarker.title + "</h5>";
                     infoWindow.setContent(windowContent);
                     placeMarker.addListener("click", () => {
                         infoWindow.open(map, placeMarker);
