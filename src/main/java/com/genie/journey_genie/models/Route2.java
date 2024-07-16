@@ -23,6 +23,12 @@ public class Route2 {
     private String[] points;
 
     private String travelMode;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Checklist checklist;
+
+    @Lob
+    @Column(length = 10000)
+    private String routeDetails;
 
     private LocalDateTime creationDate;
 
@@ -107,6 +113,13 @@ public class Route2 {
 
     public void setPoints(String[] points) { this.points = points; }
 
+    public void setChecklist(Checklist checklist) {
+        this.checklist = checklist;
+    }
+
+    public Checklist getChecklist() {
+        return checklist;
+    }
     public User getUser() {
         return user;
     }
