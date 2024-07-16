@@ -54,4 +54,28 @@ public class WeatherControllerTest {
         verify(response).setStatus(401);
     }
 
+    @Test
+    public void testShowWeatherDashboard_UserLoggedIn() throws Exception {
+        // Mock the session to return a user for sessionUser
+        User user = new User("John", "Doe", "johndoe", "password", "johndoe@example.com", "user");
+        when(session.getAttribute("sessionUser")).thenReturn(user);
+
+        // Use reflection to set the private weatherApiKey field
+        String weatherApiKey = "mockApiKey";
+        Field weatherApiKeyField = WeatherController.class.getDeclaredField("weatherApiKey");
+        weatherApiKeyField.setAccessible(true);
+        weatherApiKeyField.set(weatherController, weatherApiKey);
+
+        // Call the controller method
+        String viewName = weatherController.showWeatherDashboard(model, response, request, session);
+
+        // Verify the view name
+        assertEquals("weather", viewName);
+
+        // Verify the model attributes
+        verify(model).addAttribute("weatherApiKey", weatherApiKey);
+
+        // Verify the response status is not set to 401
+        verify(response, never()).setStatus(401);
+    }
 }
