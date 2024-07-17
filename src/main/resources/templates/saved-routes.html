@@ -111,9 +111,9 @@
                     <tbody>
                         <tr th:each="route : ${routes}">
                             <td th:text="${route.formattedCreationDate}">Date Creation</td>
-                            <td th:text="${route.startPoint}">Start Point</td>
+                            <td>Start Point</td>
 <!--                            TODO: For some reason the end point is always stated as just the country idk how to fix it right now-->
-                            <td th:text="${route.endPoint}">End Point</td>
+                            <td>End Point</td>
                             <td>
                                 <i th:classappend="'mdi mdi-travel-mode ' +
                                             (${route.travelMode} == 'driving' ? 'mdi-car' : '') +

@@ -12,15 +12,13 @@
 <body>
     <!-- Navigation bar -->
     <header>
-        <div class="row justify-content-center fixed-top">
-            <nav class="navbar navbar-expand bg-info h4 px-4 py-3 text-white" style="min-height: 75px;">
+            <nav class = "navbar navbar-expand-md bg-info h4 px-4 py-3 text-white" style = "min-height: 75px;">
                 <!-- Website name-->
                 <span class="fs-4 px-2"> JourneyGenie </span>
 
                 <!-- Other pages -->
                 <div class="navbar-collapse fs-5 d-flex justify-content-md-end justify-content-center">
                     <ul class="navbar-nav">
-
                         <!-- Home -->
                         <form action="/home" method="GET">
                             <input type="submit" value="Home" class="btn btn-dark text-white mx-2"></input>
@@ -35,13 +33,10 @@
                         <form action="/logout" method="POST">
                             <input type="submit" value="Log out" class="btn btn-danger text-white mx-2"></input>
                         </form>
-
                     </ul>
                 </div>
-                </div>
             </nav>
-        </div>
-    </header>
+    </header>   
 
 
     <!-- Container -->
@@ -55,7 +50,7 @@
             </div>
         </div>
         <!-- Buttons -->
-        <div class="d-flex justify-content-center gap-3">
+        <div class="d-flex justify-content-center gap-3 mt-5 mb-5"">
             <a href="/map" class="btn btn-outline-dark btn-lg">Routes</a>
             <a href="/saved-routes" class="btn btn-outline-dark btn-lg">See your saved routes</a>
             <a href="/weather" class="btn btn-primary btn-lg d-flex align-items-center">
