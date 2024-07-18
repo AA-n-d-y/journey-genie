@@ -40,7 +40,7 @@
                         <label for="fromCurrency" class="form-label">From Currency</label>
                         <select id="fromCurrency" class="form-control" required></select>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb3">
                         <label for="toCurrency" class="form-label">To Currency</label>
                         <select id="toCurrency" class="form-control" required></select>
                     </div>
@@ -53,8 +53,6 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
-        // fetching the list of supported currencies 
-        //directly from the Open Exchange Rates API using the currencies.json endpoint.
         document.addEventListener("DOMContentLoaded", function() {
             const apiKey = "[[${OPENCURRENCY_API_KEY}]]";
             const currencyUrl = `https://openexchangerates.org/api/currencies.json?app_id=${apiKey}`;
@@ -72,29 +70,41 @@
                     placeholder: 'Select a currency'
                 });
             });
+            // Handle form submission
+            document.getElementById('currency-form').addEventListener('submit', function(event) { 
+                event.preventDefault(); // Prevent the form from submitting
+                const amount = document.getElementById('amount').value; // Get the amount to convert
+                const fromCurrency = document.getElementById('fromCurrency').value; // Get the "from" currency
+                const toCurrency = document.getElementById('toCurrency').value;// Get the "to" currency
 
-            //
-            document.getElementById('currency-form').addEventListener('submit', function(event) {
-                event.preventDefault();
-                const amount = document.getElementById('amount').value;
-                const fromCurrency = document.getElementById('fromCurrency').value;
-                const toCurrency = document.getElementById('toCurrency').value;
-                //
-                fetch(`https://openexchangerates.org/api/latest.json?app_id=${apiKey}&base=${fromCurrency}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        const rate = data.rates[toCurrency];
-                        if (rate) {
-                            const convertedAmount = (amount * rate).toFixed(2);
-                            document.getElementById('conversion-result').innerHTML = `
-                                <div class="alert alert-success" role="alert">
-                                    ${amount} ${fromCurrency} = ${convertedAmount} ${toCurrency}
-                                </div>
-                            `;
+                // we first fetch conversion rate from "fromCurrency" to USD
+                fetch(`https://openexchangerates.org/api/latest.json?app_id=${apiKey}`)
+                    .then(response => response.json()) // parsing the JSON response
+                    .then(data => { // handle the parsed data
+                        const fromRate = data.rates[fromCurrency]; // gett the conversion rate for "fromCurrency"
+                        if (fromRate) {
+                            //
+                            const usdAmount = amount / fromRate; // converting from "fromCurrency" to USD
+                            // converting from USD to "toCurrency"
+                            const toRate = data.rates[toCurrency];
+                            if (toRate) {
+                                const convertedAmount = (usdAmount * toRate).toFixed(2);
+                                document.getElementById('conversion-result').innerHTML = `
+                                    <div class="alert alert-success" role="alert">
+                                        ${amount} ${fromCurrency} = ${convertedAmount} ${toCurrency}
+                                    </div>
+                                `;
+                            } else {
+                                document.getElementById('conversion-result').innerHTML = `
+                                    <div class="alert alert-danger" role="alert">
+                                        Conversion rate for ${toCurrency} not found.
+                                    </div>
+                                `;
+                            }
                         } else {
                             document.getElementById('conversion-result').innerHTML = `
                                 <div class="alert alert-danger" role="alert">
-                                    Conversion rate for ${toCurrency} not found.
+                                    Conversion rate for ${fromCurrency} not found.
                                 </div>
                             `;
                         }
