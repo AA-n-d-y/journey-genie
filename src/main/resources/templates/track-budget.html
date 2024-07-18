@@ -57,7 +57,7 @@
             const toCurrency = document.getElementById('toCurrency').value;
             const apiKey = "[[${OPENCURRENCY_API_KEY}]]";
 
-            fetch(`https://api.opencurrency.io/v2/latest?apikey=${apiKey}&base=${fromCurrency}`)
+            fetch(`https://openexchangerates.org/api/latest.json?app_id=${apiKey}&base=${fromCurrency}`)
                 .then(response => response.json())
                 .then(data => {
                     const rate = data.rates[toCurrency];
