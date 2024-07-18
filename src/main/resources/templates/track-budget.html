@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Budget</title>
+</head>
+<body>
+    <main>
+        <h1>Track Budget</h1>
+        <form id="currency-form">
+            <label for="amount">Amount</label>
+            <input type="number" id="amount" placeholder="Enter amount" required>
+            <label for="fromCurrency">From Currency</label>
+            <input type="text" id="fromCurrency" placeholder="E.g., USD" required>
+            <label for="toCurrency">To Currency</label>
+            <input type="text" id="toCurrency" placeholder="E.g., EUR" required>
+            <button>Convert</button>
+        </form>
+        <div id="conversion-result"></div>
+    </main>
+    <script>
+        document.getElementById('currency-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const amount = document.getElementById('amount').value;
+            const fromCurrency = document.getElementById('fromCurrency').value.toUpperCase();
+            const toCurrency = document.getElementById('toCurrency').value.toUpperCase();
+            const apiKey = "c865c4cf7ca04457803dd237f592ac7e"; // Use your actual API key here
+
+            fetch(`https://openexchangerates.org/api/latest.json?app_id=${apiKey}&base=${fromCurrency}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const rate = data.rates[toCurrency];
+                    if (rate) {
+                        const convertedAmount = (amount * rate).toFixed(2);
+                        document.getElementById('conversion-result').innerHTML = `
+                            ${amount} ${fromCurrency} = ${convertedAmount} ${toCurrency}
+                        `;
+                    } else {
+                        document.getElementById('conversion-result').innerHTML = `
+                            Conversion rate for ${toCurrency} not found.
+                        `;
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('conversion-result').innerHTML = `
+                        Error fetching conversion rate: ${error.message}
+                    `;
+                });
+        });
+    </script>
+</body>
+</html>
