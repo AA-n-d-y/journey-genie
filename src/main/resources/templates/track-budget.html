@@ -39,7 +39,7 @@
         <div class="row justify-content-center">
             <div class="col-12">
                 <h1 class="text-center mb-5">Track Budget</h1>
-                <form id="currency-form">
+                <!-- <form id="currency-form">
                     <div class="mb-3">
                         <label for="amount" class="form-label">Amount</label>
                         <input type="number" class="form-control" id="amount" placeholder="Enter amount" required>
@@ -53,7 +53,7 @@
                         <select id="toCurrency" class="form-control" required></select>
                     </div>
                 </form>
-                <div id="conversion-result" class="mt-4"></div>
+                <div id="conversion-result" class="mt-4"></div> -->
 
                 <!-- Table for adding and editing rows and columns -->
                 <div class="mt-5">
@@ -63,6 +63,27 @@
                             <thead>
                                 <tr id="table-header">
                                     <th contenteditable="true">Items</th>
+                                    <th>
+                                        <div class="mb-3">
+                                            <label for="amount" class="form-label">Amount</label>
+                                            <input type="number" class="form-control" id="amount" placeholder="Enter amount" required>
+                                        </div>
+                                    </th>
+                                    <th>    
+                                        <div class="mb-3">
+                                            <label for="fromCurrency" class="form-label">From Currency</label>
+                                            <select id="fromCurrency" class="form-control" required></select>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="mb-3">
+                                            <label for="toCurrency" class="form-label">To Currency</label>
+                                            <select id="toCurrency" class="form-control" required></select>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div id="conversion-result" class="mt-4"></div>
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody id="budget-table-body">
