@@ -9,30 +9,30 @@
 <body>
   <!-- Navigation bar -->
     <header>
-            <nav class = "navbar navbar-expand-md bg-info h4 px-4 py-3 text-white" style = "min-height: 75px;">
-                <!-- Website name-->
-                <span class="fs-4 px-2"> JourneyGenie </span>
+        <nav class="navbar navbar-expand-md bg-info h4 px-4 py-3 text-white" style="min-height: 75px;">
+            <!-- Website name-->
+            <span class="fs-4 px-2"> JourneyGenie </span>
 
-                <!-- Other pages -->
-                <div class="navbar-collapse fs-5 d-flex justify-content-md-end justify-content-center">
-                    <ul class="navbar-nav">
-                        <!-- Home -->
-                        <form action="/home" method="GET">
-                            <input type="submit" value="Home" class="btn btn-dark text-white mx-2"></input>
-                        </form>
+            <!-- Other pages -->
+            <div class="navbar-collapse fs-5 d-flex justify-content-md-end justify-content-center">
+                <ul class="navbar-nav">
+                    <!-- Home -->
+                    <form action="/home" method="GET">
+                        <input type="submit" value="Home" class="btn btn-dark text-white mx-2"></input>
+                    </form>
 
-                        <!-- Routes -->
-                        <form action="/map" method="GET">
-                            <input type="submit" value="Routes" class="btn btn-dark text-white mx-2"></input>
-                        </form>
+                    <!-- Routes -->
+                    <form action="/map" method="GET">
+                        <input type="submit" value="Routes" class="btn btn-dark text-white mx-2"></input>
+                    </form>
 
-                        <!-- Log out -->
-                        <form action="/logout" method="POST">
-                            <input type="submit" value="Log out" class="btn btn-danger text-white mx-2"></input>
-                        </form>
-                    </ul>
-                </div>
-            </nav>
+                    <!-- Log out -->
+                    <form action="/logout" method="POST">
+                        <input type="submit" value="Log out" class="btn btn-danger text-white mx-2"></input>
+                    </form>
+                </ul>
+            </div>
+        </nav>
     </header>  
 
     <!-- Container -->
@@ -44,7 +44,7 @@
                     <input type="hidden" name="noteId" th:value="${note.id}">
                     <div class="mb-3">
                         <label for="noteHeadline" class="form-label">Note Headline</label>
-                        <input type="text" class="form-control" id="noteHeadline" name="noteHeadline" th:value="${#strings.substring(note.content, 4, #strings.indexOf(note.content, '</h2>'))}" required>
+                        <input type="text" class="form-control" id="noteHeadline" name="noteHeadline" th:value="${noteHeadline}" required>
                     </div>
                     <div class="mb-3">
                         <label for="noteContent" class="form-label">Note Content</label>
