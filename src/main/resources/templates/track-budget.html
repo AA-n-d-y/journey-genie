@@ -40,14 +40,14 @@
             <div class="col-12">
                 <h1 class="text-center mb-5">Track Budget</h1>
                 <!-- Currency selection -->
-                <div class="mb-3">
+                <!-- <div class="mb-3">
                     <label for="fromCurrency" class="form-label">From Currency</label>
                     <select id="fromCurrency" class="form-control" required></select>
                 </div>
                 <div class="mb-3">
                     <label for="toCurrency" class="form-label">To Currency</label>
                     <select id="toCurrency" class="form-control" required></select>
-                </div>
+                </div> -->
 
                 <!-- Table for adding and editing rows and columns -->
                 <div class="mt-5">
@@ -57,8 +57,16 @@
                             <thead>
                                 <tr id="table-header">
                                     <th contenteditable="true">Items</th>
-                                    <th contenteditable="true">Amount</th>
-                                    <th>Conversion Result</th>
+                                    <th contenteditable="true">
+                                        Amount
+                                        <select id="fromCurrency" class="form-control" required></select>
+
+                                    </th>
+                                    <th>
+                                        Conversion Result
+                                        <select id="toCurrency" class="form-control" required></select>
+
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody id="budget-table-body">
@@ -204,3 +212,4 @@
     </script>
 </body>
 </html>
+
