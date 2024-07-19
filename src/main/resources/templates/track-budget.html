@@ -138,6 +138,21 @@
                         `;
                     });
             });
+
+            document.getElementById('add-row').addEventListener('click', function() {
+                const tableBody = document.getElementById('budget-table-body');
+                const row = document.createElement('tr');
+                const headerCells = document.querySelectorAll('#table-header th');
+                headerCells.forEach(() => {
+                    const cell = document.createElement('td');
+                    cell.classList.add('editable');
+                    cell.contentEditable = 'true';
+                    cell.innerText = 'Editable';
+                    row.appendChild(cell);
+                });
+                tableBody.appendChild(row);
+            });
+
         });
     </script>
 </body>
