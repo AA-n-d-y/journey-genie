@@ -146,8 +146,12 @@ public class RouteController {
         }
         Note note = noteRepository.findById(noteId).orElse(null);
         if (note != null) {
-            String strippedContent = stripHtml(note.getContent()).replace("<br>", "\n");
+            String content = note.getContent();
+            String headline = content.substring(4, content.indexOf("</h2>"));
+            String strippedContent = content.substring(content.indexOf("</h2>") + 5).replace("<br>", "\n").replaceAll("<[^>]*>", "");
+    
             model.addAttribute("note", note);
+            model.addAttribute("noteHeadline", headline);
             model.addAttribute("strippedContent", strippedContent);
         }
         return "edit_note";
