@@ -39,21 +39,15 @@
         <div class="row justify-content-center">
             <div class="col-12">
                 <h1 class="text-center mb-5">Track Budget</h1>
-                <!-- <form id="currency-form">
-                    <div class="mb-3">
-                        <label for="amount" class="form-label">Amount</label>
-                        <input type="number" class="form-control" id="amount" placeholder="Enter amount" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="fromCurrency" class="form-label">From Currency</label>
-                        <select id="fromCurrency" class="form-control" required></select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="toCurrency" class="form-label">To Currency</label>
-                        <select id="toCurrency" class="form-control" required></select>
-                    </div>
-                </form>
-                <div id="conversion-result" class="mt-4"></div> -->
+                <!-- Currency selection -->
+                <div class="mb-3">
+                    <label for="fromCurrency" class="form-label">From Currency</label>
+                    <select id="fromCurrency" class="form-control" required></select>
+                </div>
+                <div class="mb-3">
+                    <label for="toCurrency" class="form-label">To Currency</label>
+                    <select id="toCurrency" class="form-control" required></select>
+                </div>
 
                 <!-- Table for adding and editing rows and columns -->
                 <div class="mt-5">
@@ -63,27 +57,8 @@
                             <thead>
                                 <tr id="table-header">
                                     <th contenteditable="true">Items</th>
-                                    <th>
-                                        <div class="mb-3">
-                                            <label for="amount" class="form-label">Amount</label>
-                                            <input type="number" class="form-control" id="amount" placeholder="Enter amount" required>
-                                        </div>
-                                    </th>
-                                    <th>    
-                                        <div class="mb-3">
-                                            <label for="fromCurrency" class="form-label">From Currency</label>
-                                            <select id="fromCurrency" class="form-control" required></select>
-                                        </div>
-                                    </th>
-                                    <th>
-                                        <div class="mb-3">
-                                            <label for="toCurrency" class="form-label">To Currency</label>
-                                            <select id="toCurrency" class="form-control" required></select>
-                                        </div>
-                                    </th>
-                                    <th>
-                                        <div id="conversion-result" class="mt-4"></div>
-                                    </th>
+                                    <th contenteditable="true">Amount</th>
+                                    <th>Conversion Result</th>
                                 </tr>
                             </thead>
                             <tbody id="budget-table-body">
@@ -121,11 +96,7 @@
             });
 
             // Function to fetch and display the conversion result
-            function updateConversion() {
-                const amount = document.getElementById('amount').value;
-                const fromCurrency = document.getElementById('fromCurrency').value;
-                const toCurrency = document.getElementById('toCurrency').value;
-
+            function updateConversion(amount, fromCurrency, toCurrency, resultElement) {
                 if (amount && fromCurrency && toCurrency) {
                     fetch(`https://openexchangerates.org/api/latest.json?app_id=${apiKey}`)
                         .then(response => response.json())
@@ -136,54 +107,54 @@
                                 const toRate = data.rates[toCurrency];
                                 if (toRate) {
                                     const convertedAmount = (usdAmount * toRate).toFixed(2);
-                                    document.getElementById('conversion-result').innerHTML = `
-                                        <div class="alert alert-success" role="alert">
-                                            ${amount} ${fromCurrency} = ${convertedAmount} ${toCurrency}
-                                        </div>
-                                    `;
+                                    resultElement.innerHTML = `${amount} ${fromCurrency} = ${convertedAmount} ${toCurrency}`;
                                 } else {
-                                    document.getElementById('conversion-result').innerHTML = `
-                                        <div class="alert alert-danger" role="alert">
-                                            Conversion rate for ${toCurrency} not found.
-                                        </div>
-                                    `;
+                                    resultElement.innerHTML = `Conversion rate for ${toCurrency} not found.`;
                                 }
                             } else {
-                                document.getElementById('conversion-result').innerHTML = `
-                                    <div class="alert alert-danger" role="alert">
-                                        Conversion rate for ${fromCurrency} not found.
-                                    </div>
-                                `;
+                                resultElement.innerHTML = `Conversion rate for ${fromCurrency} not found.`;
                             }
                         })
                         .catch(error => {
-                            document.getElementById('conversion-result').innerHTML = `
-                                <div class="alert alert-danger" role="alert">
-                                    Error fetching conversion rate: ${error.message}
-                                </div>
-                            `;
+                            resultElement.innerHTML = `Error fetching conversion rate: ${error.message}`;
                         });
                 }
             }
-
-            // Add event listeners for automatic conversion
-            document.getElementById('amount').addEventListener('input', updateConversion);
-            document.getElementById('fromCurrency').addEventListener('change', updateConversion);
-            document.getElementById('toCurrency').addEventListener('change', updateConversion);
 
             // Add row functionality
             document.getElementById('add-row').addEventListener('click', function() {
                 const tableBody = document.getElementById('budget-table-body');
                 const row = document.createElement('tr');
-                const headerCells = document.querySelectorAll('#table-header th');
-                headerCells.forEach(() => {
-                    const cell = document.createElement('td');
-                    cell.classList.add('editable');
-                    cell.contentEditable = 'true';
-                    cell.innerText = 'Editable';
-                    row.appendChild(cell);
-                });
+
+                // Item cell
+                const itemCell = document.createElement('td');
+                itemCell.classList.add('editable');
+                itemCell.contentEditable = 'true';
+                itemCell.innerText = 'Editable';
+                row.appendChild(itemCell);
+
+                // Amount cell
+                const amountCell = document.createElement('td');
+                amountCell.classList.add('editable');
+                amountCell.contentEditable = 'true';
+                row.appendChild(amountCell);
+
+                // Result cell
+                const resultCell = document.createElement('td');
+                resultCell.classList.add('editable');
+                resultCell.contentEditable = 'false';
+                row.appendChild(resultCell);
+
+                // Append row to table body
                 tableBody.appendChild(row);
+
+                // Add event listener for amount input
+                amountCell.addEventListener('input', function() {
+                    const amount = parseFloat(amountCell.innerText);
+                    const fromCurrency = document.getElementById('fromCurrency').value;
+                    const toCurrency = document.getElementById('toCurrency').value;
+                    updateConversion(amount, fromCurrency, toCurrency, resultCell);
+                });
             });
 
             // Add column functionality
@@ -202,6 +173,31 @@
                     newCell.contentEditable = 'true';
                     newCell.innerText = 'Editable';
                     row.appendChild(newCell);
+                });
+            });
+
+            // Add event listeners for automatic conversion
+            document.getElementById('fromCurrency').addEventListener('change', function() {
+                const rows = document.querySelectorAll('#budget-table-body tr');
+                rows.forEach(row => {
+                    const amountCell = row.children[1];
+                    const resultCell = row.children[2];
+                    const amount = parseFloat(amountCell.innerText);
+                    const fromCurrency = document.getElementById('fromCurrency').value;
+                    const toCurrency = document.getElementById('toCurrency').value;
+                    updateConversion(amount, fromCurrency, toCurrency, resultCell);
+                });
+            });
+
+            document.getElementById('toCurrency').addEventListener('change', function() {
+                const rows = document.querySelectorAll('#budget-table-body tr');
+                rows.forEach(row => {
+                    const amountCell = row.children[1];
+                    const resultCell = row.children[2];
+                    const amount = parseFloat(amountCell.innerText);
+                    const fromCurrency = document.getElementById('fromCurrency').value;
+                    const toCurrency = document.getElementById('toCurrency').value;
+                    updateConversion(amount, fromCurrency, toCurrency, resultCell);
                 });
             });
         });
