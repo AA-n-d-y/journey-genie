@@ -40,13 +40,30 @@
                         <label for="fromCurrency" class="form-label">From Currency</label>
                         <select id="fromCurrency" class="form-control" required></select>
                     </div>
-                    <div class="mb3">
+                    <div class="mb-3">
                         <label for="toCurrency" class="form-label">To Currency</label>
                         <select id="toCurrency" class="form-control" required></select>
                     </div>
                     <button type="submit" class="btn btn-primary">Convert</button>
                 </form>
                 <div id="conversion-result" class="mt-4"></div>
+
+                <!-- Table for adding and editing rows and columns -->
+                <div class="mt-5">
+                    <h2>Tracking Expenses</h2>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr id="table-header">
+                                <th>Item</th>
+                                <th>Amount</th>
+                                <th>Currency</th>
+                            </tr>
+                        </thead>
+                        <tbody id="budget-table-body">
+                            <!-- Rows will be added here -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </main>
