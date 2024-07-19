@@ -10,6 +10,9 @@
         .editable {
             cursor: pointer;
         }
+        .btn-separated {
+            margin-left: 15px;
+        }
     </style>
 </head>
 <body>
@@ -49,7 +52,6 @@
                         <label for="toCurrency" class="form-label">To Currency</label>
                         <select id="toCurrency" class="form-control" required></select>
                     </div>
-                    <button type="submit" class="btn btn-primary">Convert</button>
                 </form>
                 <div id="conversion-result" class="mt-4"></div>
 
@@ -57,30 +59,20 @@
                 <div class="mt-5">
                     <h2>Tracking Expenses</h2>
                     <div class="d-flex mb-3">
-                        <!-- <button id="add-row" class="btn btn-success me-2">Add Row</button>
-                        <button id="add-column" class="btn btn-secondary">Add Column</button> -->
-                    </div>
-                    <div class="d-flex ">
-
                         <table class="table table-bordered">
                             <thead>
                                 <tr id="table-header">
                                     <th contenteditable="true">Items</th>
-                                    <!-- <th>Amount</th>
-                                    <th>Currency</th> -->
                                 </tr>
                             </thead>
                             <tbody id="budget-table-body">
                                 <!-- Rows will be added here -->
                             </tbody>
                         </table>
-                        <!-- <button id="add-column" class="btn btn-warning btn-lg mx-3">Add Column</button> -->
-                        <button id="add-column" class="btn btn-success me-2">Add Column</button>
-
+                        <button id="add-column" class="btn btn-success me-2 btn-separated">Add Column</button>
                     </div>
                     <div class="d-flex mb-3">
                         <button id="add-row" class="btn btn-success me-2">Add Row</button>
-                        <!-- <button id="add-column" class="btn btn-secondary">Add Column</button> -->
                     </div>
                 </div>
             </div>
@@ -106,54 +98,59 @@
                     placeholder: 'Select a currency'
                 });
             });
-            // Handle form submission
-            document.getElementById('currency-form').addEventListener('submit', function(event) { 
-                event.preventDefault(); // Prevent the form from submitting
-                const amount = document.getElementById('amount').value; // Get the amount to convert
-                const fromCurrency = document.getElementById('fromCurrency').value; // Get the "from" currency
-                const toCurrency = document.getElementById('toCurrency').value;// Get the "to" currency
 
-                // we first fetch conversion rate from "fromCurrency" to USD
-                fetch(`https://openexchangerates.org/api/latest.json?app_id=${apiKey}`)
-                    .then(response => response.json()) // parsing the JSON response
-                    .then(data => { // handle the parsed data
-                        const fromRate = data.rates[fromCurrency]; // gett the conversion rate for "fromCurrency"
-                        if (fromRate) {
-                            //
-                            const usdAmount = amount / fromRate; // converting from "fromCurrency" to USD
-                            // converting from USD to "toCurrency"
-                            const toRate = data.rates[toCurrency];
-                            if (toRate) {
-                                const convertedAmount = (usdAmount * toRate).toFixed(2);
-                                document.getElementById('conversion-result').innerHTML = `
-                                    <div class="alert alert-success" role="alert">
-                                        ${amount} ${fromCurrency} = ${convertedAmount} ${toCurrency}
-                                    </div>
-                                `;
+            // Function to fetch and display the conversion result
+            function updateConversion() {
+                const amount = document.getElementById('amount').value;
+                const fromCurrency = document.getElementById('fromCurrency').value;
+                const toCurrency = document.getElementById('toCurrency').value;
+
+                if (amount && fromCurrency && toCurrency) {
+                    fetch(`https://openexchangerates.org/api/latest.json?app_id=${apiKey}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            const fromRate = data.rates[fromCurrency];
+                            if (fromRate) {
+                                const usdAmount = amount / fromRate;
+                                const toRate = data.rates[toCurrency];
+                                if (toRate) {
+                                    const convertedAmount = (usdAmount * toRate).toFixed(2);
+                                    document.getElementById('conversion-result').innerHTML = `
+                                        <div class="alert alert-success" role="alert">
+                                            ${amount} ${fromCurrency} = ${convertedAmount} ${toCurrency}
+                                        </div>
+                                    `;
+                                } else {
+                                    document.getElementById('conversion-result').innerHTML = `
+                                        <div class="alert alert-danger" role="alert">
+                                            Conversion rate for ${toCurrency} not found.
+                                        </div>
+                                    `;
+                                }
                             } else {
                                 document.getElementById('conversion-result').innerHTML = `
                                     <div class="alert alert-danger" role="alert">
-                                        Conversion rate for ${toCurrency} not found.
+                                        Conversion rate for ${fromCurrency} not found.
                                     </div>
                                 `;
                             }
-                        } else {
+                        })
+                        .catch(error => {
                             document.getElementById('conversion-result').innerHTML = `
                                 <div class="alert alert-danger" role="alert">
-                                    Conversion rate for ${fromCurrency} not found.
+                                    Error fetching conversion rate: ${error.message}
                                 </div>
                             `;
-                        }
-                    })
-                    .catch(error => {
-                        document.getElementById('conversion-result').innerHTML = `
-                            <div class="alert alert-danger" role="alert">
-                                Error fetching conversion rate: ${error.message}
-                            </div>
-                        `;
-                    });
-            });
+                        });
+                }
+            }
 
+            // Add event listeners for automatic conversion
+            document.getElementById('amount').addEventListener('input', updateConversion);
+            document.getElementById('fromCurrency').addEventListener('change', updateConversion);
+            document.getElementById('toCurrency').addEventListener('change', updateConversion);
+
+            // Add row functionality
             document.getElementById('add-row').addEventListener('click', function() {
                 const tableBody = document.getElementById('budget-table-body');
                 const row = document.createElement('tr');
@@ -168,6 +165,7 @@
                 tableBody.appendChild(row);
             });
 
+            // Add column functionality
             document.getElementById('add-column').addEventListener('click', function() {
                 const headerRow = document.getElementById('table-header');
                 const newHeaderCell = document.createElement('th');
