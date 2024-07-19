@@ -102,7 +102,7 @@
                 <div id="map2" style="min-height: 500px; width: 100%;"></div>
 
                 <!-- Local Places Table -->
-                <table id="eventsTable" class="table table-bordered mt-3">
+                <table id="eventsTable" class="table table-bordered mt-3 mb-5">
                     <thead>
                         <tr>
                             <th>Place Name</th>
@@ -115,7 +115,7 @@
                 </table>
 
                 <!-- Notes -->
-                <h2 class="mt-5">Notes</h2>
+                <h2 class="mt-5 mb-3">Notes</h2>
                 <div class="notes-container">
                     <div th:each="note : ${notes}" class="note-card col-lg-3 col-md-4 col-sm-6">
                         <div>
@@ -128,7 +128,7 @@
                         </div>
                     </div>
                 </div>
-                <a th:href="@{'/add-note/' + ${route.id}}" class="btn btn-primary mt-3">Add Note</a>
+                <a th:href="@{'/add-note/' + ${route.id}}" class="btn btn-primary mt-3 mb-5">Add Note</a>
             </div>
         </div>
     </main>

@@ -60,20 +60,26 @@
                 </div>
             </nav>
     </header>
-    <div class="container">
-        <div class="todo-app">
-            <h2>Your Itinerary</h2>
-            <div class="row">
-                <!-- <tr th:each="r : ${route}">
 
-                </tr>                     -->
-                <!-- <td th:text="${route.checklist.activities}"></td> -->
-                <ul>
-                    <li th:each="activity : ${act}" th:text="${activity}"></li>
-                </ul>
-                
+
+    <!-- Container -->
+    <div class="container" style="margin-top: 100px;">
+        <div class="todo-app">
+            <div class="row justify-content-center">
+                <div class = "col-8"> 
+
+                    <h1 class = "text-center mb-5"> Checklist</h2>
+
+                    <!-- <tr th:each="r : ${route}">
+
+                    </tr>                     -->
+                    <!-- <td th:text="${route.checklist.activities}"></td> -->
+                    <ul>
+                        <li th:each="activity : ${act}" th:text="${activity}"></li>
+                    </ul>
+
+                </div>
             </div>
-            
         </div>
     </div>
 </body>

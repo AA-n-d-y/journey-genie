@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Make Itinerary</title>
+    <title> Add to Checklist </title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     
@@ -36,19 +36,24 @@
                 </div>
             </nav>
     </header>
+
+
+    <!-- Container -->
     <main class="container" style="margin-top: 100px;">
         <div class="row justify-content-center">
-            <div class="col-12">
-                <h1 class="text-center mb-5">Make Itinerary</h1>
+            <div class="col-8">
+                <h1 class="text-center mb-5"> Add Items to Checklist </h1>
                 <form th:action="@{/makeChecklist/{id}(id=${route.id})}" method="POST">
-                    <input type="text" name="activity" placeholder = "activity" class = "form-control mb-3" required>
+                    <div class = "mt-5 mb-3">
+                        <input type="text" name="activity" placeholder = "Item" class = "form-control" required>
+                    </div>
 
                     <div>
-                        <input type="submit" value="Add" class = "btn btn-info text-white w-100 mt-2 mb-4"></input>
+                        <input type="submit" value="Add to checklist" class = "btn btn-info text-white w-100 mt-2 mb-5"></input>
                     </div>
                 </form>
                 
-                <a th:href="@{|checklist/${route.id}|}">View Itinerary</a>
+                <a th:href="@{|checklist/${route.id}|}"> View Checklist </a>
             </div>
 
             <div>
