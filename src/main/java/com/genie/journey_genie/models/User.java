@@ -19,6 +19,8 @@ public class User {
     private String password;
     private String email;
     private String type;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Preferences preferences;
     
 
     // Constructors
@@ -81,6 +83,13 @@ public class User {
     }
     public void setType(String type) {
         this.type = type;
+    }
+
+    public Preferences getPreferences() {
+        return preferences;
+    }
+    public void setPreferences(Preferences preferences) {
+        this.preferences = preferences;
     }
     
 }

@@ -79,5 +79,10 @@ public class UserController {
         }
     }
 
+    @GetMapping("/preferences")
+    public String preferences() {
+        return "preferences";
+    }
+
     
 }
