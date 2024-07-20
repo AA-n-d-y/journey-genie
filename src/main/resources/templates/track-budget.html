@@ -19,7 +19,7 @@
     <!-- Navigation bar -->
     <header>
         <nav class="navbar navbar-expand-md bg-info h4 px-4 py-3 text-white" style="min-height: 75px;">
-            <span class="fs-4 px-2">JourneyGenie</span>
+            <span class="fs-4 px-2"> JourneyGenie </span>
             <div class="navbar-collapse fs-5 d-flex justify-content-md-end justify-content-center">
                 <ul class="navbar-nav">
                     <form action="/home" method="GET">
@@ -39,6 +39,15 @@
         <div class="row justify-content-center">
             <div class="col-12">
                 <h1 class="text-center mb-5">Track Budget</h1>
+                <!-- Currency selection -->
+                <!-- <div class="mb-3">
+                    <label for="fromCurrency" class="form-label">From Currency</label>
+                    <select id="fromCurrency" class="form-control" required></select>
+                </div>
+                <div class="mb-3">
+                    <label for="toCurrency" class="form-label">To Currency</label>
+                    <select id="toCurrency" class="form-control" required></select>
+                </div> -->
 
                 <!-- Table for adding and editing rows and columns -->
                 <div class="mt-5">
@@ -47,18 +56,17 @@
                         <table class="table table-bordered">
                             <thead>
                                 <tr id="table-header">
+                                    <th contenteditable="true">Numbers</th>
                                     <th contenteditable="true">Items</th>
-                                    <th contenteditable="true">
-                                        Amount
+                                    <th contenteditable="false">
+                                        Amount<br>
                                         <select id="fromCurrency" class="form-control" required></select>
+
                                     </th>
                                     <th>
-                                        Conversion Result 1
-                                        <select class="toCurrency form-control" required></select>
-                                    </th>
-                                    <th>
-                                        Conversion Result 2
-                                        <select class="toCurrency form-control" required></select>
+                                        Converting to<br>
+                                        <select id="toCurrency" class="form-control" required></select>
+
                                     </th>
                                 </tr>
                             </thead>
@@ -66,7 +74,7 @@
                                 <!-- Rows will be added here -->
                             </tbody>
                         </table>
-                        <button id="add-column" class="btn btn-success me-2 btn-separated">Add Column</button>
+                        <!-- <button id="add-column" class="btn btn-success me-2 btn-separated">Add Column</button> -->
                     </div>
                     <div class="d-flex mb-3">
                         <button id="add-row" class="btn btn-success me-2">Add Row</button>
@@ -81,17 +89,16 @@
         document.addEventListener("DOMContentLoaded", function() {
             const apiKey = "[[${OPENCURRENCY_API_KEY}]]";
             const currencyUrl = `https://openexchangerates.org/api/currencies.json?app_id=${apiKey}`;
-            let currencies = [];
-
-            $.getJSON(currencyUrl, function (data) {
-                currencies = Object.keys(data).map(key => ({ id: key, text: `${data[key]} (${key})` }));
-
+            
+            $.getJSON(currencyUrl, function(data) {
+                const currencies = Object.keys(data).map(key => ({ id: key, text: `${data[key]} (${key})` }));
+                
                 $('#fromCurrency').select2({
                     data: currencies,
                     placeholder: 'Select a currency'
                 });
-
-                $('.toCurrency').select2({
+                
+                $('#toCurrency').select2({
                     data: currencies,
                     placeholder: 'Select a currency'
                 });
@@ -128,6 +135,14 @@
                 const tableBody = document.getElementById('budget-table-body');
                 const row = document.createElement('tr');
 
+
+                // numbers cell
+                const numbersCell = document.createElement('td');
+                numbersCell.classList.add('editable');
+                numbersCell.contentEditable = 'true';
+                numbersCell.innerText = 'Editable';
+                row.appendChild(numbersCell);
+                
                 // Item cell
                 const itemCell = document.createElement('td');
                 itemCell.classList.add('editable');
@@ -138,18 +153,14 @@
                 // Amount cell
                 const amountCell = document.createElement('td');
                 amountCell.classList.add('editable');
-                amountCell.contentEditable = 'true';
+                amountCell.contentEditable = 'false';
                 row.appendChild(amountCell);
 
-                // Conversion Result cells
-                const resultCells = [];
-                document.querySelectorAll('.toCurrency').forEach((toCurrencySelect, index) => {
-                    const resultCell = document.createElement('td');
-                    resultCell.classList.add('editable');
-                    resultCell.contentEditable = 'false';
-                    row.appendChild(resultCell);
-                    resultCells.push(resultCell);
-                });
+                // Result cell
+                const resultCell = document.createElement('td');
+                resultCell.classList.add('editable');
+                resultCell.contentEditable = 'false';
+                row.appendChild(resultCell);
 
                 // Append row to table body
                 tableBody.appendChild(row);
@@ -158,72 +169,52 @@
                 amountCell.addEventListener('input', function() {
                     const amount = parseFloat(amountCell.innerText);
                     const fromCurrency = document.getElementById('fromCurrency').value;
-                    document.querySelectorAll('.toCurrency').forEach((toCurrencySelect, index) => {
-                        const toCurrency = toCurrencySelect.value;
-                        updateConversion(amount, fromCurrency, toCurrency, resultCells[index]);
-                    });
+                    const toCurrency = document.getElementById('toCurrency').value;
+                    updateConversion(amount, fromCurrency, toCurrency, resultCell);
                 });
             });
 
             // Add column functionality
-            document.getElementById('add-column').addEventListener('click', function() {
+            // document.getElementById('add-column').addEventListener('click', function() {
+            //     const headerRow = document.getElementById('table-header');
+            //     const newHeaderCell = document.createElement('th');
+            //     newHeaderCell.classList.add('editable');
+            //     newHeaderCell.contentEditable = 'true';
+            //     newHeaderCell.innerText = 'New Column';
+            //     headerRow.appendChild(newHeaderCell);
 
-
-                const headerRow = document.getElementById('table-header');
-                const newHeaderCell = document.createElement('th');
-                newHeaderCell.classList.add('editable');
-                newHeaderCell.contentEditable = 'true';
-                newHeaderCell.innerHTML = `Conversion Result ${headerRow.children.length - 1}
-                                               <select class="toCurrency form-control" required></select>`;
-                headerRow.appendChild(newHeaderCell);
-
-                // Initialize the new select2 dropdown with all currency options
-                $('.toCurrency').last().select2({
-                    data: currencies,
-                    placeholder: 'Select a currency'
-                });
-
-                const rows = document.querySelectorAll('#budget-table-body tr');
-                rows.forEach(row => {
-                    const newCell = document.createElement('td');
-                    newCell.classList.add('editable');
-                    newCell.contentEditable = 'false';
-                    row.appendChild(newCell);
-
-                    // Add event listener for new cell conversion
-                    row.children[1].addEventListener('input', function() {
-                        const amount = parseFloat(row.children[1].innerText);
-                        const fromCurrency = document.getElementById('fromCurrency').value;
-                        const toCurrency = newHeaderCell.querySelector('.toCurrency').value;
-                        updateConversion(amount, fromCurrency, toCurrency, newCell);
-                    });
-                });
-            });
+            //     const rows = document.querySelectorAll('#budget-table-body tr');
+            //     rows.forEach(row => {
+            //         const newCell = document.createElement('td');
+            //         newCell.classList.add('editable');
+            //         newCell.contentEditable = 'true';
+            //         newCell.innerText = 'Editable';
+            //         row.appendChild(newCell);
+            //     });
+            // });
 
             // Add event listeners for automatic conversion
             document.getElementById('fromCurrency').addEventListener('change', function() {
                 const rows = document.querySelectorAll('#budget-table-body tr');
                 rows.forEach(row => {
                     const amountCell = row.children[1];
+                    const resultCell = row.children[2];
                     const amount = parseFloat(amountCell.innerText);
-                    document.querySelectorAll('.toCurrency').forEach((toCurrencySelect, index) => {
-                        const toCurrency = toCurrencySelect.value;
-                        updateConversion(amount, fromCurrency, toCurrency, row.children[index + 2]);
-                    });
+                    const fromCurrency = document.getElementById('fromCurrency').value;
+                    const toCurrency = document.getElementById('toCurrency').value;
+                    updateConversion(amount, fromCurrency, toCurrency, resultCell);
                 });
             });
 
-            document.querySelectorAll('.toCurrency').forEach((toCurrencySelect) => {
-                toCurrencySelect.addEventListener('change', function() {
-                    const rows = document.querySelectorAll('#budget-table-body tr');
-                    rows.forEach(row => {
-                        const amountCell = row.children[1];
-                        const amount = parseFloat(amountCell.innerText);
-                        const fromCurrency = document.getElementById('fromCurrency').value;
-                        const toCurrency = toCurrencySelect.value;
-                        const resultCell = row.children[Array.from(row.children).indexOf(toCurrencySelect) - 1];
-                        updateConversion(amount, fromCurrency, toCurrency, resultCell);
-                    });
+            document.getElementById('toCurrency').addEventListener('change', function() {
+                const rows = document.querySelectorAll('#budget-table-body tr');
+                rows.forEach(row => {
+                    const amountCell = row.children[1];
+                    const resultCell = row.children[2];
+                    const amount = parseFloat(amountCell.innerText);
+                    const fromCurrency = document.getElementById('fromCurrency').value;
+                    const toCurrency = document.getElementById('toCurrency').value;
+                    updateConversion(amount, fromCurrency, toCurrency, resultCell);
                 });
             });
         });
