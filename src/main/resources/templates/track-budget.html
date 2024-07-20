@@ -39,15 +39,6 @@
         <div class="row justify-content-center">
             <div class="col-12">
                 <h1 class="text-center mb-5">Track Budget</h1>
-                <!-- Currency selection -->
-                <!-- <div class="mb-3">
-                    <label for="fromCurrency" class="form-label">From Currency</label>
-                    <select id="fromCurrency" class="form-control" required></select>
-                </div>
-                <div class="mb-3">
-                    <label for="toCurrency" class="form-label">To Currency</label>
-                    <select id="toCurrency" class="form-control" required></select>
-                </div> -->
 
                 <!-- Table for adding and editing rows and columns -->
                 <div class="mt-5">
@@ -61,12 +52,10 @@
                                     <th contenteditable="false">
                                         Amount<br>
                                         <select id="fromCurrency" class="form-control" required></select>
-
                                     </th>
                                     <th>
                                         Converting to<br>
                                         <select id="toCurrency" class="form-control" required></select>
-
                                     </th>
                                 </tr>
                             </thead>
@@ -74,10 +63,10 @@
                                 <!-- Rows will be added here -->
                             </tbody>
                         </table>
-                        <!-- <button id="add-column" class="btn btn-success me-2 btn-separated">Add Column</button> -->
                     </div>
                     <div class="d-flex mb-3">
                         <button id="add-row" class="btn btn-success me-2">Add Row</button>
+                        <button id="reload" class="btn btn-primary me-2">Reload</button>
                     </div>
                 </div>
             </div>
@@ -135,7 +124,6 @@
                 const tableBody = document.getElementById('budget-table-body');
                 const row = document.createElement('tr');
 
-
                 // numbers cell
                 const numbersCell = document.createElement('td');
                 numbersCell.classList.add('editable');
@@ -153,7 +141,8 @@
                 // Amount cell
                 const amountCell = document.createElement('td');
                 amountCell.classList.add('editable');
-                amountCell.contentEditable = 'false';
+                amountCell.contentEditable = 'true';
+                amountCell.innerText = '0'; // Default value
                 row.appendChild(amountCell);
 
                 // Result cell
@@ -172,51 +161,29 @@
                     const toCurrency = document.getElementById('toCurrency').value;
                     updateConversion(amount, fromCurrency, toCurrency, resultCell);
                 });
+
+                // Trigger conversion for new row
+                const amount = parseFloat(amountCell.innerText);
+                const fromCurrency = document.getElementById('fromCurrency').value;
+                const toCurrency = document.getElementById('toCurrency').value;
+                updateConversion(amount, fromCurrency, toCurrency, resultCell);
             });
 
-            // Add column functionality
-            // document.getElementById('add-column').addEventListener('click', function() {
-            //     const headerRow = document.getElementById('table-header');
-            //     const newHeaderCell = document.createElement('th');
-            //     newHeaderCell.classList.add('editable');
-            //     newHeaderCell.contentEditable = 'true';
-            //     newHeaderCell.innerText = 'New Column';
-            //     headerRow.appendChild(newHeaderCell);
-
-            //     const rows = document.querySelectorAll('#budget-table-body tr');
-            //     rows.forEach(row => {
-            //         const newCell = document.createElement('td');
-            //         newCell.classList.add('editable');
-            //         newCell.contentEditable = 'true';
-            //         newCell.innerText = 'Editable';
-            //         row.appendChild(newCell);
-            //     });
-            // });
-
-            // Add event listeners for automatic conversion
-            document.getElementById('fromCurrency').addEventListener('change', function() {
+            // Function to update all rows
+            function updateAllRows() {
                 const rows = document.querySelectorAll('#budget-table-body tr');
                 rows.forEach(row => {
-                    const amountCell = row.children[1];
-                    const resultCell = row.children[2];
+                    const amountCell = row.children[2];
+                    const resultCell = row.children[3];
                     const amount = parseFloat(amountCell.innerText);
                     const fromCurrency = document.getElementById('fromCurrency').value;
                     const toCurrency = document.getElementById('toCurrency').value;
                     updateConversion(amount, fromCurrency, toCurrency, resultCell);
                 });
-            });
+            }
 
-            document.getElementById('toCurrency').addEventListener('change', function() {
-                const rows = document.querySelectorAll('#budget-table-body tr');
-                rows.forEach(row => {
-                    const amountCell = row.children[1];
-                    const resultCell = row.children[2];
-                    const amount = parseFloat(amountCell.innerText);
-                    const fromCurrency = document.getElementById('fromCurrency').value;
-                    const toCurrency = document.getElementById('toCurrency').value;
-                    updateConversion(amount, fromCurrency, toCurrency, resultCell);
-                });
-            });
+            // Add event listener for reload button
+            document.getElementById('reload').addEventListener('click', updateAllRows);
         });
     </script>
 </body>
