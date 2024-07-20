@@ -81,15 +81,16 @@
         document.addEventListener("DOMContentLoaded", function() {
             const apiKey = "[[${OPENCURRENCY_API_KEY}]]";
             const currencyUrl = `https://openexchangerates.org/api/currencies.json?app_id=${apiKey}`;
-            
-            $.getJSON(currencyUrl, function(data) {
-                const currencies = Object.keys(data).map(key => ({ id: key, text: `${data[key]} (${key})` }));
-                
+            let currencies = [];
+
+            $.getJSON(currencyUrl, function (data) {
+                currencies = Object.keys(data).map(key => ({ id: key, text: `${data[key]} (${key})` }));
+
                 $('#fromCurrency').select2({
                     data: currencies,
                     placeholder: 'Select a currency'
                 });
-                
+
                 $('.toCurrency').select2({
                     data: currencies,
                     placeholder: 'Select a currency'
@@ -166,17 +167,19 @@
 
             // Add column functionality
             document.getElementById('add-column').addEventListener('click', function() {
+
+
                 const headerRow = document.getElementById('table-header');
                 const newHeaderCell = document.createElement('th');
                 newHeaderCell.classList.add('editable');
                 newHeaderCell.contentEditable = 'true';
                 newHeaderCell.innerHTML = `Conversion Result ${headerRow.children.length - 1}
-                                            <select class="toCurrency form-control" required></select>`;
+                                               <select class="toCurrency form-control" required></select>`;
                 headerRow.appendChild(newHeaderCell);
 
-                // Update new column's select2 dropdown
-                $('.toCurrency').select2({
-                    data: $('#fromCurrency').select2('data'),
+                // Initialize the new select2 dropdown with all currency options
+                $('.toCurrency').last().select2({
+                    data: currencies,
                     placeholder: 'Select a currency'
                 });
 
