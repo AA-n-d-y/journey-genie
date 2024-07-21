@@ -161,10 +161,32 @@
                     cell5.innerHTML = ""; // This will be updated with conversion result
                     
                     updateConversion(amount, fromCurrency, toCurrency, cell5);
+                    saveBudget(item, amount, fromCurrency, toCurrency, cell5.innerHTML);
                     selectedRowToInput();
                 }
             }
-            
+
+            function saveBudget(item, amount, fromCurrency, toCurrency, convertedAmount) {
+                $.ajax({
+                    url: '/budgets',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        item: item,
+                        amount: parseFloat(amount),
+                        fromCurrency: fromCurrency,
+                        toCurrency: toCurrency,
+                        convertedAmount: parseFloat(convertedAmount.split(' ')[0])
+                    }),
+                    success: function (result) {
+                        console.log("Budget saved", result);
+                    },
+                    error: function (error) {
+                        console.log("Error saving budget", error);
+                    }
+                });
+            }
+
             function selectedRowToInput() {
                 for (var i = 1; i < table.rows.length; i++) {
                     table.rows[i].onclick = function() {
@@ -178,7 +200,34 @@
                 }
             }
             selectedRowToInput();
-            
+
+            function loadBudgets() {
+                $.ajax({
+                    url: '/budgets',
+                    type: 'GET',
+                    success: function (data) {
+                        data.forEach(function (budget) {
+                            var newRow = table.insertRow(table.length),
+                                cell1 = newRow.insertCell(0),
+                                cell2 = newRow.insertCell(1),
+                                cell3 = newRow.insertCell(2),
+                                cell4 = newRow.insertCell(3),
+                                cell5 = newRow.insertCell(4);
+                            
+                            cell1.innerHTML = budget.item;
+                            cell2.innerHTML = budget.amount;
+                            cell3.innerHTML = budget.fromCurrency;
+                            cell4.innerHTML = budget.toCurrency;
+                            cell5.innerHTML = `${budget.convertedAmount} ${budget.toCurrency}`;
+                        });
+                        selectedRowToInput();
+                    },
+                    error: function (error) {
+                        console.log("Error loading budgets", error);
+                    }
+                });
+            }
+
             function editHtmlTbleSelectedRow() {
                 var item = document.getElementById("item").value,
                     amount = document.getElementById("amount").value,
@@ -190,17 +239,55 @@
                     table.rows[rIndex].cells[2].innerHTML = fromCurrency;
                     table.rows[rIndex].cells[3].innerHTML = toCurrency;
                     updateConversion(amount, fromCurrency, toCurrency, table.rows[rIndex].cells[4]);
+                    updateBudget(table.rows[rIndex].cells[4].innerHTML.split(' ')[0]);
                 }
             }
-            
-            function removeSelectedRow() {
-                table.deleteRow(rIndex);
-                document.getElementById("item").value = "";
-                document.getElementById("amount").value = "";
-                document.getElementById("fromCurrency").value = "";
-                document.getElementById("toCurrency").value = "";
-                document.getElementById("convertedAmount").innerHTML = "";
+
+            function updateBudget(convertedAmount) {
+                var id = table.rows[rIndex].dataset.id;
+                $.ajax({
+                    url: `/budgets/${id}`,
+                    type: 'PUT',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        item: document.getElementById("item").value,
+                        amount: parseFloat(document.getElementById("amount").value),
+                        fromCurrency: document.getElementById("fromCurrency").value,
+                        toCurrency: document.getElementById("toCurrency").value,
+                        convertedAmount: parseFloat(convertedAmount)
+                    }),
+                    success: function (result) {
+                        console.log("Budget updated", result);
+                    },
+                    error: function (error) {
+                        console.log("Error updating budget", error);
+                    }
+                });
             }
+
+            function removeSelectedRow() {
+                var id = table.rows[rIndex].dataset.id;
+                $.ajax({
+                    url: `/budgets/${id}`,
+                    type: 'DELETE',
+                    success: function (result) {
+                        console.log("Budget deleted", result);
+                        table.deleteRow(rIndex);
+                        document.getElementById("item").value = "";
+                        document.getElementById("amount").value = "";
+                        document.getElementById("fromCurrency").value = "";
+                        document.getElementById("toCurrency").value = "";
+                        document.getElementById("convertedAmount").innerHTML = "";
+                    },
+                    error: function (error) {
+                        console.log("Error deleting budget", error);
+                    }
+                });
+            }
+
+            $(document).ready(function () {
+                loadBudgets();
+            });
         </script>
     </body>
 </html>
