@@ -17,7 +17,7 @@ public class Checklist {
     private List<String> activities = new ArrayList<>();
 
     @ElementCollection
-    private List<String> places;
+    private List<String> places = new ArrayList<>();
 
 
     // Constructors
