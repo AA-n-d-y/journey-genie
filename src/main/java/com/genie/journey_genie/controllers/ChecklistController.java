@@ -21,6 +21,8 @@ import jakarta.servlet.http.HttpSession;
 //import com.genie.journey_genie.models.Checklist;
 import java.util.List;
 import java.util.Map;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @Controller
 public class ChecklistController {
@@ -51,7 +53,8 @@ public class ChecklistController {
         // Else
         Route2 routeForAssocChecklist = routeRepository.findById(id).orElse(null);
 
-        // If checklist is null null
+
+        // If checklist is null
         if (routeForAssocChecklist.getChecklist() == null) {
             model.addAttribute("act", null);
             return "checklist";
@@ -60,6 +63,7 @@ public class ChecklistController {
         // Else
         List<String> activities = routeForAssocChecklist.getChecklist().getActivities();
         model.addAttribute("act", activities);
+        model.addAttribute("places", routeForAssocChecklist.getChecklist().getPlaces());
         return "checklist";
     }
 
@@ -110,4 +114,28 @@ public class ChecklistController {
     }
 
 
+    // Post request (adding a place to the checklist)
+    @PostMapping("/addPlace/{id}")
+    public String addPlaceToChecklist(@RequestParam Map<String, String> place, @PathVariable Long id, HttpServletResponse response, HttpSession session) {
+        // If not logged in
+        if (!isUserLoggedIn(session)) {
+            response.setStatus(401); // Unauthorized
+            return "loginPage";
+        }
+
+        // Else
+        Route2 route = routeRepository.findById(id).orElse(null);
+
+        if (route.getChecklist() != null && !route.getChecklist().getPlaces().isEmpty()) {
+            route.getChecklist().getPlaces().add(place.get("placeTitle"));
+            checklistRepository.save(route.getChecklist()); // Save the Checklist object
+            route.setChecklist(route.getChecklist());
+            routeRepository.save(route);
+            System.out.println(place.get("placeTitle"));
+        }
+        
+        return "redirect:/route-details/" + id;
+    }
+ 
+    
 }

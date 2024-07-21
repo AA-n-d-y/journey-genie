@@ -68,14 +68,20 @@
             <div class="row justify-content-center">
                 <div class = "col-8"> 
 
-                    <h1 class = "text-center mb-5"> Checklist</h2>
+                    <h1 class = "text-center mb-5"> Checklist</h1>
 
                     <!-- <tr th:each="r : ${route}">
 
                     </tr>                     -->
                     <!-- <td th:text="${route.checklist.activities}"></td> -->
-                    <ul>
+                    <h3 class = "mb-2"> Activities </h3>
+                    <ul class = "mb-5">
                         <li th:each="activity : ${act}" th:text="${activity}"></li>
+                    </ul>
+
+                    <h3 class = "mb-2"> Places </h3>
+                    <ul class = "mb-5">
+                        <li th:each="place : ${places}" th:text="${place}"></li>
                     </ul>
 
                     <a href="/saved-routes" class="btn btn-link mt-3">Back to Saved Routes</a>
