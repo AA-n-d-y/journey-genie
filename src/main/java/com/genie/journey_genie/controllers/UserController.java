@@ -75,7 +75,7 @@ public class UserController {
         else {
             repo.save(new User(firstname, lastname, username, password, email, type));
             response.setStatus(201);
-            return "loginPage";
+            return "preferences";
         }
     }
 
