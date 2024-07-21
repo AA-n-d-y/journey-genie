@@ -53,7 +53,7 @@
             Item: <input type="text" name="item" id="item" class="form-control">
             Amount: <input type="number" name="amount" id="amount" class="form-control" oninput="updateDisplayedConversion()">
             Converted Amount: <div id="convertedAmount" class="mb-3"></div>
-            From Currency: <select id="fromCurrency" class="form-control"></select>
+            From Currency: <select id="fromCurrency" class="form-control" onchange="updateDisplayedConversion()"></select>
             To Currency: <select id="toCurrency" class="form-control" onchange="updateDisplayedConversion()"></select>
             <button onclick="addHtmlTableRow();" class="btn btn-success">Add</button>
             <button onclick="editHtmlTbleSelectedRow();" class="btn btn-primary">Edit</button>
