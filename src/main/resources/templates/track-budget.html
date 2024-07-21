@@ -15,6 +15,7 @@
         .tab-2 input, .tab-2 select { display: block; margin-bottom: 10px; width: 100%; }
         tr { transition: all .25s ease-in-out; }
         tr:hover { background-color: #EEE; cursor: pointer; }
+        #moreOptions { display: none; } /* Initially hidden */
     </style>
 </head>
 <body>
@@ -53,8 +54,11 @@
             Item: <input type="text" name="item" id="item" class="form-control">
             Amount: <input type="number" name="amount" id="amount" class="form-control" oninput="updateDisplayedConversion()">
             Converted Amount: <div id="convertedAmount" class="mb-3"></div>
-            From Currency: <select id="fromCurrency" class="form-control" onchange="updateDisplayedConversion()"></select>
-            To Currency: <select id="toCurrency" class="form-control" onchange="updateDisplayedConversion()"></select>
+            <button onclick="toggleMoreOptions()" class="btn btn-secondary mb-3">More</button>
+            <div id="moreOptions">
+                From Currency: <select id="fromCurrency" class="form-control"></select>
+                To Currency: <select id="toCurrency" class="form-control" onchange="updateDisplayedConversion()"></select>
+            </div>
             <button onclick="addHtmlTableRow();" class="btn btn-success">Add</button>
             <button onclick="editHtmlTbleSelectedRow();" class="btn btn-primary">Edit</button>
             <button onclick="removeSelectedRow();" class="btn btn-danger">Remove</button>
@@ -320,6 +324,15 @@
                     console.log("Error deleting budget", error);
                 }
             });
+        }
+
+        function toggleMoreOptions() {
+            var moreOptions = document.getElementById("moreOptions");
+            if (moreOptions.style.display === "none" || moreOptions.style.display === "") {
+                moreOptions.style.display = "block";
+            } else {
+                moreOptions.style.display = "none";
+            }
         }
 
         $(document).ready(function () {
