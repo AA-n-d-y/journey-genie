@@ -1,293 +1,333 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Track Budget</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-        
-        <style>
-            .container { overflow: hidden; }
-            .tab { float: left; }
-            .tab-2 { margin-left: 50px; }
-            .tab-2 input, .tab-2 select { display: block; margin-bottom: 10px; width: 100%; }
-            tr { transition: all .25s ease-in-out; }
-            tr:hover { background-color: #EEE; cursor: pointer; }
-        </style>
-    </head>
-    <body>
-        <header>
-            <nav class="navbar navbar-expand-md bg-info h4 px-4 py-3 text-white" style="min-height: 75px;">
-                <span class="fs-4 px-2">JourneyGenie</span>
-                <div class="navbar-collapse fs-5 d-flex justify-content-md-end justify-content-center">
-                    <ul class="navbar-nav">
-                        <form action="/home" method="GET">
-                            <input type="submit" value="Home" class="btn btn-dark text-white mx-2"></input>
-                        </form>
-                        <form action="/map" method="GET">
-                            <input type="submit" value="Routes" class="btn btn-dark text-white mx-2"></input>
-                        </form>
-                        <form action="/logout" method="POST">
-                            <input type="submit" value="Log out" class="btn btn-danger text-white mx-2"></input>
-                        </form>
-                    </ul>
-                </div>
-            </nav>
-        </header>
-        
-        <div class="container mt-5">
-            <div class="tab tab-1">
-                <table id="table" class="table table-bordered">
-                    <tr>
-                        <th>Item</th>
-                        <th>Amount</th>
-                        <th>From Currency</th>
-                        <th>To Currency</th>
-                        <th>Converted Amount</th>
-                    </tr>
-                </table>
+<head>
+    <title>Track Budget</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <style>
+        .container { overflow: hidden; }
+        .tab { float: left; }
+        .tab-2 { margin-left: 50px; }
+        .tab-2 input, .tab-2 select { display: block; margin-bottom: 10px; width: 100%; }
+        tr { transition: all .25s ease-in-out; }
+        tr:hover { background-color: #EEE; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-md bg-info h4 px-4 py-3 text-white" style="min-height: 75px;">
+            <span class="fs-4 px-2">JourneyGenie</span>
+            <div class="navbar-collapse fs-5 d-flex justify-content-md-end justify-content-center">
+                <ul class="navbar-nav">
+                    <form action="/home" method="GET">
+                        <input type="submit" value="Home" class="btn btn-dark text-white mx-2"></input>
+                    </form>
+                    <form action="/map" method="GET">
+                        <input type="submit" value="Routes" class="btn btn-dark text-white mx-2"></input>
+                    </form>
+                    <form action="/logout" method="POST">
+                        <input type="submit" value="Log out" class="btn btn-danger text-white mx-2"></input>
+                    </form>
+                </ul>
             </div>
-            <div class="tab tab-2">
-                Item: <input type="text" name="item" id="item" class="form-control">
-                Amount: <input type="number" name="amount" id="amount" class="form-control" oninput="updateDisplayedConversion()">
-                Converted Amount: <div id="convertedAmount" class="mb-3"></div>
-                From Currency: <select id="fromCurrency" class="form-control"></select>
-                To Currency: <select id="toCurrency" class="form-control" onchange="updateDisplayedConversion()"></select>
-                <button onclick="addHtmlTableRow();" class="btn btn-success">Add</button>
-                <button onclick="editHtmlTbleSelectedRow();" class="btn btn-primary">Edit</button>
-                <button onclick="removeSelectedRow();" class="btn btn-danger">Remove</button>
-            </div>
+        </nav>
+    </header>
+
+    <div class="container mt-5">
+        <div class="tab tab-1">
+            <table id="table" class="table table-bordered">
+                <tr>
+                    <th>Item</th>
+                    <th>Amount</th>
+                    <th>From Currency</th>
+                    <th>To Currency</th>
+                    <th>Converted Amount</th>
+                </tr>
+            </table>
         </div>
-        
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-        <script>
-            var rIndex,
-                table = document.getElementById("table");
-            
-            const apiKey = "[[${OPENCURRENCY_API_KEY}]]";
-            const currencyUrl = `https://openexchangerates.org/api/currencies.json?app_id=${apiKey}`;
-            
-            $.getJSON(currencyUrl, function(data) {
-                const currencies = Object.keys(data).map(key => ({ id: key, text: `${data[key]} (${key})` }));
-                
-                $('#fromCurrency').select2({
-                    data: currencies,
-                    placeholder: 'Select a currency'
-                });
-                
-                $('#toCurrency').select2({
-                    data: currencies,
-                    placeholder: 'Select a currency'
-                });
+        <div class="tab tab-2">
+            Item: <input type="text" name="item" id="item" class="form-control">
+            Amount: <input type="number" name="amount" id="amount" class="form-control" oninput="updateDisplayedConversion()">
+            Converted Amount: <div id="convertedAmount" class="mb-3"></div>
+            From Currency: <select id="fromCurrency" class="form-control"></select>
+            To Currency: <select id="toCurrency" class="form-control" onchange="updateDisplayedConversion()"></select>
+            <button onclick="addHtmlTableRow();" class="btn btn-success">Add</button>
+            <button onclick="editHtmlTbleSelectedRow();" class="btn btn-primary">Edit</button>
+            <button onclick="removeSelectedRow();" class="btn btn-danger">Remove</button>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        var rIndex,
+            table = document.getElementById("table");
+
+        const apiKey = "[[${OPENCURRENCY_API_KEY}]]";
+        const currencyUrl = `https://openexchangerates.org/api/currencies.json?app_id=${apiKey}`;
+
+        $.getJSON(currencyUrl, function(data) {
+            const currencies = Object.keys(data).map(key => ({ id: key, text: `${data[key]} (${key})` }));
+
+            $('#fromCurrency').select2({
+                data: currencies,
+                placeholder: 'Select a currency'
             });
 
-            function checkEmptyInput() {
-                var isEmpty = false,
+            $('#toCurrency').select2({
+                data: currencies,
+                placeholder: 'Select a currency'
+            });
+        });
+
+        function checkEmptyInput() {
+            var isEmpty = false,
+                item = document.getElementById("item").value,
+                amount = document.getElementById("amount").value,
+                fromCurrency = document.getElementById("fromCurrency").value,
+                toCurrency = document.getElementById("toCurrency").value;
+
+            if (item === "") {
+                alert("Item cannot be empty");
+                isEmpty = true;
+            } else if (amount === "") {
+                alert("Amount cannot be empty");
+                isEmpty = true;
+            } else if (fromCurrency === "") {
+                alert("From Currency cannot be empty");
+                isEmpty = true;
+            } else if (toCurrency === "") {
+                alert("To Currency cannot be empty");
+                isEmpty = true;
+            }
+            return isEmpty;
+        }
+
+        function updateConversion(amount, fromCurrency, toCurrency, resultElement) {
+            if (amount && fromCurrency && toCurrency) {
+                fetch(`https://openexchangerates.org/api/latest.json?app_id=${apiKey}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const fromRate = data.rates[fromCurrency];
+                        if (fromRate) {
+                            const usdAmount = amount / fromRate;
+                            const toRate = data.rates[toCurrency];
+                            if (toRate) {
+                                const convertedAmount = (usdAmount * toRate).toFixed(2);
+                                resultElement.innerHTML = `${convertedAmount} ${toCurrency}`;
+                            } else {
+                                resultElement.innerHTML = `Conversion rate for ${toCurrency} not found.`;
+                            }
+                        } else {
+                            resultElement.innerHTML = `Conversion rate for ${fromCurrency} not found.`;
+                        }
+                    })
+                    .catch(error => {
+                        resultElement.innerHTML = `Error fetching conversion rate: ${error.message}`;
+                    });
+            }
+        }
+
+        function updateDisplayedConversion() {
+            var amount = document.getElementById("amount").value,
+                fromCurrency = document.getElementById("fromCurrency").value,
+                toCurrency = document.getElementById("toCurrency").value,
+                resultElement = document.getElementById("convertedAmount");
+
+            updateConversion(amount, fromCurrency, toCurrency, resultElement);
+        }
+
+        function addHtmlTableRow() {
+            if (!checkEmptyInput()) {
+                var newRow = table.insertRow(table.length),
+                    cell1 = newRow.insertCell(0),
+                    cell2 = newRow.insertCell(1),
+                    cell3 = newRow.insertCell(2),
+                    cell4 = newRow.insertCell(3),
+                    cell5 = newRow.insertCell(4),
                     item = document.getElementById("item").value,
                     amount = document.getElementById("amount").value,
                     fromCurrency = document.getElementById("fromCurrency").value,
                     toCurrency = document.getElementById("toCurrency").value;
-            
-                if (item === "") {
-                    alert("Item cannot be empty");
-                    isEmpty = true;
-                } else if (amount === "") {
-                    alert("Amount cannot be empty");
-                    isEmpty = true;
-                } else if (fromCurrency === "") {
-                    alert("From Currency cannot be empty");
-                    isEmpty = true;
-                } else if (toCurrency === "") {
-                    alert("To Currency cannot be empty");
-                    isEmpty = true;
-                }
-                return isEmpty;
-            }
 
-            function updateConversion(amount, fromCurrency, toCurrency, resultElement) {
-                if (amount && fromCurrency && toCurrency) {
-                    fetch(`https://openexchangerates.org/api/latest.json?app_id=${apiKey}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            const fromRate = data.rates[fromCurrency];
-                            if (fromRate) {
-                                const usdAmount = amount / fromRate;
-                                const toRate = data.rates[toCurrency];
-                                if (toRate) {
-                                    const convertedAmount = (usdAmount * toRate).toFixed(2);
-                                    resultElement.innerHTML = `${convertedAmount} ${toCurrency}`;
-                                } else {
-                                    resultElement.innerHTML = `Conversion rate for ${toCurrency} not found.`;
+                cell1.innerHTML = item;
+                cell2.innerHTML = amount;
+                cell3.innerHTML = fromCurrency;
+                cell4.innerHTML = toCurrency;
+                cell5.innerHTML = ""; // This will be updated with conversion result
+
+                saveBudget(item, amount, fromCurrency, toCurrency, cell5);
+            }
+        }
+
+        function saveBudget(item, amount, fromCurrency, toCurrency, resultElement) {
+            fetch(`https://openexchangerates.org/api/latest.json?app_id=${apiKey}`)
+                .then(response => response.json())
+                .then(data => {
+                    const fromRate = data.rates[fromCurrency];
+                    if (fromRate) {
+                        const usdAmount = amount / fromRate;
+                        const toRate = data.rates[toCurrency];
+                        if (toRate) {
+                            const convertedAmount = (usdAmount * toRate).toFixed(2);
+                            resultElement.innerHTML = `${convertedAmount} ${toCurrency}`;
+
+                            $.ajax({
+                                url: '/budgets',
+                                type: 'POST',
+                                contentType: 'application/json',
+                                data: JSON.stringify({
+                                    item: item,
+                                    amount: parseFloat(amount),
+                                    fromCurrency: fromCurrency,
+                                    toCurrency: toCurrency,
+                                    convertedAmount: parseFloat(convertedAmount)
+                                }),
+                                success: function (result) {
+                                    console.log("Budget saved", result);
+                                    newRow.setAttribute("data-id", result.id);
+                                },
+                                error: function (error) {
+                                    console.log("Error saving budget", error);
                                 }
-                            } else {
-                                resultElement.innerHTML = `Conversion rate for ${fromCurrency} not found.`;
-                            }
-                        })
-                        .catch(error => {
-                            resultElement.innerHTML = `Error fetching conversion rate: ${error.message}`;
-                        });
-                }
-            }
+                            });
+                        } else {
+                            resultElement.innerHTML = `Conversion rate for ${toCurrency} not found.`;
+                        }
+                    } else {
+                        resultElement.innerHTML = `Conversion rate for ${fromCurrency} not found.`;
+                    }
+                })
+                .catch(error => {
+                    resultElement.innerHTML = `Error fetching conversion rate: ${error.message}`;
+                });
+        }
 
-            function updateDisplayedConversion() {
-                var amount = document.getElementById("amount").value,
-                    fromCurrency = document.getElementById("fromCurrency").value,
-                    toCurrency = document.getElementById("toCurrency").value,
-                    resultElement = document.getElementById("convertedAmount");
-
-                updateConversion(amount, fromCurrency, toCurrency, resultElement);
+        function selectedRowToInput() {
+            for (var i = 1; i < table.rows.length; i++) {
+                table.rows[i].onclick = function() {
+                    rIndex = this.rowIndex;
+                    document.getElementById("item").value = this.cells[0].innerHTML;
+                    document.getElementById("amount").value = this.cells[1].innerHTML;
+                    document.getElementById("fromCurrency").value = this.cells[2].innerHTML;
+                    document.getElementById("toCurrency").value = this.cells[3].innerHTML;
+                    updateDisplayedConversion();
+                };
             }
-            
-            function addHtmlTableRow() {
-                if (!checkEmptyInput()) {
-                    var newRow = table.insertRow(table.length),
-                        cell1 = newRow.insertCell(0),
-                        cell2 = newRow.insertCell(1),
-                        cell3 = newRow.insertCell(2),
-                        cell4 = newRow.insertCell(3),
-                        cell5 = newRow.insertCell(4),
-                        item = document.getElementById("item").value,
-                        amount = document.getElementById("amount").value,
-                        fromCurrency = document.getElementById("fromCurrency").value,
-                        toCurrency = document.getElementById("toCurrency").value;
-            
-                    cell1.innerHTML = item;
-                    cell2.innerHTML = amount;
-                    cell3.innerHTML = fromCurrency;
-                    cell4.innerHTML = toCurrency;
-                    cell5.innerHTML = ""; // This will be updated with conversion result
-                    
-                    updateConversion(amount, fromCurrency, toCurrency, cell5);
-                    saveBudget(item, amount, fromCurrency, toCurrency, cell5.innerHTML);
+        }
+        selectedRowToInput();
+
+        function loadBudgets() {
+            $.ajax({
+                url: '/budgets',
+                type: 'GET',
+                success: function (data) {
+                    data.forEach(function (budget) {
+                        var newRow = table.insertRow(table.length),
+                            cell1 = newRow.insertCell(0),
+                            cell2 = newRow.insertCell(1),
+                            cell3 = newRow.insertCell(2),
+                            cell4 = newRow.insertCell(3),
+                            cell5 = newRow.insertCell(4);
+
+                        newRow.setAttribute("data-id", budget.id);
+                        cell1.innerHTML = budget.item;
+                        cell2.innerHTML = budget.amount;
+                        cell3.innerHTML = budget.fromCurrency;
+                        cell4.innerHTML = budget.toCurrency;
+                        cell5.innerHTML = `${budget.convertedAmount} ${budget.toCurrency}`;
+                    });
                     selectedRowToInput();
+                },
+                error: function (error) {
+                    console.log("Error loading budgets", error);
                 }
-            }
-
-            function saveBudget(item, amount, fromCurrency, toCurrency, convertedAmount) {
-                $.ajax({
-                    url: '/budgets',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({
-                        item: item,
-                        amount: parseFloat(amount),
-                        fromCurrency: fromCurrency,
-                        toCurrency: toCurrency,
-                        convertedAmount: parseFloat(convertedAmount.split(' ')[0])
-                    }),
-                    success: function (result) {
-                        console.log("Budget saved", result);
-                    },
-                    error: function (error) {
-                        console.log("Error saving budget", error);
-                    }
-                });
-            }
-
-            function selectedRowToInput() {
-                for (var i = 1; i < table.rows.length; i++) {
-                    table.rows[i].onclick = function() {
-                        rIndex = this.rowIndex;
-                        document.getElementById("item").value = this.cells[0].innerHTML;
-                        document.getElementById("amount").value = this.cells[1].innerHTML;
-                        document.getElementById("fromCurrency").value = this.cells[2].innerHTML;
-                        document.getElementById("toCurrency").value = this.cells[3].innerHTML;
-                        updateDisplayedConversion();
-                    };
-                }
-            }
-            selectedRowToInput();
-
-            function loadBudgets() {
-                $.ajax({
-                    url: '/budgets',
-                    type: 'GET',
-                    success: function (data) {
-                        data.forEach(function (budget) {
-                            var newRow = table.insertRow(table.length),
-                                cell1 = newRow.insertCell(0),
-                                cell2 = newRow.insertCell(1),
-                                cell3 = newRow.insertCell(2),
-                                cell4 = newRow.insertCell(3),
-                                cell5 = newRow.insertCell(4);
-                            
-                            cell1.innerHTML = budget.item;
-                            cell2.innerHTML = budget.amount;
-                            cell3.innerHTML = budget.fromCurrency;
-                            cell4.innerHTML = budget.toCurrency;
-                            cell5.innerHTML = `${budget.convertedAmount} ${budget.toCurrency}`;
-                        });
-                        selectedRowToInput();
-                    },
-                    error: function (error) {
-                        console.log("Error loading budgets", error);
-                    }
-                });
-            }
-
-            function editHtmlTbleSelectedRow() {
-                var item = document.getElementById("item").value,
-                    amount = document.getElementById("amount").value,
-                    fromCurrency = document.getElementById("fromCurrency").value,
-                    toCurrency = document.getElementById("toCurrency").value;
-                if (!checkEmptyInput()) {
-                    table.rows[rIndex].cells[0].innerHTML = item;
-                    table.rows[rIndex].cells[1].innerHTML = amount;
-                    table.rows[rIndex].cells[2].innerHTML = fromCurrency;
-                    table.rows[rIndex].cells[3].innerHTML = toCurrency;
-                    updateConversion(amount, fromCurrency, toCurrency, table.rows[rIndex].cells[4]);
-                    updateBudget(table.rows[rIndex].cells[4].innerHTML.split(' ')[0]);
-                }
-            }
-
-            function updateBudget(convertedAmount) {
-                var id = table.rows[rIndex].dataset.id;
-                $.ajax({
-                    url: `/budgets/${id}`,
-                    type: 'PUT',
-                    contentType: 'application/json',
-                    data: JSON.stringify({
-                        item: document.getElementById("item").value,
-                        amount: parseFloat(document.getElementById("amount").value),
-                        fromCurrency: document.getElementById("fromCurrency").value,
-                        toCurrency: document.getElementById("toCurrency").value,
-                        convertedAmount: parseFloat(convertedAmount)
-                    }),
-                    success: function (result) {
-                        console.log("Budget updated", result);
-                    },
-                    error: function (error) {
-                        console.log("Error updating budget", error);
-                    }
-                });
-            }
-
-            function removeSelectedRow() {
-                var id = table.rows[rIndex].dataset.id;
-                $.ajax({
-                    url: `/budgets/${id}`,
-                    type: 'DELETE',
-                    success: function (result) {
-                        console.log("Budget deleted", result);
-                        table.deleteRow(rIndex);
-                        document.getElementById("item").value = "";
-                        document.getElementById("amount").value = "";
-                        document.getElementById("fromCurrency").value = "";
-                        document.getElementById("toCurrency").value = "";
-                        document.getElementById("convertedAmount").innerHTML = "";
-                    },
-                    error: function (error) {
-                        console.log("Error deleting budget", error);
-                    }
-                });
-            }
-
-            $(document).ready(function () {
-                loadBudgets();
             });
-        </script>
-    </body>
+        }
+
+        function editHtmlTbleSelectedRow() {
+            var item = document.getElementById("item").value,
+                amount = document.getElementById("amount").value,
+                fromCurrency = document.getElementById("fromCurrency").value,
+                toCurrency = document.getElementById("toCurrency").value;
+            if (!checkEmptyInput()) {
+                table.rows[rIndex].cells[0].innerHTML = item;
+                table.rows[rIndex].cells[1].innerHTML = amount;
+                table.rows[rIndex].cells[2].innerHTML = fromCurrency;
+                table.rows[rIndex].cells[3].innerHTML = toCurrency;
+                updateConversion(amount, fromCurrency, toCurrency, table.rows[rIndex].cells[4]);
+                updateBudget(table.rows[rIndex].dataset.id, amount, fromCurrency, toCurrency);
+            }
+        }
+
+        function updateBudget(id, amount, fromCurrency, toCurrency) {
+            fetch(`https://openexchangerates.org/api/latest.json?app_id=${apiKey}`)
+                .then(response => response.json())
+                .then(data => {
+                    const fromRate = data.rates[fromCurrency];
+                    if (fromRate) {
+                        const usdAmount = amount / fromRate;
+                        const toRate = data.rates[toCurrency];
+                        if (toRate) {
+                            const convertedAmount = (usdAmount * toRate).toFixed(2);
+                            $.ajax({
+                                url: `/budgets/${id}`,
+                                type: 'PUT',
+                                contentType: 'application/json',
+                                data: JSON.stringify({
+                                    item: document.getElementById("item").value,
+                                    amount: parseFloat(amount),
+                                    fromCurrency: fromCurrency,
+                                    toCurrency: toCurrency,
+                                    convertedAmount: parseFloat(convertedAmount)
+                                }),
+                                success: function (result) {
+                                    console.log("Budget updated", result);
+                                    table.rows[rIndex].cells[4].innerHTML = `${convertedAmount} ${toCurrency}`;
+                                },
+                                error: function (error) {
+                                    console.log("Error updating budget", error);
+                                }
+                            });
+                        } else {
+                            console.log(`Conversion rate for ${toCurrency} not found.`);
+                        }
+                    } else {
+                        console.log(`Conversion rate for ${fromCurrency} not found.`);
+                    }
+                })
+                .catch(error => {
+                    console.log(`Error fetching conversion rate: ${error.message}`);
+                });
+        }
+
+        function removeSelectedRow() {
+            var id = table.rows[rIndex].dataset.id;
+            $.ajax({
+                url: `/budgets/${id}`,
+                type: 'DELETE',
+                success: function (result) {
+                    console.log("Budget deleted", result);
+                    table.deleteRow(rIndex);
+                    document.getElementById("item").value = "";
+                    document.getElementById("amount").value = "";
+                    document.getElementById("fromCurrency").value = "";
+                    document.getElementById("toCurrency").value = "";
+                    document.getElementById("convertedAmount").innerHTML = "";
+                },
+                error: function (error) {
+                    console.log("Error deleting budget", error);
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            loadBudgets();
+        });
+    </script>
+</body>
 </html>
