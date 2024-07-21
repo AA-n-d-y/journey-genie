@@ -238,14 +238,15 @@
                     placeName.innerText = placeMarker.title;
                     tableRow.appendChild(placeName);
 
+
                     let addPlace = document.createElement("td");
                     let addForm = document.createElement("form");
-                    addForm.setAttribute("th:action", "@{/addPlace/{id}(id=${route.id})}");     // NEED TO FIX THIS TO SAVE THE PLACE TO THE CHECKLIST
-                    addForm.setAttribute("method", "POST");                                     // NEED TO FIX THIS TO SAVE THE PLACE TO THE CHECKLIST
+                    addForm.setAttribute("action", "/addPlace/" + /*[[ ${route.id} ]]*/'');     
+                    addForm.setAttribute("method", "POST");                                     
                     let placeData = document.createElement("input");
                     placeData.setAttribute("type", "hidden");
                     placeData.setAttribute("value", placeMarker.title);
-                    placeData.setAttribute("name", "placeTitle");                               // EXTRACT THIS IN THE ENDPOINT BY USING MAP
+                    placeData.setAttribute("name", "placeTitle");                               
                     addForm.appendChild(placeData);
                     let formButton = document.createElement("input");
                     formButton.setAttribute("type", "submit");
@@ -259,10 +260,7 @@
                 });
                 map.fitBounds(bounds);
             }
-            // Else no places found
-            else {
-                console.log("No places found");
-            }
+
 
         }
     </script>

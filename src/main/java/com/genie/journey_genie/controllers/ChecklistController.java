@@ -126,12 +126,20 @@ public class ChecklistController {
         // Else
         Route2 route = routeRepository.findById(id).orElse(null);
 
-        if (route.getChecklist() != null && !route.getChecklist().getPlaces().isEmpty()) {
+        // If checklist isn't null
+        if (route.getChecklist() != null) {
             route.getChecklist().getPlaces().add(place.get("placeTitle"));
             checklistRepository.save(route.getChecklist()); // Save the Checklist object
             route.setChecklist(route.getChecklist());
-            routeRepository.save(route);
-            System.out.println(place.get("placeTitle"));
+            routeRepository.save(route); // Save the route
+        }
+        // Else create a new checklist
+        else {
+            route.setChecklist(new Checklist()); // Create a new checklist
+            route.getChecklist().getPlaces().add(place.get("placeTitle"));
+            checklistRepository.save(route.getChecklist()); // Save the Checklist object
+            route.setChecklist(route.getChecklist());
+            routeRepository.save(route); // Save the route
         }
         
         return "redirect:/route-details/" + id;
