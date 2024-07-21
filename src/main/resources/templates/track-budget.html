@@ -160,11 +160,11 @@
                 cell4.innerHTML = toCurrency;
                 cell5.innerHTML = ""; // This will be updated with conversion result
 
-                saveBudget(item, amount, fromCurrency, toCurrency, cell5);
+                saveBudget(item, amount, fromCurrency, toCurrency, newRow, cell5);
             }
         }
 
-        function saveBudget(item, amount, fromCurrency, toCurrency, resultElement) {
+        function saveBudget(item, amount, fromCurrency, toCurrency, newRow, resultElement) {
             fetch(`https://openexchangerates.org/api/latest.json?app_id=${apiKey}`)
                 .then(response => response.json())
                 .then(data => {
@@ -190,6 +190,7 @@
                                 success: function (result) {
                                     console.log("Budget saved", result);
                                     newRow.setAttribute("data-id", result.id);
+                                    location.reload();
                                 },
                                 error: function (error) {
                                     console.log("Error saving budget", error);
@@ -288,6 +289,7 @@
                                 success: function (result) {
                                     console.log("Budget updated", result);
                                     table.rows[rIndex].cells[4].innerHTML = `${convertedAmount} ${toCurrency}`;
+                                    location.reload();
                                 },
                                 error: function (error) {
                                     console.log("Error updating budget", error);
@@ -312,12 +314,7 @@
                 type: 'DELETE',
                 success: function (result) {
                     console.log("Budget deleted", result);
-                    table.deleteRow(rIndex);
-                    document.getElementById("item").value = "";
-                    document.getElementById("amount").value = "";
-                    document.getElementById("fromCurrency").value = "";
-                    document.getElementById("toCurrency").value = "";
-                    document.getElementById("convertedAmount").innerHTML = "";
+                    location.reload();
                 },
                 error: function (error) {
                     console.log("Error deleting budget", error);
