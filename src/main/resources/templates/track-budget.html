@@ -54,7 +54,7 @@
             Item: <input type="text" name="item" id="item" class="form-control">
             Amount: <input type="number" name="amount" id="amount" class="form-control" oninput="updateDisplayedConversion()">
             Converted Amount: <div id="convertedAmount" class="mb-3"></div>
-            <button onclick="toggleMoreOptions()" class="btn btn-secondary mb-3">More</button>
+            <button onclick="toggleMoreOptions()" id="toggleButton" class="btn btn-secondary mb-3">More</button>
             <div id="moreOptions">
                 From Currency: <select id="fromCurrency" class="form-control"></select>
                 To Currency: <select id="toCurrency" class="form-control" onchange="updateDisplayedConversion()"></select>
@@ -328,13 +328,15 @@
 
         function toggleMoreOptions() {
             var moreOptions = document.getElementById("moreOptions");
+            var toggleButton = document.getElementById("toggleButton");
             if (moreOptions.style.display === "none" || moreOptions.style.display === "") {
                 moreOptions.style.display = "block";
+                toggleButton.innerText = "Less";
             } else {
                 moreOptions.style.display = "none";
+                toggleButton.innerText = "More";
             }
         }
-
         $(document).ready(function () {
             loadBudgets();
         });
