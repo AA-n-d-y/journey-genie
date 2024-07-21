@@ -41,6 +41,7 @@
             <div class="tab tab-1">
                 <table id="table" class="table table-bordered">
                     <tr>
+                        <th>Item</th>
                         <th>Amount</th>
                         <th>From Currency</th>
                         <th>To Currency</th>
@@ -49,6 +50,7 @@
                 </table>
             </div>
             <div class="tab tab-2">
+                Item: <input type="text" name="item" id="item" class="form-control">
                 Amount: <input type="number" name="amount" id="amount" class="form-control" oninput="updateDisplayedConversion()">
                 Converted Amount: <div id="convertedAmount" class="mb-3"></div>
                 From Currency: <select id="fromCurrency" class="form-control"></select>
@@ -84,11 +86,15 @@
 
             function checkEmptyInput() {
                 var isEmpty = false,
+                    item = document.getElementById("item").value,
                     amount = document.getElementById("amount").value,
                     fromCurrency = document.getElementById("fromCurrency").value,
                     toCurrency = document.getElementById("toCurrency").value;
             
-                if (amount === "") {
+                if (item === "") {
+                    alert("Item cannot be empty");
+                    isEmpty = true;
+                } else if (amount === "") {
                     alert("Amount cannot be empty");
                     isEmpty = true;
                 } else if (fromCurrency === "") {
@@ -142,16 +148,19 @@
                         cell2 = newRow.insertCell(1),
                         cell3 = newRow.insertCell(2),
                         cell4 = newRow.insertCell(3),
+                        cell5 = newRow.insertCell(4),
+                        item = document.getElementById("item").value,
                         amount = document.getElementById("amount").value,
                         fromCurrency = document.getElementById("fromCurrency").value,
                         toCurrency = document.getElementById("toCurrency").value;
             
-                    cell1.innerHTML = amount;
-                    cell2.innerHTML = fromCurrency;
-                    cell3.innerHTML = toCurrency;
-                    cell4.innerHTML = ""; // This will be updated with conversion result
+                    cell1.innerHTML = item;
+                    cell2.innerHTML = amount;
+                    cell3.innerHTML = fromCurrency;
+                    cell4.innerHTML = toCurrency;
+                    cell5.innerHTML = ""; // This will be updated with conversion result
                     
-                    updateConversion(amount, fromCurrency, toCurrency, cell4);
+                    updateConversion(amount, fromCurrency, toCurrency, cell5);
                     selectedRowToInput();
                 }
             }
@@ -160,9 +169,10 @@
                 for (var i = 1; i < table.rows.length; i++) {
                     table.rows[i].onclick = function() {
                         rIndex = this.rowIndex;
-                        document.getElementById("amount").value = this.cells[0].innerHTML;
-                        document.getElementById("fromCurrency").value = this.cells[1].innerHTML;
-                        document.getElementById("toCurrency").value = this.cells[2].innerHTML;
+                        document.getElementById("item").value = this.cells[0].innerHTML;
+                        document.getElementById("amount").value = this.cells[1].innerHTML;
+                        document.getElementById("fromCurrency").value = this.cells[2].innerHTML;
+                        document.getElementById("toCurrency").value = this.cells[3].innerHTML;
                         updateDisplayedConversion();
                     };
                 }
@@ -170,19 +180,22 @@
             selectedRowToInput();
             
             function editHtmlTbleSelectedRow() {
-                var amount = document.getElementById("amount").value,
+                var item = document.getElementById("item").value,
+                    amount = document.getElementById("amount").value,
                     fromCurrency = document.getElementById("fromCurrency").value,
                     toCurrency = document.getElementById("toCurrency").value;
                 if (!checkEmptyInput()) {
-                    table.rows[rIndex].cells[0].innerHTML = amount;
-                    table.rows[rIndex].cells[1].innerHTML = fromCurrency;
-                    table.rows[rIndex].cells[2].innerHTML = toCurrency;
-                    updateConversion(amount, fromCurrency, toCurrency, table.rows[rIndex].cells[3]);
+                    table.rows[rIndex].cells[0].innerHTML = item;
+                    table.rows[rIndex].cells[1].innerHTML = amount;
+                    table.rows[rIndex].cells[2].innerHTML = fromCurrency;
+                    table.rows[rIndex].cells[3].innerHTML = toCurrency;
+                    updateConversion(amount, fromCurrency, toCurrency, table.rows[rIndex].cells[4]);
                 }
             }
             
             function removeSelectedRow() {
                 table.deleteRow(rIndex);
+                document.getElementById("item").value = "";
                 document.getElementById("amount").value = "";
                 document.getElementById("fromCurrency").value = "";
                 document.getElementById("toCurrency").value = "";
