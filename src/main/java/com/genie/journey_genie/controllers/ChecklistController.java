@@ -13,6 +13,10 @@ import com.genie.journey_genie.models.Checklist;
 import com.genie.journey_genie.models.ChecklistRepository;
 import com.genie.journey_genie.models.Route2;
 import com.genie.journey_genie.models.Route2Repository;
+import com.genie.journey_genie.models.User;
+
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 //import com.genie.journey_genie.models.Checklist;
 import java.util.List;
@@ -27,23 +31,65 @@ public class ChecklistController {
     @Autowired
     private ChecklistRepository checklistRepository;
 
+
+    // Function for login checks
+    private boolean isUserLoggedIn(HttpSession session) {
+        User user = (User) session.getAttribute("sessionUser");
+        return user != null;
+    }
+
+
+    // Get request ()
     @GetMapping("/makeChecklist/checklist/{id}")
-    public String displayChecklist(Model model, @PathVariable Long id) {
+    public String displayChecklist(Model model, @PathVariable Long id, HttpServletResponse response, HttpSession session) {
+        // If not logged in
+        if (!isUserLoggedIn(session)) {
+            response.setStatus(401); // Unauthorized
+            return "loginPage";
+        }
+
+        // Else
         Route2 routeForAssocChecklist = routeRepository.findById(id).orElse(null);
+
+        // If checklist is null null
+        if (routeForAssocChecklist.getChecklist() == null) {
+            model.addAttribute("act", null);
+            return "checklist";
+        }
+
+        // Else
         List<String> activities = routeForAssocChecklist.getChecklist().getActivities();
         model.addAttribute("act", activities);
         return "checklist";
     }
 
+
+    // Get request ()
     @GetMapping("/makeChecklist/{id}")
-    public String makeChecklist(Model model, @PathVariable Long id) {
+    public String makeChecklist(Model model, @PathVariable Long id, HttpServletResponse response, HttpSession session) {
+        // If not logged in
+        if (!isUserLoggedIn(session)) {
+            response.setStatus(401); // Unauthorized
+            return "loginPage";
+        }
+
+        // Else
         Route2 routeForAssocChecklist = routeRepository.findById(id).orElse(null);
         model.addAttribute("route", routeForAssocChecklist);
         return "makeChecklist";
     }
 
+
+    // Post request () 
     @PostMapping("/makeChecklist/{id}")
-    public String addToChecklist(@RequestParam Map<String, String> newChecklist, @PathVariable Long id) {
+    public String addToChecklist(@RequestParam Map<String, String> newChecklist, @PathVariable Long id, HttpServletResponse response, HttpSession session) {
+        // If not logged in
+        if (!isUserLoggedIn(session)) {
+            response.setStatus(401); // Unauthorized
+            return "loginPage";
+        }
+
+        // Else
         String activity = newChecklist.get("activity");
         Route2 routeForAssocChecklist = routeRepository.findById(id).orElse(null);
         
@@ -63,17 +109,5 @@ public class ChecklistController {
         return "redirect:/makeChecklist/" + id;
     }
 
-    // @GetMapping("/viewChecklist/{id}")
-    // public String viewChecklist(@PathVariable Long id){
-    //     RouteController routeController = new RouteController();
-    //     List<Route> routes = routeController.getRouteRepository().findAll();
-        
-    //     for (Route route : routes) {
-    //         if(route.getId() == id){
-    //             Route routeForAssocChecklist = route;
-    //             return "redirect:/checklist";
-    //         }
-    //     }
-    //     return "";
-    // }
+
 }
