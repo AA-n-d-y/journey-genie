@@ -41,7 +41,7 @@ public class ChecklistController {
     }
 
 
-    // Get request ()
+    // Get request (getting the checklist page)
     @GetMapping("/makeChecklist/checklist/{id}")
     public String displayChecklist(Model model, @PathVariable Long id, HttpServletResponse response, HttpSession session) {
         // If not logged in
@@ -56,19 +56,22 @@ public class ChecklistController {
 
         // If checklist is null
         if (routeForAssocChecklist.getChecklist() == null) {
+            model.addAttribute("checklistID", id);
             model.addAttribute("act", null);
+            model.addAttribute("places", null);
             return "checklist";
         }
 
         // Else
         List<String> activities = routeForAssocChecklist.getChecklist().getActivities();
+        model.addAttribute("checklistID", id);
         model.addAttribute("act", activities);
         model.addAttribute("places", routeForAssocChecklist.getChecklist().getPlaces());
         return "checklist";
     }
 
 
-    // Get request ()
+    // Get request (getting the add items to checklist page)
     @GetMapping("/makeChecklist/{id}")
     public String makeChecklist(Model model, @PathVariable Long id, HttpServletResponse response, HttpSession session) {
         // If not logged in
@@ -84,7 +87,7 @@ public class ChecklistController {
     }
 
 
-    // Post request () 
+    // Post request (creating a checklist) 
     @PostMapping("/makeChecklist/{id}")
     public String addToChecklist(@RequestParam Map<String, String> newChecklist, @PathVariable Long id, HttpServletResponse response, HttpSession session) {
         // If not logged in
@@ -146,4 +149,42 @@ public class ChecklistController {
     }
  
     
+    // Post request (deleting an activity from the checklist)
+    @PostMapping("/deleteActivity/{id}")
+    public String deleteActivity(@RequestParam Map<String, String> activity, @PathVariable Long id, HttpServletResponse response, HttpSession session) {
+        // If not logged in
+        if (!isUserLoggedIn(session)) {
+            response.setStatus(401); // Unauthorized
+            return "loginPage";
+        }
+
+        // Else
+        Route2 route = routeRepository.findById(id).orElse(null); // Finding the route
+        route.getChecklist().getActivities().remove(activity.get("activityTitle")); // Removing the activity
+        checklistRepository.save(route.getChecklist()); // Saving the checklist
+        route.setChecklist(route.getChecklist());
+        routeRepository.save(route); // Saving the route
+        return "redirect:/makeChecklist/checklist/" + id;
+    }
+
+
+    // Post request (deleting a place from the checklist)
+    @PostMapping("/deletePlace/{id}")
+    public String deletePlace(@RequestParam Map<String, String> place, @PathVariable Long id, HttpServletResponse response, HttpSession session) {
+        // If not logged in
+        if (!isUserLoggedIn(session)) {
+            response.setStatus(401); // Unauthorized
+            return "loginPage";
+        }
+
+        // Else
+        Route2 route = routeRepository.findById(id).orElse(null); // Finding the route
+        route.getChecklist().getPlaces().remove(place.get("placeTitle")); // Removing the place
+        checklistRepository.save(route.getChecklist()); // Saving the checklist
+        route.setChecklist(route.getChecklist());
+        routeRepository.save(route); // Saving the route
+        return "redirect:/makeChecklist/checklist/" + id;
+    }
+
+
 }
