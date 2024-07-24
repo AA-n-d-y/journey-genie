@@ -14,10 +14,10 @@ public class Checklist {
     private int checklistID;
 
     @ElementCollection
-    private List<String> activities = new ArrayList<>();
+    List<String> activities = new ArrayList<>();
 
     @ElementCollection
-    private List<String> places = new ArrayList<>();
+    List<String> places = new ArrayList<>();
 
 
     // Constructors

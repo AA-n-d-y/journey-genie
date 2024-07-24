@@ -192,6 +192,28 @@ public class ChecklistController {
     // Post request (saving an activity after editing it)
     @PostMapping("/updateActivity/{id}")
     public String updateActivity(@RequestParam Map<String, String> activity, @PathVariable Long id, HttpServletResponse response, HttpSession session) {
+        // If not logged in
+        if (!isUserLoggedIn(session)) {
+            response.setStatus(401); // Unauthorized
+            return "loginPage";
+        }
+
+        // Else
+        Route2 route = routeRepository.findById(id).orElse(null); // Finding the route
+
+        String prevActivityTitle = activity.get("prevActivityTitle");
+        String activityTitle = activity.get("activityTitle");
+
+        for (String act : route.getChecklist().getActivities()) {
+            if (act.equals(prevActivityTitle)) {
+                act = activityTitle;
+                break;
+            }
+        }
+
+        checklistRepository.save(route.getChecklist()); // Saving the checklist
+        route.setChecklist(route.getChecklist());
+        routeRepository.save(route); // Saving the route
 
         response.setStatus(200);
         return "redirect:/makeChecklist/checklist/" + id;
@@ -201,6 +223,29 @@ public class ChecklistController {
     // Post request (saving a place after updating it)
     @PostMapping("/updatePlace/{id}")
     public String updatePlace(@RequestParam Map<String, String> place, @PathVariable Long id, HttpServletResponse response, HttpSession session) {
+        // If not logged in
+        if (!isUserLoggedIn(session)) {
+            response.setStatus(401); // Unauthorized
+            return "loginPage";
+        }
+
+        // Else
+        Route2 route = routeRepository.findById(id).orElse(null); // Finding the route
+
+        String prevPlaceTitle = place.get("prevPlaceTitle");
+        String placeTitle = place.get("placeTitle");
+        System.out.println(prevPlaceTitle + "  " + placeTitle);
+
+        for (String plc : route.getChecklist().getPlaces()) {
+            if (plc.equals(prevPlaceTitle)) {
+                plc = placeTitle;
+                break;
+            }
+        }
+
+        checklistRepository.save(route.getChecklist()); // Saving the checklist
+        route.setChecklist(route.getChecklist());
+        routeRepository.save(route); // Saving the route
 
         response.setStatus(200);
         return "redirect:/makeChecklist/checklist/" + id;

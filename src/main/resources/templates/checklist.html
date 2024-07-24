@@ -90,14 +90,21 @@
                             <form th:action = "@{/updateActivity/{id}(id=${checklistID})}" method = "POST">
                                 <!-- Title -->
                                 <td>
-                                    <input type = "text" th:placeholder = "${activity}" class = "form-control w-50">
+                                    <input id = "activityBox" type = "text" th:value = "${activity}" class = "form-control w-50" onchange="inputChange()">
                                 </td>
                                 
                                 <!-- Update button -->
                                 <td>
-                                    <input type = "hidden" th:value = "${activity}" name = "activityTitle">
+                                    <input id = "activityHiddenBox" type = "hidden" name = "activityTitle">
+                                    <input type = "hidden" th:value = "${activity}" name = "prevActivityTitle">
                                     <input type = "submit" value = "UPDATE" class = "btn btn-white text-success" style = "text-decoration: underline;">
                                 </td>
+
+                                <script> 
+                                    function inputChange() {
+                                        document.getElementById("activityHiddenBox").value = document.getElementById("activityBox").value;
+                                    }
+                                </script>
                             </form>
 
                             <!-- Delete -->
@@ -134,14 +141,21 @@
                             <form th:action = "@{/updatePlace/{id}(id=${checklistID})}" method = "POST">
                                 <!-- Title -->
                                 <td>
-                                    <input type = "text" th:placeholder = "${place}" class = "form-control w-50">
+                                    <input id = "placeBox" type = "text" th:value = "${place}" class = "form-control w-50" onchange="inputChange()">
                                 </td>
                                 
                                 <!-- Update button -->
                                 <td>
-                                    <input type = "hidden" th:value = "${place}" name = "placeTitle">
+                                    <input id = "placeHiddenBox" type = "hidden" name = "placeTitle">
+                                    <input type = "hidden" th:value = "${place}" name = "prevPlaceTitle">
                                     <input type = "submit" value = "UPDATE" class = "btn btn-white text-success" style = "text-decoration: underline;">
                                 </td>
+
+                                <script> 
+                                    function inputChange() {
+                                        document.getElementById("placeHiddenBox").value = document.getElementById("placeBox").value;
+                                    }
+                                </script>
                             </form>
 
                             <!-- Delete -->
