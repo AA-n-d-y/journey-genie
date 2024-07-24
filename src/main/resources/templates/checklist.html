@@ -80,16 +80,28 @@
                         <tr>
                             <th class = "w-75"> Activity Name </th>
                             <th>  </th>
+                            <th>  </th>
                         </tr>
 
                         <!-- Data -->
                         <tr th:each = "activity : ${act}">
 
-                            <!-- Title -->
-                            <td th:text = "${activity}" class = "w-75"></td>
+                            <!-- Update -->
+                            <form th:action = "@{/updateActivity/{id}(id=${checklistID})}" method = "POST">
+                                <!-- Title -->
+                                <td>
+                                    <input type = "text" th:placeholder = "${activity}" class = "form-control w-50">
+                                </td>
+                                
+                                <!-- Update button -->
+                                <td>
+                                    <input type = "hidden" th:value = "${activity}" name = "activityTitle">
+                                    <input type = "submit" value = "UPDATE" class = "btn btn-white text-success" style = "text-decoration: underline;">
+                                </td>
+                            </form>
 
                             <!-- Delete -->
-                            <td class = "text-danger" style = "text-decoration: underline;">
+                            <td>
                                 <form th:action = "@{/deleteActivity/{id}(id=${checklistID})}" method = "POST">
                                     <input type = "hidden" th:value = "${activity}" name = "activityTitle">
                                     <input type = "submit" value = "DELETE" class = "btn btn-white text-danger" style = "text-decoration: underline;">
@@ -118,8 +130,19 @@
                         <!-- Data -->
                         <tr th:each = "place : ${places}">
 
-                            <!-- Title -->
-                            <td th:text = "${place}" class = "w-75"></td>
+                            <!-- Update -->
+                            <form th:action = "@{/updatePlace/{id}(id=${checklistID})}" method = "POST">
+                                <!-- Title -->
+                                <td>
+                                    <input type = "text" th:placeholder = "${place}" class = "form-control w-50">
+                                </td>
+                                
+                                <!-- Update button -->
+                                <td>
+                                    <input type = "hidden" th:value = "${place}" name = "placeTitle">
+                                    <input type = "submit" value = "UPDATE" class = "btn btn-white text-success" style = "text-decoration: underline;">
+                                </td>
+                            </form>
 
                             <!-- Delete -->
                             <td class = "text-danger" style = "text-decoration: underline;">
