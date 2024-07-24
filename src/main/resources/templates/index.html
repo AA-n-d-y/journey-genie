@@ -50,10 +50,12 @@
             const refDiv = document.getElementById("endOfLocations");
 
             const newElement = document.createElement('div')
-            newElement.innerHTML = "<input class='location form-control mb-3' id='" + document.getElementsByClassName('location').length +
+            newElement.innerHTML = "<div class='row'><div class='col-1'><i onclick='try {moveUp(this.parentElement.parentElement.parentElement, this.parentElement.parentElement.getElementsByClassName(\"location\")[0].id)} catch (e) {return}' class='mdi mdi-chevron-up btn-icon locationButton' title='Move up'></i>" +
+                "<i onclick='try {moveUp(this.parentElement.parentElement.parentElement.nextSibling, parseInt(this.parentElement.parentElement.getElementsByClassName(\"location\")[0].id) + 1)} catch (e) {return}' class='mdi mdi-chevron-down btn-icon locationButton' title='Move down'></i></div>" +
+                "<div class='col'><input class='location form-control mb-3' id='" + document.getElementsByClassName('location').length +
                 "' type='text' placeholder='Enter location'>" +
                 "<button onclick='calculateRoute(" + document.getElementsByClassName('location').length + ")' class='btn btn-info'>Display</button>" +
-                "<i onclick='deleteLocation(this.parentElement)' class='mdi mdi-close btn-icon delete-button' title='delete'>"
+                "<i onclick='deleteLocation(this.parentElement.parentElement.parentElement)' class='mdi mdi-close btn-icon locationButton' title='Delete'></div></div>"
             newElement.className = 'container bg-primary rounded p-2 mb-2'
 
             document.getElementById('locationsParent').insertBefore(newElement, refDiv);
@@ -81,13 +83,28 @@
         }
 
         function deleteLocation(element) {
-            let locId = parseInt(element.children[0].id)
+            let locId = parseInt(element.getElementsByClassName("location")[0].id)
             element.remove()
             for (let i = locId; i < document.getElementsByClassName("location").length; i++) {
                 document.getElementsByClassName("location")[i].id = (document.getElementsByClassName("location")[i].id - 1)
             }
             locations.splice(locId, 1)
             markers.splice(locId, 1)
+        }
+
+        function moveUp(element, id) {
+            let temp1 = document.getElementsByClassName("location")[id].id;
+            document.getElementsByClassName("location")[id].id = document.getElementsByClassName("location")[id-1].id;
+            document.getElementsByClassName("location")[id-1].id = temp1;
+            element.parentNode.insertBefore(element, element.previousSibling);
+
+            let temp2 = locations[id]
+            locations[id] = locations[id-1]
+            locations[id-1] = temp2
+
+            let temp3 = markers[id]
+            markers[id] = markers[id-1]
+            markers[id-1] = temp3
         }
 
         function geocodeLocation(location, inputId) {
@@ -283,6 +300,11 @@
         }
     </script>
     <style>
+        #map {
+            min-height: calc(100vh - 500px);
+            height: 500px;
+        }
+
         .route-option {
             margin: 5px 0;
             padding: 10px;
@@ -305,12 +327,12 @@
         .btn-icon:hover {
             color: #0056b3;
         }
-
-        .delete-button {
+        
+        .locationButton {
             color: lightgray;
         }
-
-        .delete-button:hover {
+        
+        .locationButton:hover {
             color: white;
         }
     </style>
@@ -381,7 +403,7 @@
                 <button onclick="saveRoute()" class="btn btn-success">Save This Route</button>
             </div>
             <div id="routes"></div>
-            <div id="map" style="height: 500px; width: 100%;" class="mt-5"></div>
+            <div id="map" style="width: 100%;" class="mt-5"></div>
             <iframe id="iframe" height="500px" width="100%" style="border:0; display:none" loading="lazy" allowfullscreen th:inline="javascript"></iframe>
             <a href="/saved-routes" class="btn btn-link mt-3">See Your Saved Routes</a>
     </div>
