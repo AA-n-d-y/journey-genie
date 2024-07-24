@@ -45,6 +45,7 @@ public class LoginsController {
            // Finding all the users and rendering the admin page
            List<User> users = repo.findAll();
            model.addAttribute("users", users);
+           model.addAttribute("user", user);
            response.setStatus(401);
            return "adminPage";
        }
@@ -74,6 +75,7 @@ public class LoginsController {
            // Finding all the users and rendering the admin page
            List<User> users = repo.findAll();
            model.addAttribute("users", users);
+           model.addAttribute("user", user);
            response.setStatus(200);
            return "adminPage";
         }
@@ -106,6 +108,7 @@ public class LoginsController {
             // Finding all the users and rendering the admin page
             List<User> users = repo.findAll();
             model.addAttribute("users", users);
+            model.addAttribute("user", user);
             response.setStatus(200);
             return "adminPage";
         }

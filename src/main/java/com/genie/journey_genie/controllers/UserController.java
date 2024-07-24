@@ -8,10 +8,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.ui.Model;
 
+import com.genie.journey_genie.models.Preferences;
 import com.genie.journey_genie.models.User;
 import com.genie.journey_genie.models.UserRepository;
 
@@ -25,6 +27,11 @@ public class UserController {
     @Autowired
     private UserRepository repo;
   
+    private boolean isUserLoggedIn(HttpSession session) {
+        User user = (User) session.getAttribute("sessionUser");
+        return user != null;
+    }
+
     // Get request (displaying registration page)
     @GetMapping("/register")
     public String displayRegistration(Model model, HttpServletResponse response, HttpServletRequest request, HttpSession session) {
@@ -79,8 +86,35 @@ public class UserController {
         }
     }
 
-    @GetMapping("/preferences")
-    public String preferences() {
+    @PostMapping("/save-preferences/{id}")
+    public void savePreferences(@RequestParam Map<String, String> newPreferences, @PathVariable int id, HttpServletResponse response) {
+        int duration = Integer.parseInt(newPreferences.get("duration"));
+        boolean tolls = Boolean.parseBoolean(newPreferences.get("tolls"));
+        String location = newPreferences.get("location");
+        float range = Float.parseFloat(newPreferences.get("range"));
+        String interests = newPreferences.get("interests");
+        Preferences preferences = new Preferences(duration, tolls, location, range, interests);
+
+        System.out.println(preferences.getDuration());
+        System.out.println(preferences.allowTolls());
+        System.out.println(preferences.getLocation());
+        System.out.println(preferences.getRange());
+        System.out.println(preferences.getInterests());
+
+        User user = repo.findByUserID(id);
+        user.setPreferences(preferences);
+        repo.save(user);
+        response.setStatus(201);
+    }
+
+    @GetMapping("/preferences/{id}")
+    public String preferences(Model model, @PathVariable int id, HttpSession session, HttpServletResponse response) {
+        if (!isUserLoggedIn(session)) {
+            response.setStatus(401); // Unauthorized
+            return "loginPage";
+        }
+        User user = repo.findByUserID(id);
+        model.addAttribute("user", user);
         return "preferences";
     }
 
