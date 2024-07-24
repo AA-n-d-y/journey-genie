@@ -71,7 +71,7 @@ public class ChecklistController {
     }
 
 
-    // Get request (getting the add items to checklist page)
+    // Get request (getting the Add Items to Checklist page)
     @GetMapping("/makeChecklist/{id}")
     public String makeChecklist(Model model, @PathVariable Long id, HttpServletResponse response, HttpSession session) {
         // If not logged in

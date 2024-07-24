@@ -123,7 +123,7 @@
                                             (${route.travelMode} == 'flying' ? 'mdi-airplane' : '')"></i>
                             </td>
                             <td><a th:href="@{'/route-details/' + ${route.id}}">View Route</a></td>
-                            <td><a th:href="@{'/makeChecklist/' + ${route.id}}"> Checklist </a></td>
+                            <td><a th:href="@{'/makeChecklist/checklist/' + ${route.id}}"> Checklist </a></td>
                             <!-- <td><a th:href="@{'/checklist/' + ${route.id}}">View Itinerary</a></td> -->
                             
                             <td>
@@ -136,7 +136,9 @@
                         </tr>
                     </tbody>
                 </table>
+
                 <a href="/map" class="btn btn-link mt-3">Back to Routes</a>
+                
             </div>
         </div>
     </main>

@@ -66,6 +66,7 @@ public class RouteController {
             String[] subArr = Arrays.copyOfRange(route.getCoords(), 1 , route.getCoords().length-1);
             model.addAttribute("subArr", subArr);
         }
+        model.addAttribute("checklistID", id);
         model.addAttribute("route", route);
         model.addAttribute("notes", notes);
         model.addAttribute("GOOGLE_API_KEY", GOOGLE_API_KEY);

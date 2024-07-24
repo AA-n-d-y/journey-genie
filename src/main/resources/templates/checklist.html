@@ -71,7 +71,7 @@
                     <h1 class = "text-center mb-5"> Checklist</h1>
 
                     <!-- Activities Table -->
-                    <table class = "table table-bordered mb-5">
+                    <table class = "table table-bordered mb-3">
                         
                         <!-- Heading -->
                         <h3 class = "mb-3"> Activities </h3>
@@ -92,17 +92,19 @@
                             <td class = "text-danger" style = "text-decoration: underline;">
                                 <form th:action = "@{/deleteActivity/{id}(id=${checklistID})}" method = "POST">
                                     <input type = "hidden" th:value = "${activity}" name = "activityTitle">
-                                    <input type = "submit" th:value = "DELETE" class = "btn btn-white text-danger" style = "text-decoration: underline;">
+                                    <input type = "submit" value = "DELETE" class = "btn btn-white text-danger" style = "text-decoration: underline;">
                                 </form>
                             </td>
 
                         </tr>
-
                     </table>
+                    <form th:action = "@{/makeChecklist/{id}(id=${checklistID})}" method = "GET">
+                        <input type = "submit" value =  "Add more activities" class="btn btn-info text-white mb-5">
+                    </form>
 
 
                     <!-- Places Table -->
-                    <table class = "table table-bordered mb-5">
+                    <table class = "table table-bordered mb-3">
                         
                         <!-- Heading -->
                         <h3 class = "mb-3"> Places </h3>
@@ -128,8 +130,10 @@
                             </td>
 
                         </tr>
-
                     </table>
+                    <form th:action = "@{/route-details/{id}(id=${checklistID})}" method = "GET">
+                        <input type = "submit" value =  "Add more places" class="btn btn-info text-white mb-5">
+                    </form>
 
 
                     <a href="/saved-routes" class="btn btn-link">Back to Saved Routes</a>
