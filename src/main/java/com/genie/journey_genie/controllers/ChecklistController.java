@@ -203,14 +203,16 @@ public class ChecklistController {
 
         String prevActivityTitle = activity.get("prevActivityTitle");
         String activityTitle = activity.get("activityTitle");
-
-        for (String act : route.getChecklist().getActivities()) {
-            if (act.equals(prevActivityTitle)) {
-                act = activityTitle;
+        
+        List<String> activities = route.getChecklist().getActivities();
+        for (int i = 0; i < activities.size(); i++) {
+            if (activities.get(i).equals(prevActivityTitle)) {
+                activities.set(i, activityTitle); 
                 break;
             }
         }
 
+        route.getChecklist().setActivities(activities);
         checklistRepository.save(route.getChecklist()); // Saving the checklist
         route.setChecklist(route.getChecklist());
         routeRepository.save(route); // Saving the route
@@ -234,15 +236,15 @@ public class ChecklistController {
 
         String prevPlaceTitle = place.get("prevPlaceTitle");
         String placeTitle = place.get("placeTitle");
-        System.out.println(prevPlaceTitle + "  " + placeTitle);
-
-        for (String plc : route.getChecklist().getPlaces()) {
-            if (plc.equals(prevPlaceTitle)) {
-                plc = placeTitle;
+        List<String> places = route.getChecklist().getPlaces();
+        for (int i = 0; i < places.size(); i++) {
+            if (places.get(i).equals(prevPlaceTitle)) {
+                places.set(i, placeTitle); 
                 break;
             }
         }
 
+        route.getChecklist().setPlaces(places);
         checklistRepository.save(route.getChecklist()); // Saving the checklist
         route.setChecklist(route.getChecklist());
         routeRepository.save(route); // Saving the route
