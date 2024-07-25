@@ -8,7 +8,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.ui.Model;
@@ -86,8 +85,8 @@ public class UserController {
         }
     }
 
-    @PostMapping("/save-preferences/{id}")
-    public void savePreferences(@RequestParam Map<String, String> newPreferences, @PathVariable int id, HttpServletResponse response) {
+    @PostMapping("/save-preferences")
+    public void savePreferences(@RequestParam Map<String, String> newPreferences, HttpSession session, HttpServletResponse response) {
         int duration = Integer.parseInt(newPreferences.get("duration"));
         boolean tolls = Boolean.parseBoolean(newPreferences.get("tolls"));
         String location = newPreferences.get("location");
@@ -95,19 +94,19 @@ public class UserController {
         String interests = newPreferences.get("interests");
         Preferences preferences = new Preferences(duration, tolls, location, range, interests);
 
-        User user = repo.findByUserID(id);
+        User user = (User) session.getAttribute("sessionUser");
         user.setPreferences(preferences);
         repo.save(user);
         response.setStatus(201);
     }
 
-    @GetMapping("/preferences/{id}")
-    public String preferences(Model model, @PathVariable int id, HttpSession session, HttpServletResponse response) {
+    @GetMapping("/preferences")
+    public String preferences(Model model, HttpSession session, HttpServletResponse response) {
         if (!isUserLoggedIn(session)) {
             response.setStatus(401); // Unauthorized
             return "loginPage";
         }
-        User user = repo.findByUserID(id);
+        User user = (User) session.getAttribute("sessionUser");
         String interests[] = user.getPreferences().getInterests().split(",");
 
         model.addAttribute("user", user);
