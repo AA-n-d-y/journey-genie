@@ -9,13 +9,27 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
     <style>
-        .container { overflow: hidden; }
-        .tab { float: left; }
-        .tab-2 { margin-left: 50px; }
-        .tab-2 input, .tab-2 select { display: block; margin-bottom: 10px; width: 100%; }
-        tr { transition: all .25s ease-in-out; }
-        tr:hover { background-color: #EEE; cursor: pointer; }
-        #moreOptions { display: none; } /* Initially hidden */
+        /* .container { 
+            overflow: hidden; 
+        }
+        .tab { 
+            float: left; 
+        }
+        .tab-2 { 
+            margin-left: 50px; 
+        }
+        .tab-2 input, .tab-2 select { 
+            display: block; margin-bottom: 10px; width: 100%; 
+        }
+        tr { 
+            transition: all .25s ease-in-out; 
+        }
+        tr:hover { 
+            background-color: #EEE; cursor: pointer; 
+        } */
+        #moreOptions { 
+            display: none; 
+        } /* Initially hidden */
     </style>
 </head>
 <body>
@@ -39,29 +53,70 @@
     </header>
 
     <div class="container mt-5">
-        <div class="tab tab-1">
-            <table id="table" class="table table-bordered">
-                <tr>
-                    <th>Item</th>
-                    <th>Amount</th>
-                    <th>From Currency</th>
-                    <th>To Currency</th>
-                    <th>Converted Amount</th>
-                </tr>
+        <div class="tab tab-1 w-100">
+            <table id="table" class="table table-bordered table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Amount</th>
+                        <th>From Currency</th>
+                        <th>To Currency</th>
+                        <th>Converted Amount</th>
+                    </tr>
+                </thead>
+
+                <tbody id="tbody">
+                    <!-- Table rows will be added here dynamically -->
+                </tbody>
+                <!-- <tfoot>
+                    <tr>
+                        <td><strong>Total</strong></td>
+                        <td id="totalAmount"></td>
+                        <td></td>
+                        <td></td>
+                        <td id="totalConvertedAmount"></td>
+                    </tr>
+                </tfoot> -->
+
             </table>
         </div>
+        <div class="mt-4">
+            
+            <h4>Total Amount: <span id="totalAmount"></span></h4>
+        
+            <h4>Converted Total Amount: <span id="totalConvertedAmount"></span></h4>
+        
+        </div>
         <div class="tab tab-2">
-            Item: <input type="text" name="item" id="item" class="form-control">
-            Amount: <input type="number" name="amount" id="amount" class="form-control" oninput="updateDisplayedConversion()">
-            Converted Amount: <div id="convertedAmount" class="mb-3"></div>
-            <button onclick="toggleMoreOptions()" id="toggleButton" class="btn btn-secondary mb-3">More</button>
-            <div id="moreOptions">
-                From Currency: <select id="fromCurrency" class="form-control"></select>
-                To Currency: <select id="toCurrency" class="form-control" onchange="updateDisplayedConversion()"></select>
+            <div class="mb-3">
+                <label for="item" class="form-label">Item:</label>
+                <input type="text" name="item" id="item" class="form-control">
             </div>
-            <button onclick="addHtmlTableRow();" class="btn btn-success">Add</button>
-            <button onclick="editHtmlTbleSelectedRow();" class="btn btn-primary">Edit</button>
-            <button onclick="removeSelectedRow();" class="btn btn-danger">Remove</button>
+            <div class="mb-3">
+                <label for="amount" class="form-label">Amount:</label>
+                <input type="number" name="amount" id="amount" class="form-control" oninput="updateDisplayedConversion()">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Converted Amount:</label>
+                <div id="convertedAmount" class="form-control bg-light"></div>
+            </div>
+            
+
+            <button onclick="toggleMoreOptions()" id="toggleButton" class="btn btn-secondary mb-3">More</button>
+            <div id="moreOptions"><div class="mb-3">
+                    <label for="fromCurrency" class="form-label">From Currency:</label>
+                    <select id="fromCurrency" class="form-select"></select>
+                </div>
+                <div class="mb-3">
+                    <label for="toCurrency" class="form-label">To Currency:</label>
+                    <select id="toCurrency" class="form-select" onchange="updateDisplayedConversion()"></select>
+                </div>
+            </div>
+            <div>
+                <button onclick="addHtmlTableRow();" class="btn btn-success">Add</button>
+                <button onclick="editHtmlTbleSelectedRow();" class="btn btn-primary">Edit</button>
+                <button onclick="removeSelectedRow();" class="btn btn-danger">Remove</button>
+            </div>
         </div>
     </div>
 
@@ -147,7 +202,7 @@
 
         function addHtmlTableRow() {
             if (!checkEmptyInput()) {
-                var newRow = table.insertRow(table.length),
+                var newRow = table.insertRow(table.rows.length),
                     cell1 = newRow.insertCell(0),
                     cell2 = newRow.insertCell(1),
                     cell3 = newRow.insertCell(2),
@@ -232,7 +287,7 @@
                 type: 'GET',
                 success: function (data) {
                     data.forEach(function (budget) {
-                        var newRow = table.insertRow(table.length),
+                        var newRow = table.insertRow(table.rows.length),
                             cell1 = newRow.insertCell(0),
                             cell2 = newRow.insertCell(1),
                             cell3 = newRow.insertCell(2),
@@ -246,6 +301,7 @@
                         cell4.innerHTML = budget.toCurrency;
                         cell5.innerHTML = `${budget.convertedAmount} ${budget.toCurrency}`;
                     });
+                    updateTotals();
                     selectedRowToInput();
                 },
                 error: function (error) {
@@ -337,6 +393,23 @@
                 toggleButton.innerText = "More";
             }
         }
+        function updateTotals() {
+            var totalAmount = 0;
+            var totalConvertedAmount = 0;
+            // var toCurrency = document.getElementById("toCurrency").value;
+            
+            for (var i = 1; i < table.rows.length; i++) {
+                totalAmount += parseFloat(table.rows[i].cells[1].innerHTML);
+                totalConvertedAmount += parseFloat(table.rows[i].cells[4].innerHTML.split(' ')[0]);
+            }
+
+            document.getElementById("totalAmount").innerHTML = totalAmount.toFixed(2);
+            // document.getElementById("totalConvertedAmount").innerHTML = `${totalConvertedAmount.toFixed(2)} ${toCurrency}`;
+            document.getElementById("totalConvertedAmount").innerHTML = totalConvertedAmount.toFixed(2);
+
+        }
+
+
         $(document).ready(function () {
             loadBudgets();
         });
