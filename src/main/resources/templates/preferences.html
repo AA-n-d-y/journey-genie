@@ -10,6 +10,13 @@
     <script>
 
         function savePreferences() {
+            let interests = document.getElementsByClassName("interests");
+            var interestList = interests[0].value;
+
+            for (let i = 1; i < interests.length; i++) {
+                interestList += "," + interests[i].value;
+            }
+            
             fetch('/save-preferences/' + '[[${user.UserID}]]', {
                     method: 'POST',
                     headers: {
@@ -20,7 +27,7 @@
                         'tolls': document.getElementById("tolls").checked,
                         'location': document.getElementById("location").value,
                         'range': document.getElementById("range").value,
-                        'interests': document.getElementById("interests").value
+                        'interests': interestList
                     })
                 })
                     .then(response => {
@@ -33,6 +40,13 @@
                     .catch((error) => {
                         console.error('Error:', error);
                     });
+        }
+
+        function addInterest() {
+            let preferences = document.getElementById("preferences");
+            let interest = document.getElementsByClassName("interests")[0].cloneNode();
+            interest.value = "";
+            preferences.appendChild(interest);
         }
     </script>
 </head>
@@ -70,16 +84,17 @@
                 <h1 class="text-center mb-5">Preferences</h1>
                 <form id="preferences" class="row justify-content-sm-center">
                     <label for="duration">Trip duration</label>
-                    <input type="number" name="duration" id="duration" required> <br>
+                    <input type="number" name="duration" id="duration" th:value="${user.preferences.duration}" required> <br>
                     <label for="tolls">Allow tolls roads</label>
-                    <input type="checkbox" name="tolls" id="tolls"> <br>
+                    <input th:if="${user.preferences.tolls}" type="checkbox" name="tolls" id="tolls" checked>
+                    <input th:unless="${user.preferences.tolls}" type="checkbox" name="tolls" id="tolls">
                     <label for="location">Prefered Country</label>
-                    <input type="text" name="location" id="location" placeholder="country/leave empty for suggestions"> <br>
+                    <input type="text" name="location" id="location" placeholder="country/leave empty for suggestions" th:value="${user.preferences.location}"> <br>
                     <label for="range">Max time between Activities</label>
-                    <input type="number" name="range" id="range"> <br>
+                    <input type="number" name="range" id="range" th:value="${user.preferences.range}"> <br>
                     <label for="interests">Interests</label>
-                    <input type="text" name="interests" id="interests" required> <br>
-                    <input value="Add Interest" class="btn btn-dark text-white mx-2"></input>
+                    <button onclick="addInterest()" class="btn btn-dark text-white mx-2">Add Interest</button>
+                    <input th:each="interest:${interests}" type="text" name="interests" class="interests" required th:value="${interest}">
                 </form>
                 <button onclick="savePreferences()" class = "btn btn-info text-white w-100">Save</button>
 

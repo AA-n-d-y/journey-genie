@@ -95,12 +95,6 @@ public class UserController {
         String interests = newPreferences.get("interests");
         Preferences preferences = new Preferences(duration, tolls, location, range, interests);
 
-        System.out.println(preferences.getDuration());
-        System.out.println(preferences.allowTolls());
-        System.out.println(preferences.getLocation());
-        System.out.println(preferences.getRange());
-        System.out.println(preferences.getInterests());
-
         User user = repo.findByUserID(id);
         user.setPreferences(preferences);
         repo.save(user);
@@ -114,7 +108,10 @@ public class UserController {
             return "loginPage";
         }
         User user = repo.findByUserID(id);
+        String interests[] = user.getPreferences().getInterests().split(",");
+
         model.addAttribute("user", user);
+        model.addAttribute("interests", interests);
         return "preferences";
     }
 

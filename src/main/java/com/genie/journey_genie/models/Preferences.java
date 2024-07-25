@@ -39,7 +39,7 @@ public class Preferences {
     public void setDuration(int duration) {
         this.duration = duration;
     }
-    public boolean allowTolls() {
+    public boolean isTolls() {
         return tolls;
     }
     public void setTolls(boolean tolls) {
