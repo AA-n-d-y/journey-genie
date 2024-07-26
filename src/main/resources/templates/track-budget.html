@@ -12,6 +12,9 @@
         #moreOptions { 
             display: none; 
         } /* Initially hidden */
+        .hidden-column {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -41,8 +44,8 @@
                     <tr class="table-success fs-4">
                         <th>Item</th>
                         <th>Amount</th>
-                        <th>From Currency</th>
-                        <th>To Currency</th>
+                        <th class="hidden-column">From Currency</th>
+                        <th class="hidden-column">To Currency</th>
                         <th>Converted Amount</th>
                     </tr>
                 <!-- </thead> -->
@@ -54,8 +57,8 @@
                     <tr >
                         <td><strong>Total</strong></td>
                         <td id="totalAmount"></td>
-                        <td></td>
-                        <td></td>
+                        <td class="hidden-column"></td>
+                        <td class="hidden-column"></td>
                         <td id="totalConvertedAmount"></td>
                     </tr>
                 </tfoot>
@@ -75,10 +78,11 @@
                 <label class="form-label">Converted Amount:</label>
                 <div id="convertedAmount" class="form-control bg-light"></div>
             </div>
-            
+
 
             <button onclick="toggleMoreOptions()" id="toggleButton" class="btn btn-secondary mb-3">More</button>
-            <div id="moreOptions"><div class="mb-3">
+            <div id="moreOptions">
+                <div class="mb-3">
                     <label for="fromCurrency" class="form-label">From Currency:</label>
                     <select id="fromCurrency" class="form-select"></select>
                 </div>
@@ -190,6 +194,8 @@
 
                 cell1.innerHTML = item;
                 cell2.innerHTML = amount;
+                cell3.classList.add('hidden-column');
+                cell4.classList.add('hidden-column');
                 cell3.innerHTML = fromCurrency;
                 cell4.innerHTML = toCurrency;
                 cell5.innerHTML = ""; // This will be updated with conversion result
@@ -247,9 +253,10 @@
                 table.rows[i].onclick = function() {
                     rIndex = this.rowIndex; // for debugging
                     rIndex--; // Adjust for header row
-                    console.log(rIndex);
+                    console.log(rIndex);// for debugging
                     document.getElementById("item").value = this.cells[0].innerHTML;
-                    document.getElementById("amount").value = this.cells[1].innerHTML;
+                    // document.getElementById("amount").value = this.cells[1].innerHTML;
+                    document.getElementById("amount").value = this.cells[1].innerHTML.split(' ')[0];
                     document.getElementById("fromCurrency").value = this.cells[2].innerHTML;
                     document.getElementById("toCurrency").value = this.cells[3].innerHTML;
                     updateDisplayedConversion();
@@ -273,7 +280,9 @@
 
                         newRow.setAttribute("data-id", budget.id);
                         cell1.innerHTML = budget.item;
-                        cell2.innerHTML = budget.amount;
+                        cell2.innerHTML = `${budget.amount} ${budget.fromCurrency}`;
+                        cell3.classList.add('hidden-column');
+                        cell4.classList.add('hidden-column');
                         cell3.innerHTML = budget.fromCurrency;
                         cell4.innerHTML = budget.toCurrency;
                         cell5.innerHTML = `${budget.convertedAmount} ${budget.toCurrency}`;
@@ -386,7 +395,7 @@
             document.getElementById("totalConvertedAmount").innerHTML = totalConvertedAmount.toFixed(2);
 
         }
-
+        
 
         $(document).ready(function () {
             loadBudgets();
