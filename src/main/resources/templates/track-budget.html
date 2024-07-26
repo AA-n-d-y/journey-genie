@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Track Budget</title>
     <meta charset="UTF-8">
@@ -14,6 +15,16 @@
         } /* Initially hidden */
         .hidden-column {
             display: none;
+        }
+
+        .form-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .form-column {
+            flex: 1;
         }
     </style>
 </head>
@@ -41,13 +52,13 @@
         <div class="tab tab-1 w-100">
             <table id="table" class="table table-bordered table-hover table-striped">
                 <!-- <thead> -->
-                    <tr class="table-success fs-4">
-                        <th>Item</th>
-                        <th>Amount</th>
-                        <th class="hidden-column">From Currency</th>
-                        <th class="hidden-column">To Currency</th>
-                        <th>Converted Amount</th>
-                    </tr>
+                <tr class="table-success fs-4">
+                    <th>Item</th>
+                    <th>Amount</th>
+                    <th class="hidden-column">From Currency</th>
+                    <th class="hidden-column">To Currency</th>
+                    <th>Converted Amount</th>
+                </tr>
                 <!-- </thead> -->
 
                 <tbody id="tbody">
@@ -65,38 +76,42 @@
 
             </table>
         </div>
-        <div class="tab tab-2">
-            <div class="mb-3">
-                <label for="item" class="form-label">Item:</label>
-                <input type="text" name="item" id="item" class="form-control">
-            </div>
-            <div class="mb-3">
-                <label for="amount" class="form-label">Amount:</label>
-                <input type="number" name="amount" id="amount" class="form-control" oninput="updateDisplayedConversion()">
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Converted Amount:</label>
-                <div id="convertedAmount" class="form-control bg-light"></div>
-            </div>
-
-
-            <button onclick="toggleMoreOptions()" id="toggleButton" class="btn btn-secondary mb-3">More</button>
-            <div id="moreOptions">
+        <div class="form-container mt-5">
+            <div class="form-column">
                 <div class="mb-3">
-                    <label for="fromCurrency" class="form-label">From Currency:</label>
-                    <select id="fromCurrency" class="form-select"></select>
+                    <label for="item" class="form-label">Item:</label>
+                    <input type="text" name="item" id="item" class="form-control">
                 </div>
                 <div class="mb-3">
-                    <label for="toCurrency" class="form-label">To Currency:</label>
-                    <select id="toCurrency" class="form-select" onchange="updateDisplayedConversion()"></select>
+                    <label for="amount" class="form-label">Amount:</label>
+                    <input type="number" name="amount" id="amount" class="form-control"
+                        oninput="updateDisplayedConversion()">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Converted Amount:</label>
+                    <div id="convertedAmount" class="form-control bg-light"></div>
                 </div>
             </div>
-            <div>
-                <button onclick="addHtmlTableRow();" class="btn btn-success">Add</button>
-                <button onclick="editHtmlTbleSelectedRow();" class="btn btn-primary">Edit</button>
-                <button onclick="removeSelectedRow();" class="btn btn-danger">Remove</button>
+            <div class="form-column">
+                <button onclick="toggleMoreOptions()" id="toggleButton" class="btn btn-secondary mt-4">More</button>
+                <div id="moreOptions">
+                    <div class="mb-3 mt-5">
+                        <label for="fromCurrency" class="form-label">From Currency:</label>
+                        <select id="fromCurrency" class="form-select"></select>
+                    </div>
+                    <div class="mt-5">
+                        <label for="toCurrency" class="form-label">To Currency:</label>
+                        <select id="toCurrency" class="form-select" onchange="updateDisplayedConversion()"></select>
+                    </div>
+                </div>
             </div>
         </div>
+        <div>
+            <button onclick="addHtmlTableRow();" class="btn btn-success">Add</button>
+            <button onclick="editHtmlTbleSelectedRow();" class="btn btn-primary">Edit</button>
+            <button onclick="removeSelectedRow();" class="btn btn-danger">Remove</button>
+        </div>
+    </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
