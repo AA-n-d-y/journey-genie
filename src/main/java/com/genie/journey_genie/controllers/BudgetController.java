@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
@@ -41,7 +42,7 @@ public class BudgetController {
 
         @GetMapping
         public List<Budget> getAllBudgets() {
-            return budgetRepository.findAll();
+            return budgetRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
         }
 
         @PostMapping
