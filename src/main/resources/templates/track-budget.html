@@ -95,21 +95,21 @@
             <div class="form-column">
                 <button onclick="toggleMoreOptions()" id="toggleButton" class="btn btn-secondary mt-4">More</button>
                 <div id="moreOptions">
-                    <div class="mb-3 mt-5">
+                    <div class="mb-3 mt-4">
                         <label for="fromCurrency" class="form-label">From Currency:</label>
-                        <select id="fromCurrency" class="form-select"></select>
+                        <div><select id="fromCurrency" class="form-select"></select> </div>
                     </div>
-                    <div class="mt-5">
+                    <div class="mt-4">
                         <label for="toCurrency" class="form-label">To Currency:</label>
-                        <select id="toCurrency" class="form-select" onchange="updateDisplayedConversion()"></select>
+                        <div><select id="toCurrency" class="form-select" onchange="updateDisplayedConversion()"></select></div>
                     </div>
                 </div>
             </div>
         </div>
-        <div>
-            <button onclick="addHtmlTableRow();" class="btn btn-success">Add</button>
-            <button onclick="editHtmlTbleSelectedRow();" class="btn btn-primary">Edit</button>
-            <button onclick="removeSelectedRow();" class="btn btn-danger">Remove</button>
+        <div class="grid text-center mt-4">
+            <button onclick="addHtmlTableRow();" class="btn btn-success btn-lg g-col-6 g-col-md-4 me-2">Add</button>
+            <button onclick="editHtmlTbleSelectedRow();" class="btn btn-primary btn-lg g-col-6 g-col-md-4 me-2">Edit</button>
+            <button onclick="removeSelectedRow();" class="btn btn-danger btn-lg g-col-6 g-col-md-4 me-2">Remove</button>
         </div>
     </div>
     </div>
