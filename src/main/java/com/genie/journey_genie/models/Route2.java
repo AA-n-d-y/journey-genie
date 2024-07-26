@@ -26,10 +26,6 @@ public class Route2 {
     @OneToOne(cascade = CascadeType.ALL)
     private Checklist checklist;
 
-    @Lob
-    @Column(length = 10000)
-    private String routeDetails;
-
     private LocalDateTime creationDate;
 
     @ManyToOne

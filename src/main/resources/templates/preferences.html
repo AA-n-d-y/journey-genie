@@ -38,8 +38,10 @@
     
     
         document.getElementById('generateTrip').addEventListener('click', async () => {
-            let input = "Design a trip. Display the trip as a comma-separated list of coordinates corresponding to activity locations."
-            + "The coordinate pairs should be contained by round brackets. The output should contain no end-of-lines. Nothing else should be shown.";
+            let input = "Create a list of activities for a trip. It should be displayed as an ampersand-separated list of street addresses. "
+            + "The list should also contain short descriptions of the activities which are contained by curved brackets. "
+            + "There must be one activity per day. "
+            + "The output should contain no end-of-lines. Nothing else should be shown.";
             if ("[[${user.preferences.duration}]]") input += " The trip should be [[${user.preferences.duration}]] days long";
             if ("[[${user.preferences.location}]]") input += " The activities should be in and around [[${user.preferences.location}]]";
             if ("[[${user.preferences.range}]]") input += " The activities should be a maximum of [[${user.preferences.range}]] hours away from eachother";
@@ -48,7 +50,7 @@
             const outputDiv = document.getElementById('generationStatus');
             outputDiv.textContent = 'Generating...';
         
-            const generatedText = await generateContent(input);
+            let generatedText = await generateContent(input);
             outputDiv.textContent = generatedText;
         });
     </script>
