@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +26,9 @@ public class UserController {
     // Creating the repository object
     @Autowired
     private UserRepository repo;
+
+    @Value("${GOOGLE_API_KEY}")
+    private String GOOGLE_API_KEY;
   
     private boolean isUserLoggedIn(HttpSession session) {
         User user = (User) session.getAttribute("sessionUser");
@@ -111,6 +115,7 @@ public class UserController {
 
         model.addAttribute("user", user);
         model.addAttribute("interests", interests);
+        model.addAttribute("GOOGLE_API_KEY", GOOGLE_API_KEY);
         return "preferences";
     }
 
