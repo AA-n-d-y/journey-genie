@@ -259,6 +259,11 @@
                     document.getElementById("amount").value = this.cells[1].innerHTML.split(' ')[0];
                     document.getElementById("fromCurrency").value = this.cells[2].innerHTML;
                     document.getElementById("toCurrency").value = this.cells[3].innerHTML;
+
+                    // Update the placeholders
+                    $('#fromCurrency').select2('destroy').attr('placeholder', this.cells[2].innerHTML).select2();
+                    $('#toCurrency').select2('destroy').attr('placeholder', this.cells[3].innerHTML).select2();
+
                     updateDisplayedConversion();
                 };
             }
