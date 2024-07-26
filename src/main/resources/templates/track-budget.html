@@ -9,24 +9,6 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
     <style>
-        /* .container { 
-            overflow: hidden; 
-        }
-        .tab { 
-            float: left; 
-        }
-        .tab-2 { 
-            margin-left: 50px; 
-        }
-        .tab-2 input, .tab-2 select { 
-            display: block; margin-bottom: 10px; width: 100%; 
-        }
-        tr { 
-            transition: all .25s ease-in-out; 
-        }
-        tr:hover { 
-            background-color: #EEE; cursor: pointer; 
-        } */
         #moreOptions { 
             display: none; 
         } /* Initially hidden */
@@ -56,7 +38,7 @@
         <div class="tab tab-1 w-100">
             <table id="table" class="table table-bordered table-hover table-striped">
                 <!-- <thead> -->
-                    <tr>
+                    <tr class="table-success fs-4">
                         <th>Item</th>
                         <th>Amount</th>
                         <th>From Currency</th>
@@ -68,8 +50,8 @@
                 <tbody id="tbody">
                     <!-- Table rows will be added here dynamically -->
                 </tbody>
-                <tfoot>
-                    <tr>
+                <tfoot class="table-primary fs-5">
+                    <tr >
                         <td><strong>Total</strong></td>
                         <td id="totalAmount"></td>
                         <td></td>
@@ -80,13 +62,6 @@
 
             </table>
         </div>
-        <!-- <div class="mt-4">
-            
-            <h4>Total Amount: <span id="totalAmount"></span></h4>
-        
-            <h4>Converted Total Amount: <span id="totalConvertedAmount"></span></h4>
-        
-        </div> -->
         <div class="tab tab-2">
             <div class="mb-3">
                 <label for="item" class="form-label">Item:</label>
