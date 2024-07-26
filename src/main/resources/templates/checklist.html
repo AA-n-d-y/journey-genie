@@ -84,13 +84,13 @@
                         </tr>
 
                         <!-- Data -->
-                        <tr th:each = "activity : ${act}">
+                        <tr th:each = "activity : ${activities}">
 
                             <!-- Update -->
                             <form th:action = "@{/updateActivity/{id}(id=${checklistID})}" method = "POST">
                                 <!-- Title -->
                                 <td>
-                                    <input id = "activityBox" type = "text" th:value = "${activity}" class = "form-control w-50" onchange="inputChange()">
+                                    <input id = "activityBox" type = "text" th:value = "${activity}" class = "form-control w-50" onchange="inputChangeA()">
                                 </td>
                                 
                                 <!-- Update button -->
@@ -101,7 +101,7 @@
                                 </td>
 
                                 <script> 
-                                    function inputChange() {
+                                    function inputChangeA() {
                                         document.getElementById("activityHiddenBox").value = document.getElementById("activityBox").value;
                                     }
                                 </script>
@@ -141,7 +141,7 @@
                             <form th:action = "@{/updatePlace/{id}(id=${checklistID})}" method = "POST">
                                 <!-- Title -->
                                 <td>
-                                    <input id = "placeBox" type = "text" th:value = "${place}" class = "form-control w-50" onchange="inputChange()">
+                                    <input id = "placeBox" type = "text" th:value = "${place}" class = "form-control w-50" onchange="inputChangeP()">
                                 </td>
                                 
                                 <!-- Update button -->
@@ -152,7 +152,7 @@
                                 </td>
 
                                 <script> 
-                                    function inputChange() {
+                                    function inputChangeP() {
                                         document.getElementById("placeHiddenBox").value = document.getElementById("placeBox").value;
                                     }
                                 </script>

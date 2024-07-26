@@ -34,10 +34,6 @@ public class Checklist {
         this.activities = activities;
     }
 
-    // public Checklist(String activities) {
-    //     this.activities = activities;
-    // }
-
     public List<String> getPlaces() {
         return this.places;
     }

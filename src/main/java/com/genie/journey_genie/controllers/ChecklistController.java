@@ -56,16 +56,15 @@ public class ChecklistController {
         // If checklist is null
         if (routeForAssocChecklist.getChecklist() == null) {
             model.addAttribute("checklistID", id);
-            model.addAttribute("act", null);
+            model.addAttribute("activites", null);
             model.addAttribute("places", null);
             response.setStatus(200);
             return "checklist";
         }
 
         // Else
-        List<String> activities = routeForAssocChecklist.getChecklist().getActivities();
         model.addAttribute("checklistID", id);
-        model.addAttribute("act", activities);
+        model.addAttribute("activities", routeForAssocChecklist.getChecklist().getActivities());
         model.addAttribute("places", routeForAssocChecklist.getChecklist().getPlaces());
         response.setStatus(200);
         return "checklist";
@@ -99,18 +98,23 @@ public class ChecklistController {
         }
 
         // Else
-        String activity = newChecklist.get("activity");
-        Route2 routeForAssocChecklist = routeRepository.findById(id).orElse(null);
-        
-        if(routeForAssocChecklist.getChecklist() == null){
-            routeForAssocChecklist.setChecklist(new Checklist());
-        }
+        Route2 route = routeRepository.findById(id).orElse(null);
 
-        Checklist checklist = routeForAssocChecklist.getChecklist(); // Get the Checklist object from the Route object
-        checklist.getActivities().add(activity); // Add the activity to the Checklist object
-        checklist = checklistRepository.save(checklist); // Save the Checklist object
-        routeForAssocChecklist.setChecklist(checklist);
-        routeRepository.save(routeForAssocChecklist);
+        // If checklist isn't null
+        if (route.getChecklist() != null) {
+            route.getChecklist().getActivities().add(newChecklist.get("activity"));
+            checklistRepository.save(route.getChecklist()); // Save the Checklist object
+            route.setChecklist(route.getChecklist());
+            routeRepository.save(route); // Save the route
+        }
+        // Else create a new checklist
+        else {
+            route.setChecklist(new Checklist()); // Create a new checklist
+            route.getChecklist().getActivities().add(newChecklist.get("activity"));
+            checklistRepository.save(route.getChecklist()); // Save the Checklist object
+            route.setChecklist(route.getChecklist());
+            routeRepository.save(route); // Save the route
+        }
         response.setStatus(201);
         return "redirect:/makeChecklist/" + id;
     }
