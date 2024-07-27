@@ -511,7 +511,9 @@
             var totalAmount = 0;
             var totalConvertedAmount = 0;
             var currency = null;
+            var convertedCurrency = null;
             var currencyMismatch = false;
+            var convertedCurrencyMismatch = false;
 
             for (var i = 0; i < table.rows.length; i++) {
                 var amountCell = table.rows[i].cells[1].innerHTML.split(' ');
@@ -527,16 +529,23 @@
                     break;
                 }
 
+                if (convertedCurrency === null) {
+                    convertedCurrency = convertedAmountCell[1];
+                } else if (convertedCurrency !== convertedAmountCell[1]) {
+                    convertedCurrencyMismatch = true;
+                    break;
+                }
+
                 totalAmount += amount;
                 totalConvertedAmount += convertedAmount;
             }
 
-            if (currencyMismatch) {
+            if (currencyMismatch || convertedCurrencyMismatch) {
                 document.getElementById("totalAmount").innerHTML = "Currencies don't match";
                 document.getElementById("totalConvertedAmount").innerHTML = "";
             } else {
                 document.getElementById("totalAmount").innerHTML = `${totalAmount.toFixed(2)} ${currency}`;
-                document.getElementById("totalConvertedAmount").innerHTML = `${totalConvertedAmount.toFixed(2)} ${currency}`;
+                document.getElementById("totalConvertedAmount").innerHTML = `${totalConvertedAmount.toFixed(2)} ${convertedCurrency}`;
             }
         }
 
