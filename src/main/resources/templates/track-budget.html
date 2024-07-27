@@ -358,7 +358,7 @@
             console.log(rIndex); // for debugging
             if (!checkEmptyInput()) {
                 table.rows[rIndex].cells[0].innerHTML = item;
-                table.rows[rIndex].cells[1].innerHTML = amount;
+                table.rows[rIndex].cells[1].innerHTML = `${amount} ${fromCurrency}`;
                 table.rows[rIndex].cells[2].innerHTML = fromCurrency;
                 table.rows[rIndex].cells[3].innerHTML = toCurrency;
                 updateConversion(amount, fromCurrency, toCurrency, table.rows[rIndex].cells[4]);
@@ -390,6 +390,7 @@
                                 success: function (result) {
                                     console.log("Budget updated", result);
                                     table.rows[rIndex].cells[4].innerHTML = `${convertedAmount} ${toCurrency}`;
+                                    location.reload();
                                 },
                                 error: function (error) {
                                     console.log("Error updating budget", error);
