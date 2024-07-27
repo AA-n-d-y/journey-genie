@@ -15,8 +15,7 @@
     </script>
     <script type="module">
 
-        import { GoogleGenerativeAI } from "@google/generative-ai";
-            
+        import { GoogleGenerativeAI } from "@google/generative-ai";        
         
         const API_KEY = "[[${GOOGLE_API_KEY}]]"; // Add your API key here
         
@@ -51,7 +50,16 @@
             outputDiv.textContent = 'Generating...';
         
             let generatedText = await generateContent(input);
-            outputDiv.textContent = generatedText;
+            outputDiv.textContent = generatedText.replaceAll("&","\n");
+
+            if (!document.getElementById("createRoute")) {
+                const createRoute = document.createElement("div");
+                createRoute.innerHTML = 
+                '<form action="/index/' + generatedText + ' method="GET">'
+                + '<input type="submit" id="createRoute" value="createRoute" class = "btn btn-info text-white w-100"></input>'
+                + '</form>'
+                outputDiv.append(createRoute);
+            }
         });
     </script>
     <script>
@@ -145,7 +153,7 @@
                 </form>
                 <button onclick="savePreferences()" class = "btn btn-info text-white w-100">Save</button>
                 <button id="generateTrip" class = "btn btn-info text-white w-100">Generate trip</button>
-                <div id="generationStatus"></div>
+                <div id="generationStatus" style="white-space: pre-line"></div>
 
         </div>
     </main>
