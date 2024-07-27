@@ -56,8 +56,6 @@ public class ChecklistController {
         // If checklist is null
         if (routeForAssocChecklist.getChecklist() == null) {
             model.addAttribute("checklistID", id);
-            model.addAttribute("activites", null);
-            model.addAttribute("places", null);
             response.setStatus(200);
             return "checklist";
         }

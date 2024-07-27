@@ -89,9 +89,19 @@
                 <!-- <a href="/saved-routes" class="btn btn-link mt-3">Back to Saved Routes</a> -->
 
                 <!-- <a href="/weather" class="btn btn-primary mt-3 btn-lg btn-block"> See weather</a> -->
-                <div class="d-flex justify-content-between">
+                <div class="d-flex flex-wrap justify-content-between">
+                    <!-- Back to saved routes -->
                     <a href="/saved-routes" class="btn btn-link mt-3">Back to Saved Routes</a>
-                    <a href="/track-budget" class="btn btn-warning btn-lg mx-3">Track Budget</a>
+
+                    <!-- Checklist button -->
+                    <form th:action = "@{/makeChecklist/checklist/{id}(id=${checklistID})}" method = "GET">
+                        <input type = "submit" value =  "View checklist" class="btn btn-info btn-lg text-white py-3">
+                    </form>
+                    
+                    <!-- Budget tracker -->
+                    <a href="/track-budget" class="btn btn-warning btn-lg d-flex align-items-center">Track Budget</a>
+
+                    <!-- See weather -->
                     <a href="/weather" class="btn btn-primary btn-lg d-flex align-items-center">
                         <i class="bi bi-cloud-sun weather-icon"></i>
                         <span>See Weather</span>
@@ -115,10 +125,6 @@
                     </tbody>
                 </table>
 
-                <!-- Checklist button -->
-                <form th:action = "@{/makeChecklist/checklist/{id}(id=${checklistID})}" method = "GET">
-                    <input type = "submit" value =  "View checklist" class="btn btn-info text-white mb-1">
-                </form>
 
                 <!-- Notes -->
                 <h2 class="mt-5 mb-3">Notes</h2>
