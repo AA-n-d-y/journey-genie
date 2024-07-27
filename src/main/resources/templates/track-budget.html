@@ -51,7 +51,6 @@
     <div class="container mt-5">
         <div class="tab tab-1 w-100">
             <table id="table" class="table table-bordered table-hover table-striped">
-                <!-- <thead> -->
                 <tr class="table-success fs-4">
                     <th>Item</th>
                     <th>Amount</th>
@@ -59,8 +58,6 @@
                     <th class="hidden-column">To Currency</th>
                     <th>Converted Amount</th>
                 </tr>
-                <!-- </thead> -->
-
                 <tbody id="tbody">
                     <!-- Table rows will be added here dynamically -->
                 </tbody>
@@ -73,7 +70,6 @@
                         <td id="totalConvertedAmount"></td>
                     </tr>
                 </tfoot>
-
             </table>
         </div>
         <div class="form-container mt-5">
@@ -111,6 +107,22 @@
             <button onclick="editHtmlTbleSelectedRow();" class="btn btn-primary btn-lg g-col-6 g-col-md-4 me-2">Edit</button>
             <button onclick="removeSelectedRow();" class="btn btn-danger btn-lg g-col-6 g-col-md-4 me-2">Remove</button>
         </div>
+        <div class="form-container mt-5">
+            <div class="form-column">
+                <button onclick="toggleGlobalOptions()" id="toggleGlobalButton" class="btn btn-secondary mt-4">Global Options</button>
+                <div id="globalOptions" style="display:none;">
+                    <div class="mb-3 mt-4">
+                        <label for="globalFromCurrency" class="form-label">Global From Currency:</label>
+                        <div><select id="globalFromCurrency" class="form-select"></select> </div>
+                    </div>
+                    <div class="mb-3 mt-4">
+                        <label for="globalToCurrency" class="form-label">Global To Currency:</label>
+                        <div><select id="globalToCurrency" class="form-select"></select> </div>
+                    </div>
+                    <button onclick="updateAllRows()" class="btn btn-primary btn-lg mt-4">Update All Rows</button>
+                </div>
+            </div>
+        </div>
     </div>
     </div>
 
@@ -132,6 +144,16 @@
             });
 
             $('#toCurrency').select2({
+                data: currencies,
+                placeholder: 'Select a currency'
+            });
+
+            $('#globalFromCurrency').select2({
+                data: currencies,
+                placeholder: 'Select a currency'
+            });
+
+            $('#globalToCurrency').select2({
                 data: currencies,
                 placeholder: 'Select a currency'
             });
@@ -270,7 +292,6 @@
                     rIndex--; // Adjust for header row
                     console.log(rIndex);// for debugging
                     document.getElementById("item").value = this.cells[0].innerHTML;
-                    // document.getElementById("amount").value = this.cells[1].innerHTML;
                     document.getElementById("amount").value = this.cells[1].innerHTML.split(' ')[0];
                     document.getElementById("fromCurrency").value = this.cells[2].innerHTML;
                     document.getElementById("toCurrency").value = this.cells[3].innerHTML;
@@ -402,6 +423,72 @@
             });
         }
 
+        function updateAllRows() {
+            var fromCurrency = document.getElementById("globalFromCurrency").value;
+            var toCurrency = document.getElementById("globalToCurrency").value;
+
+            if (fromCurrency && toCurrency) {
+                // Show confirmation popup
+                var confirmUpdate = confirm("Do you want to update all entries to the selected currencies?");
+                
+                if (confirmUpdate) {
+                    fetch(`https://openexchangerates.org/api/latest.json?app_id=${apiKey}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            const fromRate = data.rates[fromCurrency];
+                            const toRate = data.rates[toCurrency];
+
+                            if (fromRate && toRate) {
+                                var updatesCompleted = 0;
+
+                                for (var i = 0; i < table.rows.length; i++) {
+                                    var amount = parseFloat(table.rows[i].cells[1].innerHTML);
+                                    var convertedAmount = (amount / fromRate * toRate).toFixed(2);
+
+                                    table.rows[i].cells[1].innerHTML = `${amount} ${fromCurrency}`;
+                                    table.rows[i].cells[4].innerHTML = `${convertedAmount} ${toCurrency}`;
+
+                                    // Get row id
+                                    var id = table.rows[i].dataset.id;
+
+                                    // Prepare data for update
+                                    var updateData = {
+                                        item: table.rows[i].cells[0].innerHTML,
+                                        amount: amount,
+                                        fromCurrency: fromCurrency,
+                                        toCurrency: toCurrency,
+                                        convertedAmount: parseFloat(convertedAmount)
+                                    };
+
+                                    // Send AJAX request to update the entry
+                                    $.ajax({
+                                        url: `/budgets/${id}`,
+                                        type: 'PUT',
+                                        contentType: 'application/json',
+                                        data: JSON.stringify(updateData),
+                                        success: function(result) {
+                                            updatesCompleted++;
+                                            // Reload page when all updates are done
+                                            if (updatesCompleted === table.rows.length) {
+                                                location.reload();
+                                            }
+                                        },
+                                        error: function(error) {
+                                            console.log("Error updating budget", error);
+                                        }
+                                    });
+                                }
+                            } else {
+                                alert('Conversion rate not found.');
+                            }
+                        })
+                        .catch(error => {
+                            alert(`Error fetching conversion rate: ${error.message}`);
+                        });
+                }
+            }
+        }
+
         function toggleMoreOptions() {
             var moreOptions = document.getElementById("moreOptions");
             var toggleButton = document.getElementById("toggleButton");
@@ -413,10 +500,22 @@
                 toggleButton.innerText = "More";
             }
         }
+
+        function toggleGlobalOptions() {
+            var globalOptions = document.getElementById("globalOptions");
+            var toggleButton = document.getElementById("toggleGlobalButton");
+            if (globalOptions.style.display === "none" || globalOptions.style.display === "") {
+                globalOptions.style.display = "block";
+                toggleButton.innerText = "Hide Global Options";
+            } else {
+                globalOptions.style.display = "none";
+                toggleButton.innerText = "Show Global Options";
+            }
+        }
+    
         function updateTotals() {
             var totalAmount = 0;
             var totalConvertedAmount = 0;
-            // var toCurrency = document.getElementById("toCurrency").value;
 
             for (var i = 0; i < table.rows.length; i++) {
                 totalAmount += parseFloat(table.rows[i].cells[1].innerHTML);
@@ -424,11 +523,8 @@
             }
 
             document.getElementById("totalAmount").innerHTML = totalAmount.toFixed(2);
-            // document.getElementById("totalConvertedAmount").innerHTML = `${totalConvertedAmount.toFixed(2)} ${toCurrency}`;
             document.getElementById("totalConvertedAmount").innerHTML = totalConvertedAmount.toFixed(2);
-
         }
-
 
         $(document).ready(function () {
             loadBudgets();
