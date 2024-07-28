@@ -37,13 +37,22 @@
     
     
         document.getElementById('generateTrip').addEventListener('click', async () => {
-            let input = "Create a list of activities displayed as an ampersand-separated list of street addresses corresponding to each activity. "
-            + "There must be one activity per day. "
-            + "The output should contain no end-of-lines. Nothing else should be shown.";
-            if ("[[${user.preferences.duration}]]") input += " The trip should be [[${user.preferences.duration}]] days long";
-            if ("[[${user.preferences.location}]]") input += " The activities should be in and around [[${user.preferences.location}]]";
-            if ("[[${user.preferences.range}]]") input += " The activities should be a maximum of [[${user.preferences.range}]] hours away from eachother";
-            if ("[[${user.preferences.interests}]]") input += " The trip should suit someone who is interested in [[${user.preferences.interests}]]";
+            let interests = document.getElementsByClassName("interests");
+            var interestList = interests[0].value;
+
+            for (let i = 1; i < interests.length; i++) {
+                interestList += "," + interests[i].value;
+            }
+
+            let input = "Generate a list of activities for a vacation based on the following intructions and display it as an ampersand-separated list of street addresses corresponding to each activity."
+            + " The output should contain no end-of-lines. Nothing else should be shown."
+            + " There must be " + document.getElementById("activitiesPerDay").value + " activities per day. "
+            + " The trip should be " + document.getElementById("duration").value + " days long"
+            + " The activities should be in and around " + document.getElementById("location").value
+            + " The activities should be a maximum of " + document.getElementById("range").value + " hours away from eachother"
+            + " The trip should suit someone who is interested in " + interestList;
+
+            console.log(input);
 
             const outputDiv = document.getElementById('generationStatus');
             outputDiv.textContent = 'Generating...';
@@ -80,6 +89,7 @@
                     },
                     body: new URLSearchParams({
                         'duration': document.getElementById("duration").value,
+                        'activitiesPerDay': document.getElementById("activitiesPerDay").value,
                         'tolls': document.getElementById("tolls").checked,
                         'location': document.getElementById("location").value,
                         'range': document.getElementById("range").value,
@@ -144,14 +154,16 @@
                 <h1 class="text-center mb-5">Preferences</h1>
                 <form th:if="${hasPreferences}" id="preferences" class="row justify-content-sm-center">
                     <label for="duration">Trip duration</label>
-                    <input type="number" name="duration" id="duration" placeholder="days" th:value="${user.preferences.duration}" required> <br>
+                    <input type="number" name="duration" id="duration" placeholder="days" th:value="${user.preferences.duration}" required>
+                    <label for="activitiesPerDay">Activities per day</label>
+                    <input type="number" name="activitiesPerDay" id="activitiesPerDay" placeholder="# of activities" th:value="${user.preferences.activitiesPerDay}" required>
                     <label for="tolls">Allow tolls roads</label>
                     <input th:if="${user.preferences.tolls}" type="checkbox" name="tolls" id="tolls" checked>
                     <input th:unless="${user.preferences.tolls}" type="checkbox" name="tolls" id="tolls">
                     <label for="location">Prefered Country</label>
-                    <input type="text" name="location" id="location" placeholder="country/leave empty for suggestions" th:value="${user.preferences.location}"> <br>
+                    <input type="text" name="location" id="location" placeholder="country" th:value="${user.preferences.location}" required>
                     <label for="range">Max time between Activities</label>
-                    <input type="number" name="range" id="range" placeholder="hours" th:value="${user.preferences.range}"> <br>
+                    <input type="number" name="range" id="range" placeholder="hours" th:value="${user.preferences.range}" required>
                     <label for="interests">Interests</label>
                     <button onclick="addInterest()" class="btn btn-dark text-white mx-2">Add Interest</button>
                     <table id="interestTable">
@@ -164,13 +176,15 @@
                 </form>
                 <form th:unless="${hasPreferences}" id="preferences" class="row justify-content-sm-center">
                     <label for="duration">Trip duration</label>
-                    <input type="number" name="duration" id="duration" placeholder="days" required> <br>
+                    <input type="number" name="duration" id="duration" placeholder="days" required>
+                    <label for="activitiesPerDay">Activities per day</label>
+                    <input type="number" name="activitiesPerDay" id="activitiesPerDay" placeholder="# of activities" required>
                     <label for="tolls">Allow tolls roads</label>
                     <input type="checkbox" name="tolls" id="tolls">
                     <label for="location">Prefered Country</label>
-                    <input type="text" name="location" id="location" placeholder="country/leave empty for suggestions"> <br>
+                    <input type="text" name="location" id="location" placeholder="country" required>
                     <label for="range">Max time between Activities</label>
-                    <input type="number" name="range" id="range" placeholder="hours"> <br>
+                    <input type="number" name="range" id="range" placeholder="hours" required>
                     <label for="interests">Interests</label>
                     <button onclick="addInterest()" class="btn btn-dark text-white mx-2">Add Interest</button>
                     <table id="interestTable">

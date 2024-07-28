@@ -12,6 +12,7 @@ public class Preferences {
     private int id;
 
     private int duration;
+    private int activitiesPerDay;
     private boolean tolls;
     private String location;
     private float range;
@@ -21,8 +22,9 @@ public class Preferences {
 
     }
 
-    public Preferences(int duration, boolean tolls, String location, float range, String interests) {
+    public Preferences(int duration, int activitiesPerDay, boolean tolls, String location, float range, String interests) {
         this.duration = duration;
+        this.activitiesPerDay = activitiesPerDay;
         this.tolls = tolls;
         this.location = location;
         this.range = range;
@@ -62,6 +64,14 @@ public class Preferences {
     }
     public void setRange(float range) {
         this.range = range;
+    }
+
+    public int getActivitiesPerDay() {
+        return activitiesPerDay;
+    }
+
+    public void setActivitiesPerDay(int activitiesPerDay) {
+        this.activitiesPerDay = activitiesPerDay;
     }
     
     

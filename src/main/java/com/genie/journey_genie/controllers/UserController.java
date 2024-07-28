@@ -92,11 +92,12 @@ public class UserController {
     @PostMapping("/save-preferences")
     public void savePreferences(@RequestParam Map<String, String> newPreferences, HttpSession session, HttpServletResponse response) {
         int duration = Integer.parseInt(newPreferences.get("duration"));
+        int activitiesPerDay = Integer.parseInt(newPreferences.get("activitiesPerDay"));
         boolean tolls = Boolean.parseBoolean(newPreferences.get("tolls"));
         String location = newPreferences.get("location");
         float range = Float.parseFloat(newPreferences.get("range"));
         String interests = newPreferences.get("interests");
-        Preferences preferences = new Preferences(duration, tolls, location, range, interests);
+        Preferences preferences = new Preferences(duration, activitiesPerDay, tolls, location, range, interests);
 
         User user = (User) session.getAttribute("sessionUser");
         user.setPreferences(preferences);
