@@ -16,6 +16,9 @@ public class MapController {
     @Value("${GOOGLE_API_KEY}")
     private String GOOGLE_API_KEY;
 
+    @Value("${env.TRIPADVISOR_API_KEY}")
+    private String TRIPADVISOR_API_KEY;
+
     private boolean isUserLoggedIn(HttpSession session) {
         User user = (User) session.getAttribute("sessionUser");
         return user != null;
@@ -28,6 +31,7 @@ public class MapController {
             return "loginPage";
         }
         model.addAttribute("GOOGLE_API_KEY", GOOGLE_API_KEY);
+        model.addAttribute("TRIPADVISOR_API_KEY", TRIPADVISOR_API_KEY);
         return "index";
     }
 }
