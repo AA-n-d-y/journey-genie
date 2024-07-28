@@ -128,4 +128,27 @@ public class Route2 {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM, yyyy, hh:mm a");
         return this.creationDate.format(formatter);
     }
+
+//    Functions to edit the arrays
+//    private String[] deleteFromMiddle(String[] arr, int index) {
+//        String[] result = new String[arr.length - 1];
+//        System.arraycopy(arr, 0, result, 0, index);
+//        System.arraycopy(arr, index + 1, result, index, arr.length - index - 1);
+//        return result;
+//    }
+//
+//    public void deleteLocation(int index) {
+//        this.coords = deleteFromMiddle(this.coords, index);
+//        this.points = deleteFromMiddle(this.points, index);
+//    }
+//
+//    public void swapLocations(int index1, int index2) {
+//        String temp = this.coords[index1];
+//        this.coords[index1] = this.coords[index2];
+//        this.coords[index2] = temp;
+//
+//        temp = this.points[index1];
+//        this.points[index1] = this.points[index2];
+//        this.points[index2] = temp;
+//    }
 }
