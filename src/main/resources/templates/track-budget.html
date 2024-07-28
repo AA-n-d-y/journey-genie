@@ -12,7 +12,9 @@
     <style>
         #moreOptions {
             display: none;
-        } /* Initially hidden */
+        }
+
+        /* Initially hidden */
         .hidden-column {
             display: none;
         }
@@ -26,8 +28,14 @@
         .form-column {
             flex: 1;
         }
+
+        .red-button {
+            background-color: red !important;
+            border-color: red !important;
+        }
     </style>
 </head>
+
 <body>
     <header>
         <nav class="navbar navbar-expand-md bg-info h4 px-4 py-3 text-white" style="min-height: 75px;">
@@ -62,7 +70,7 @@
                     <!-- Table rows will be added here dynamically -->
                 </tbody>
                 <tfoot class="table-primary fs-5">
-                    <tr >
+                    <tr>
                         <td><strong>Total</strong></td>
                         <td id="totalAmount"></td>
                         <td class="hidden-column"></td>
@@ -97,32 +105,39 @@
                     </div>
                     <div class="mt-4">
                         <label for="toCurrency" class="form-label">To Currency:</label>
-                        <div><select id="toCurrency" class="form-select" onchange="updateDisplayedConversion()"></select></div>
+                        <div><select id="toCurrency" class="form-select"
+                                onchange="updateDisplayedConversion()"></select></div>
                     </div>
                 </div>
             </div>
         </div>
+        <div class="grid text-center mt-4">
+            <button onclick="addHtmlTableRow();" class="btn btn-success btn-lg g-col-6 g-col-md-4 me-2">Add</button>
+            <button onclick="editHtmlTbleSelectedRow();"
+                class="btn btn-primary btn-lg g-col-6 g-col-md-4 me-2">Edit</button>
+            <button onclick="removeSelectedRow();" class="btn btn-danger btn-lg g-col-6 g-col-md-4 me-2">Remove</button>
+        </div>
         <div class="form-container mt-5">
             <div class="form-column">
-                <button onclick="toggleGlobalOptions()" id="toggleGlobalButton" class="btn btn-secondary mt-4">Global Options</button>
+                <!-- previously was Global Options -->
+                <button onclick="toggleGlobalOptions()" id="toggleGlobalButton" class="btn btn-secondary mt-4"> 🔽 Match
+                    Currencies</button>
                 <div id="globalOptions" style="display:none;">
                     <div class="mb-3 mt-4">
-                        <label for="globalFromCurrency" class="form-label">Global From Currency:</label>
+                        <label for="globalFromCurrency" class="form-label">Change All the currencies from "Amount"
+                            column to:</label>
                         <div><select id="globalFromCurrency" class="form-select"></select> </div>
                     </div>
                     <div class="mb-3 mt-4">
-                        <label for="globalToCurrency" class="form-label">Global To Currency:</label>
+                        <label for="globalToCurrency" class="form-label">Change All the currencies from "Converted
+                            Amount" column to:</label>
                         <div><select id="globalToCurrency" class="form-select"></select> </div>
                     </div>
                     <button onclick="updateAllRows()" class="btn btn-primary btn-lg mt-4">Update All Rows</button>
                 </div>
             </div>
         </div>
-        <div class="grid text-center mt-4">
-            <button onclick="addHtmlTableRow();" class="btn btn-success btn-lg g-col-6 g-col-md-4 me-2">Add</button>
-            <button onclick="editHtmlTbleSelectedRow();" class="btn btn-primary btn-lg g-col-6 g-col-md-4 me-2">Edit</button>
-            <button onclick="removeSelectedRow();" class="btn btn-danger btn-lg g-col-6 g-col-md-4 me-2">Remove</button>
-        </div>
+
     </div>
     </div>
 
@@ -135,7 +150,7 @@
         const apiKey = "[[${OPENCURRENCY_API_KEY}]]";
         const currencyUrl = `https://openexchangerates.org/api/currencies.json?app_id=${apiKey}`;
 
-        $.getJSON(currencyUrl, function(data) {
+        $.getJSON(currencyUrl, function (data) {
             const currencies = Object.keys(data).map(key => ({ id: key, text: `${data[key]} (${key})` }));
 
             $('#fromCurrency').select2({
@@ -287,7 +302,7 @@
 
         function selectedRowToInput() {
             for (var i = 0; i < table.rows.length; i++) {
-                table.rows[i].onclick = function() {
+                table.rows[i].onclick = function () {
                     rIndex = this.rowIndex; // for debugging
                     rIndex--; // Adjust for header row
                     console.log(rIndex);// for debugging
@@ -429,7 +444,7 @@
 
             if (fromCurrency && toCurrency) {
                 var confirmUpdate = confirm("Do you want to update all entries to the selected currencies?");
-                
+
                 if (confirmUpdate) {
                     fetch(`https://openexchangerates.org/api/latest.json?app_id=${apiKey}`)
                         .then(response => response.json())
@@ -462,13 +477,13 @@
                                         type: 'PUT',
                                         contentType: 'application/json',
                                         data: JSON.stringify(updateData),
-                                        success: function(result) {
+                                        success: function (result) {
                                             updatesCompleted++;
                                             if (updatesCompleted === table.rows.length) {
                                                 location.reload();
                                             }
                                         },
-                                        error: function(error) {
+                                        error: function (error) {
                                             console.log("Error updating budget", error);
                                         }
                                     });
@@ -501,13 +516,13 @@
             var toggleButton = document.getElementById("toggleGlobalButton");
             if (globalOptions.style.display === "none" || globalOptions.style.display === "") {
                 globalOptions.style.display = "block";
-                toggleButton.innerText = "Hide Global Options";
+                toggleButton.innerText = "🔼 Match Currencies";
             } else {
                 globalOptions.style.display = "none";
-                toggleButton.innerText = "Show Global Options";
+                toggleButton.innerText = "🔽 Match Currencies";
             }
         }
-    
+
         function updateTotals() {
             var totalAmount = 0;
             var totalConvertedAmount = 0;
@@ -544,15 +559,19 @@
             if (currencyMismatch || convertedCurrencyMismatch) {
                 document.getElementById("totalAmount").innerHTML = "Currencies don't match";
                 document.getElementById("totalConvertedAmount").innerHTML = "";
+                document.getElementById("toggleGlobalButton").classList.add('red-button');
             } else {
                 document.getElementById("totalAmount").innerHTML = `${totalAmount.toFixed(2)} ${currency}`;
                 document.getElementById("totalConvertedAmount").innerHTML = `${totalConvertedAmount.toFixed(2)} ${convertedCurrency}`;
+                document.getElementById("toggleGlobalButton").classList.remove('red-button');
             }
         }
+
 
         $(document).ready(function () {
             loadBudgets();
         });
     </script>
 </body>
+
 </html>
