@@ -19,6 +19,7 @@
         let locations = [];
         let markers = [];
         let API_KEY = "[[${GOOGLE_API_KEY}]]";
+        let TRIPADVISOR_KEY = "[[${TRIPADVISOR_API_KEY}]]";
 
         function initMap() {
             directionsService = new google.maps.DirectionsService();
@@ -50,9 +51,13 @@
             const refDiv = document.getElementById("endOfLocations");
 
             const newElement = document.createElement('div')
-            newElement.innerHTML = "<input class='location form-control mb-3' id='loc-" + document.getElementsByClassName('location').length +
+            newElement.innerHTML = "<div class='row'><div class='col-1'><i onclick='try {moveUp(this.parentElement.parentElement.parentElement, this.parentElement.parentElement.getElementsByClassName(\"location\")[0].id)} catch (e) {return}' class='mdi mdi-chevron-up btn-icon locationButton' title='Move up'></i>" +
+                "<i onclick='try {moveUp(this.parentElement.parentElement.parentElement.nextSibling, parseInt(this.parentElement.parentElement.getElementsByClassName(\"location\")[0].id) + 1)} catch (e) {return}' class='mdi mdi-chevron-down btn-icon locationButton' title='Move down'></i></div>" +
+                "<div class='col'><input class='location form-control mb-3' id='" + document.getElementsByClassName('location').length +
                 "' type='text' placeholder='Enter location'>" +
-                "<button onclick='calculateRoute(" + document.getElementsByClassName('location').length + ")' class='btn btn-info'>Display</button>"
+                "<button onclick='calculateRoute(" + document.getElementsByClassName('location').length + ")' class='btn btn-info'>Display</button>" +
+                "<button onclick='findHotels(this.parentElement.parentElement.getElementsByClassName(\"location\")[0].id)' class='btn btn-info'>Find Hotels</button>" +
+                "<i onclick='deleteLocation(this.parentElement.parentElement.parentElement)' class='mdi mdi-close btn-icon locationButton' title='Delete'></i></div></div>"
             newElement.className = 'container bg-primary rounded p-2 mb-2'
 
             document.getElementById('locationsParent').insertBefore(newElement, refDiv);
@@ -67,7 +72,7 @@
         }
 
         function setLocation(location, element) {
-            let locId = parseInt(element.id.substring(4));
+            let locId = parseInt(element.id);
             locations[locId] = location;
             if (markers[locId]) markers[locId].setMap(null);
             markers[locId] = new google.maps.Marker({
@@ -79,11 +84,77 @@
             geocodeLocation(location, element.id);
         }
 
+        function deleteLocation(element) {
+            let locId = parseInt(element.getElementsByClassName("location")[0].id)
+            element.remove()
+            for (let i = locId; i < document.getElementsByClassName("location").length; i++) {
+                document.getElementsByClassName("location")[i].id = (document.getElementsByClassName("location")[i].id - 1)
+            }
+            locations.splice(locId, 1)
+            markers.splice(locId, 1)
+        }
+
+        function moveUp(element, id) {
+            let temp1 = document.getElementsByClassName("location")[id].id;
+            document.getElementsByClassName("location")[id].id = document.getElementsByClassName("location")[id-1].id;
+            document.getElementsByClassName("location")[id-1].id = temp1;
+            element.parentNode.insertBefore(element, element.previousSibling);
+
+            let temp2 = locations[id]
+            locations[id] = locations[id-1]
+            locations[id-1] = temp2
+
+            let temp3 = markers[id]
+            markers[id] = markers[id-1]
+            markers[id-1] = temp3
+        }
+
+        async function findHotels(id) {
+            if (document.getElementById('hotels-box').classList.contains('show')) {return}
+
+            const options = {method: 'GET', headers: {accept: 'application/json'}};
+
+            let data;
+            await fetch("https://corsproxy.io/?https://api.content.tripadvisor.com/api/v1/location/nearby_search?language=en&key=" + TRIPADVISOR_KEY + "&latLong=" + locations[id].lat() + "," + locations[id].lng() + "&category=hotels", options)
+                .then(response => response.json())
+                .then(response => {data = response})
+                .then(() => {console.log(data)})
+                .catch(err => console.error(err));
+            document.getElementById('hotels-box').classList.add('show')
+            for (const i in data.data) {
+                let newElement = document.createElement("div")
+                newElement.innerHTML = "<p style='margin-bottom: 5px'>" + data.data[i].name + "</p>" +
+                    "<button class='btn btn-light' style='margin-top: 0; margin-bottom: 20px' onclick='document.getElementById(" + id + ").value = \"" + data.data[i].address_obj.address_string + "\";" +
+                    "addressToLatLng(\"" + data.data[i].address_obj.address_string + "\"," + id + ");" +
+                    "closeModal()'>Select Hotel</button>"
+                document.getElementById('hotels-list').appendChild(newElement)
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('hotels-box').classList.remove("show")
+            document.getElementById('hotels-list').innerHTML = ""
+        }
+
         function geocodeLocation(location, inputId) {
             geocoder.geocode({ 'location': location }, function (results, status) {
                 if (status === 'OK') {
                     if (results[0]) {
                         document.getElementById(inputId).value = results[0].formatted_address;
+                    } else {
+                        alert('No results found');
+                    }
+                } else {
+                    alert('Geocoder failed due to: ' + status);
+                }
+            });
+        }
+
+        function addressToLatLng(address, inputId) {
+            geocoder.geocode({ 'address': address }, function (results, status) {
+                if (status === 'OK') {
+                    if (results[0]) {
+                        setLocation(results[0].geometry.location, document.getElementById(inputId));
                     } else {
                         alert('No results found');
                     }
@@ -147,7 +218,7 @@
             }
             mapElement = document.getElementById("map");
 
-            // This doesn't actually do work because you can't have a flying route with waypoints in the middle
+            // This doesn't actually work because you can't have a flying route with waypoints in the middle
             // I just did it for the sake of consistency
             if (travelMode === "flying") {
                 console.log("flying");
@@ -223,7 +294,7 @@
             selectedRoute = null;
             document.getElementById('routes').innerHTML = '';
             for (let i in locations) {
-                document.getElementById('loc-' + i).value = ''
+                document.getElementById(i).value = ''
             }
             for (let i in locations) {
                 locations[i] = null
@@ -231,6 +302,10 @@
         }
 
         function saveRoute() {
+            if (document.getElementsByClassName('location').length < 2) {
+                alert("You must have at least 2 locations.");
+                return;
+            }
             for (let i in locations) {
                 if (!locations[i]) {
                     alert("Please fill in all locations.");
@@ -240,7 +315,7 @@
 
             const routePoints = []
             for (let i in locations) {
-                routePoints[i] = document.getElementById('loc-' + i).value;
+                routePoints[i] = document.getElementById(i).value;
             }
 
             const coords = []
@@ -272,6 +347,11 @@
         }
     </script>
     <style>
+        #map {
+            min-height: calc(100vh - 500px);
+            height: 500px;
+        }
+
         .route-option {
             margin: 5px 0;
             padding: 10px;
@@ -293,6 +373,32 @@
 
         .btn-icon:hover {
             color: #0056b3;
+        }
+        
+        .locationButton {
+            color: lightgray;
+        }
+        
+        .locationButton:hover {
+            color: white;
+        }
+
+        .modal {
+            position: absolute;
+            left: 50%;
+            transform: translate(-50%, 30%);
+            border-radius: 10px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            width: 500px;
+            height: 500px;
+            z-index: 100;
+            padding: 20px;
+        }
+
+        .show {
+            display: block;
         }
     </style>
 </head>
@@ -327,6 +433,13 @@
 
 <!-- Container -->
 <main class="container-fluid row mx-0" style="margin-top: 100px;">
+    <div id="hotels-box" class="modal bg-info">
+        <div class="row">
+            <div class="col-10"><h3>Nearby Hotels</h3></div>
+            <div class="col-2"><i onclick='closeModal()' class='mdi mdi-close btn-icon locationButton' title='Close'></i></div>
+        </div>
+        <div id="hotels-list"></div>
+    </div>
     <div class="col-4" id="locationsParent">
         <div id="endOfLocations"></div>
     </div>
@@ -362,7 +475,7 @@
                 <button onclick="saveRoute()" class="btn btn-success">Save This Route</button>
             </div>
             <div id="routes"></div>
-            <div id="map" style="height: 500px; width: 100%;" class="mt-5"></div>
+            <div id="map" style="width: 100%;" class="mt-5"></div>
             <iframe id="iframe" height="500px" width="100%" style="border:0; display:none" loading="lazy" allowfullscreen th:inline="javascript"></iframe>
             <a href="/saved-routes" class="btn btn-link mt-3">See Your Saved Routes</a>
     </div>
