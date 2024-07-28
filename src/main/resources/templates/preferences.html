@@ -13,7 +13,7 @@
           }
         }
     </script>
-    <script type="module">
+    <script type="module" th:if="${hasPreferences}">
 
         import { GoogleGenerativeAI } from "@google/generative-ai";        
         
@@ -37,8 +37,9 @@
     
     
         document.getElementById('generateTrip').addEventListener('click', async () => {
-            let input = "Create a list of activities for a trip. It should be displayed as an ampersand-separated list of street addresses. "
-            + "The list should also contain short descriptions of the activities which are contained by curved brackets. "
+            let input = "Create a list of activities displayed as an ampersand-separated list of coordinates corresponding to each activity. "
+            + "Next there should be a ampersand-separated list of short activity descriptions corresponding to each coordinate. "
+            // + "Here is an example of how it should be formatted: 114 Amsterdam, Netherlands & 1300 AJ Almere, Netherlands & 2221 AK Katwijk, Netherlands & 6900 AA Zevenaar, Netherlands & 6211 AE Maastricht, Netherlands & 9741 AD Groningen, Netherlands & 1013 BG Amsterdam, Netherlands & Explore the canals and visit the Anne Frank House & Visit the Dutch National Maritime Museum and learn about the country’s rich maritime history & Go for a hike along the North Sea coast and enjoy the fresh air & Go fishing on the Rhine River and enjoy the peaceful atmosphere & Visit the Maastricht Underground and explore the city's history & Visit the Groninger Museum and discover contemporary art & Explore the city's vibrant nightlife and enjoy the city's unique atmosphere"
             + "There must be one activity per day. "
             + "The output should contain no end-of-lines. Nothing else should be shown.";
             if ("[[${user.preferences.duration}]]") input += " The trip should be [[${user.preferences.duration}]] days long";
@@ -51,6 +52,7 @@
         
             let generatedText = await generateContent(input);
             outputDiv.textContent = generatedText.replaceAll("&","\n");
+            // outputDiv.textContent = generatedText;
 
             if (!document.getElementById("createRoute")) {
                 const createRoute = document.createElement("div");
@@ -98,10 +100,14 @@
         }
 
         function addInterest() {
-            let preferences = document.getElementById("preferences");
-            let interest = document.getElementsByClassName("interests")[0].cloneNode();
-            interest.value = "";
-            preferences.appendChild(interest);
+            let table = document.getElementById("interestTable");
+            let row = document.createElement("tr");
+            row.innerHTML = '<td><input style="width:90%" type="text" name="interests" class="interests" required></td><td><button class="btn-delete" onclick="deleteInterest(this)">Delete</button></td>';
+            table.appendChild(row);
+        }
+
+        function deleteInterest(interest) {
+            interest.parentElement.parentElement.remove();
         }
     </script>
 </head>
@@ -137,7 +143,7 @@
         <div style = "margin-top: 100px;">
 
                 <h1 class="text-center mb-5">Preferences</h1>
-                <form id="preferences" class="row justify-content-sm-center">
+                <form th:if="${hasPreferences}" id="preferences" class="row justify-content-sm-center">
                     <label for="duration">Trip duration</label>
                     <input type="number" name="duration" id="duration" th:value="${user.preferences.duration}" required> <br>
                     <label for="tolls">Allow tolls roads</label>
@@ -149,10 +155,33 @@
                     <input type="number" name="range" id="range" th:value="${user.preferences.range}"> <br>
                     <label for="interests">Interests</label>
                     <button onclick="addInterest()" class="btn btn-dark text-white mx-2">Add Interest</button>
-                    <input th:each="interest:${interests}" type="text" name="interests" class="interests" required th:value="${interest}">
+                    <table id="interestTable">
+                        <tr th:each="interest:${interests}">
+                            <td><input style="width:90%" type="text" name="interests" class="interests" required th:value="${interest}"></td>
+                            <td><button onclick="deleteInterest(this)">Delete</button></td>
+                        </tr>
+                    </table>
+                </form>
+                <form th:unless="${hasPreferences}" id="preferences" class="row justify-content-sm-center">
+                    <label for="duration">Trip duration</label>
+                    <input type="number" name="duration" id="duration" required> <br>
+                    <label for="tolls">Allow tolls roads</label>
+                    <input type="checkbox" name="tolls" id="tolls">
+                    <label for="location">Prefered Country</label>
+                    <input type="text" name="location" id="location" placeholder="country/leave empty for suggestions"> <br>
+                    <label for="range">Max time between Activities</label>
+                    <input type="number" name="range" id="range"> <br>
+                    <label for="interests">Interests</label>
+                    <button onclick="addInterest()" class="btn btn-dark text-white mx-2">Add Interest</button>
+                    <table id="interestTable">
+                        <tr>
+                            <td><input style="width:90%" type="text" name="interests" class="interests" required></td>
+                            <td><button onclick="deleteInterest(this)">Delete</button></td>
+                        </tr>
+                    </table>
                 </form>
                 <button onclick="savePreferences()" class = "btn btn-info text-white w-100">Save</button>
-                <button id="generateTrip" class = "btn btn-info text-white w-100">Generate trip</button>
+                <button th:if="${hasPreferences}" id="generateTrip" class = "btn btn-info text-white w-100">Generate trip</button>
                 <div id="generationStatus" style="white-space: pre-line"></div>
 
         </div>

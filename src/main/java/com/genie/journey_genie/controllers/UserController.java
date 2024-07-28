@@ -111,10 +111,16 @@ public class UserController {
             return "loginPage";
         }
         User user = (User) session.getAttribute("sessionUser");
-        String interests[] = user.getPreferences().getInterests().split(",");
-
         model.addAttribute("user", user);
-        model.addAttribute("interests", interests);
+
+        if (user.getPreferences() != null) {
+            String interests[] = user.getPreferences().getInterests().split(",");
+            model.addAttribute("interests", interests);
+            model.addAttribute("hasPreferences", true);
+        } else {
+            model.addAttribute("hasPreferences", false);
+        }   
+        
         model.addAttribute("GOOGLE_API_KEY", GOOGLE_API_KEY);
         return "preferences";
     }

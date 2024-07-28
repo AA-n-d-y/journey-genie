@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -30,4 +31,15 @@ public class MapController {
         model.addAttribute("GOOGLE_API_KEY", GOOGLE_API_KEY);
         return "index";
     }
+
+    // @GetMapping("/index/{trip}")
+    // public String generateTrip(Model model, @PathVariable String trip, HttpServletResponse response, HttpServletRequest request, HttpSession session) {
+    //     if (!isUserLoggedIn(session)) {
+    //         response.setStatus(401); // Unauthorized
+    //         return "loginPage";
+    //     }
+    //     model.addAttribute("GOOGLE_API_KEY", GOOGLE_API_KEY);
+
+    //     String locations[] = trip.split("&");
+    // }
 }
