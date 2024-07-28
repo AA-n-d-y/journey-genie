@@ -302,6 +302,10 @@
         }
 
         function saveRoute() {
+            if (document.getElementsByClassName('location').length < 2) {
+                alert("You must have at least 2 locations.");
+                return;
+            }
             for (let i in locations) {
                 if (!locations[i]) {
                     alert("Please fill in all locations.");
