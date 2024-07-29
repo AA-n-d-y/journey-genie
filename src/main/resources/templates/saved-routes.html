@@ -112,7 +112,6 @@
                         <tr th:each="route : ${routes}">
                             <td th:text="${route.formattedCreationDate}">Date Creation</td>
                             <td th:text="${#strings.replace(route.startPoint, '%2C', ',')}"> </td>
-<!--                            TODO: For some reason the end point is always stated as just the country idk how to fix it right now-->
                             <td th:text="${#strings.replace(route.endPoint, '%2C', ',')}"> </td>
                             <td>
                                 <i th:classappend="'mdi mdi-travel-mode ' +
