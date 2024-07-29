@@ -92,10 +92,10 @@ public class LoginsController {
         // Getting the user
         List<User> userList = repo.findByUsernameAndPassword(loginForm.get("username"), loginForm.get("password"));
 
-        // If the user does not exist
+        // If the user does not exist or password/username is incorrect
         if (userList.isEmpty()) {
             response.setStatus(401);
-            return "loginPage";
+            return "loginError";
         }
 
         // Else create the session

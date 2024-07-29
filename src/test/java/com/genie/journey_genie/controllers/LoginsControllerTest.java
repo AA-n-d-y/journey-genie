@@ -268,7 +268,7 @@ public class LoginsControllerTest {
             .param("password", "random"))
 
             .andExpect(MockMvcResultMatchers.status().isUnauthorized())
-            .andExpect(MockMvcResultMatchers.view().name("loginPage"));
+            .andExpect(MockMvcResultMatchers.view().name("loginError"));
     }
 
 
