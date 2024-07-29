@@ -46,8 +46,9 @@
 
             let input = "Generate a list of activities for a vacation based on the following intructions and display it as an ampersand-separated list of street addresses corresponding to each activity."
             + " The output should contain no end-of-lines. Nothing else should be shown."
-            + " There must be " + document.getElementById("activitiesPerDay").value + " activities per day. "
             + " The trip should be " + document.getElementById("duration").value + " days long"
+            + " There must be exactly " + document.getElementById("activitiesPerDay").value + " activities per day. "
+            + " The output should not start with an ampersand. "
             + " The activities should be in and around " + document.getElementById("location").value
             + " The activities should be a maximum of " + document.getElementById("range").value + " hours away from eachother"
             + " The trip should suit someone who is interested in " + interestList;

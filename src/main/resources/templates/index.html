@@ -41,7 +41,7 @@
             }   
         }
 
-        function initGeneratedTrip(addresses) {
+        function initGeneratedTrip() {
             console.log("init map");
 
             directionsService = new google.maps.DirectionsService();
@@ -57,11 +57,16 @@
             directionsRenderer.setMap(map);
 
             console.log("generatingTrip");
-            for (let i = 0; i < addresses.length; i++) {
-                console.log(addresses[i]);
+
+            let addresses = "[[${addresses}]]";
+            let addressArray = addresses.split("&amp;");
+
+            for (let i = 0; i < addressArray.length; i++) {
+                console.log(addressArray[i]);
                 addLocation();
                 let activities = document.getElementsByClassName("location");
-                activities[activities.length-1].value = addresses[i];
+                activities[activities.length-1].value = addressArray[i];
+                addressToLatLng(addressArray[i], i);
             }
 
         }
@@ -430,7 +435,7 @@
     </style>
 </head>
 <th:block th:if="${isGeneratedTrip}">
-<body th:onload="'initGeneratedTrip(' + ${addresses} + ')'">
+<body onload="initGeneratedTrip()">
 </th:block>
 <th:block th:unless="${isGeneratedTrip}">
 <body onload="initMap()">
