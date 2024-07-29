@@ -347,7 +347,7 @@
 
             const routePoints = []
             for (let i in locations) {
-                routePoints[i] = document.getElementById(i).value;
+                routePoints[i] = document.getElementById(i).value.replaceAll(',', '%2C');
             }
 
             const coords = []
