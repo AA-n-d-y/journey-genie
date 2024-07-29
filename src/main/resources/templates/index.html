@@ -22,6 +22,8 @@
         let TRIPADVISOR_KEY = "[[${TRIPADVISOR_API_KEY}]]";
 
         function initMap() {
+            console.log("init map");
+
             directionsService = new google.maps.DirectionsService();
             directionsRenderer = new google.maps.DirectionsRenderer();
             geocoder = new google.maps.Geocoder();
@@ -36,7 +38,32 @@
 
             for (let i = 0; i < 2; i++) {
                 addLocation()
+            }   
+        }
+
+        function initGeneratedTrip(addresses) {
+            console.log("init map");
+
+            directionsService = new google.maps.DirectionsService();
+            directionsRenderer = new google.maps.DirectionsRenderer();
+            geocoder = new google.maps.Geocoder();
+
+            iframe = document.getElementById("iframe");
+
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: 49.2827, lng: -123.1207 },
+                zoom: 8,
+            });
+            directionsRenderer.setMap(map);
+
+            console.log("generatingTrip");
+            for (let i = 0; i < addresses.length; i++) {
+                console.log(addresses[i]);
+                addLocation();
+                let activities = document.getElementsByClassName("location");
+                activities[activities.length-1].value = addresses[i];
             }
+
         }
 
         function setTravelMode(mode) {
@@ -402,7 +429,12 @@
         }
     </style>
 </head>
+<th:block th:if="${isGeneratedTrip}">
+<body th:onload="'initGeneratedTrip(' + ${addresses} + ')'">
+</th:block>
+<th:block th:unless="${isGeneratedTrip}">
 <body onload="initMap()">
+</th:block>
     <!-- Navigation bar -->
     <header>
             <nav class = "navbar navbar-expand-md bg-info h4 px-4 py-3 text-white" style = "min-height: 75px;">
@@ -450,7 +482,7 @@
     </div>
     <div class="col-8 justify-content-center">
             <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-3">
-                <button onclick="addLocation()" class="btn btn-primary">Add Location</button>
+                <button onclick="addLocation(this)" class="btn btn-primary">Add Location</button>
 <!--                TODO: Add icons to radio buttons-->
 <!--                <i onclick="calculateRoute('DRIVING')" class="mdi mdi-car btn-icon" title="Car Route"></i>-->
 <!--                <i onclick="calculateRoute('WALKING')" class="mdi mdi-walk btn-icon" title="Walking Route"></i>-->

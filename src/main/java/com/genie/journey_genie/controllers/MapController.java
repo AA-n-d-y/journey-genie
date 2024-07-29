@@ -33,17 +33,28 @@ public class MapController {
         }
         model.addAttribute("GOOGLE_API_KEY", GOOGLE_API_KEY);
         model.addAttribute("TRIPADVISOR_API_KEY", TRIPADVISOR_API_KEY);
+        model.addAttribute("isGeneratedTrip", false);
         return "index";
     }
 
-    // @GetMapping("/index/{trip}")
-    // public String generateTrip(Model model, @PathVariable String trip, HttpServletResponse response, HttpServletRequest request, HttpSession session) {
-    //     if (!isUserLoggedIn(session)) {
-    //         response.setStatus(401); // Unauthorized
-    //         return "loginPage";
-    //     }
-    //     model.addAttribute("GOOGLE_API_KEY", GOOGLE_API_KEY);
+    @GetMapping("/index/{trip}")
+    public String generateTrip(Model model, @PathVariable String trip, HttpServletResponse response, HttpServletRequest request, HttpSession session) {
+        if (!isUserLoggedIn(session)) {
+            response.setStatus(401); // Unauthorized
+            return "loginPage";
+        }
+        model.addAttribute("GOOGLE_API_KEY", GOOGLE_API_KEY);
+        model.addAttribute("TRIPADVISOR_API_KEY", TRIPADVISOR_API_KEY);
 
-    //     String locations[] = trip.split("&");
-    // }
+        String[] addresses = trip.split("&");
+        System.out.println("----------------------------------------");
+        for (int i = 0; i < addresses.length; i++) {
+            System.out.println(addresses[i]);
+        }
+        System.out.println("----------------------------------------");
+
+        model.addAttribute("addresses", addresses);
+        model.addAttribute("isGeneratedTrip", true);
+        return "index";
+    }
 }
