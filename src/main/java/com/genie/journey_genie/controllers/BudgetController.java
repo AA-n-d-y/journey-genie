@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.data.domain.Sort;
 
+import org.springframework.data.domain.Sort;
 import java.util.List;
 
 @Controller
@@ -27,6 +27,10 @@ public class BudgetController {
         return user != null;
     }
 
+    private User getLoggedInUser(HttpSession session) {
+        return (User) session.getAttribute("sessionUser");
+    }
+
     @GetMapping("/track-budget")
     public String showBudgetPage(Model model, HttpSession session) {
         if (!isUserLoggedIn(session)) {
@@ -41,19 +45,26 @@ public class BudgetController {
     public class BudgetRestController {
 
         @GetMapping
-        public List<Budget> getAllBudgets() {
-            return budgetRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
+        public List<Budget> getAllBudgets(HttpSession session) {
+            User user = getLoggedInUser(session);
+            return budgetRepository.findByUser(user, Sort.by(Sort.Direction.ASC, "id"));
         }
 
         @PostMapping
-        public Budget createBudget(@RequestBody Budget budget) {
+        public Budget createBudget(@RequestBody Budget budget, HttpSession session) {
+            User user = getLoggedInUser(session);
+            budget.setUser(user);
             return budgetRepository.save(budget);
         }
 
         @PutMapping("/{id}")
-        public Budget updateBudget(@PathVariable Long id, @RequestBody Budget updatedBudget) {
+        public Budget updateBudget(@PathVariable Long id, @RequestBody Budget updatedBudget, HttpSession session) {
+            User user = getLoggedInUser(session);
             return budgetRepository.findById(id)
                     .map(budget -> {
+                        // if (!budget.getUser().equals(user)) {
+                        //     throw new SecurityException("You are not authorized to update this budget.");
+                        // }
                         budget.setItem(updatedBudget.getItem());
                         budget.setAmount(updatedBudget.getAmount());
                         budget.setFromCurrency(updatedBudget.getFromCurrency());
@@ -63,12 +74,19 @@ public class BudgetController {
                     })
                     .orElseGet(() -> {
                         updatedBudget.setId(id);
+                        updatedBudget.setUser(user);
                         return budgetRepository.save(updatedBudget);
                     });
         }
 
         @DeleteMapping("/{id}")
-        public void deleteBudget(@PathVariable Long id) {
+        public void deleteBudget(@PathVariable Long id, HttpSession session) {
+            User user = getLoggedInUser(session);
+            Budget budget = budgetRepository.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid budget ID"));
+            // if (!budget.getUser().equals(user)) {
+            //     throw new SecurityException("You are not authorized to delete this budget.");
+            // }
             budgetRepository.deleteById(id);
         }
     }
