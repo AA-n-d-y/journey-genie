@@ -167,11 +167,7 @@ public class ChecklistControllerTest {
 
             .andExpect(MockMvcResultMatchers.status().isUnauthorized())
             .andExpect(MockMvcResultMatchers.view().name("loginPage")); 
-    }
-
-
-                                                /* * */
- 
+    } 
 
     // Testing creating a checklist/adding activities when checklist is null
     @Test
@@ -329,76 +325,6 @@ public class ChecklistControllerTest {
         // Mock the post request
         mockMvc.perform(MockMvcRequestBuilders.post("/deletePlace/1").session(session)
             .param("placeTitle", "Place1"))
-
-            .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-            .andExpect(MockMvcResultMatchers.redirectedUrl("/makeChecklist/checklist/1"));
-    }
-
-
-    // Testing saving an activity after editing it when logged out
-    @Test
-    void editActivityLOTest() throws Exception {
-        // Mock the post request
-        mockMvc.perform(MockMvcRequestBuilders.post("/updateActivity/1"))
-
-            .andExpect(MockMvcResultMatchers.status().isUnauthorized())
-            .andExpect(MockMvcResultMatchers.view().name("loginPage")); 
-    }
-
-    // Testing saving an activity after editing it
-    @Test
-    void editActivityTest() throws Exception {
-        // Creating the user for session validation
-        User user = new User("John", "Smith", "testuser", "54321", "johnsmith@example.com", "admin");
-        MockHttpSession session = new MockHttpSession();
-        session.setAttribute("sessionUser", user);
-
-        // When the endpoint tries to find the route, return this
-        Route2 route = new Route2();
-        route.setChecklist(new Checklist());
-        route.getChecklist().setActivities(new ArrayList<>());
-        route.getChecklist().getActivities().add("Activity1");
-        when(routeRepository.findById(1L)).thenReturn(Optional.of(route));
-
-        // Mock the post request
-        mockMvc.perform(MockMvcRequestBuilders.post("/updateActivity/1").session(session)
-            .param("prevActivityTitle", "Activity1")
-            .param("activityTitle", "Activity2"))
-
-            .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-            .andExpect(MockMvcResultMatchers.redirectedUrl("/makeChecklist/checklist/1"));
-    }
-
-
-    // Testing saving a place after editing it when logged out
-    @Test
-    void editPlaceLOTest() throws Exception {
-        // Mock the post request
-        mockMvc.perform(MockMvcRequestBuilders.post("/updatePlace/1"))
-
-            .andExpect(MockMvcResultMatchers.status().isUnauthorized())
-            .andExpect(MockMvcResultMatchers.view().name("loginPage")); 
-    }
-
-    // Testing saving a place after editing it
-    @Test
-    void editPlaceTest() throws Exception {
-        // Creating the user for session validation
-        User user = new User("John", "Smith", "testuser", "54321", "johnsmith@example.com", "admin");
-        MockHttpSession session = new MockHttpSession();
-        session.setAttribute("sessionUser", user);
-
-        // When the endpoint tries to find the route, return this
-        Route2 route = new Route2();
-        route.setChecklist(new Checklist());
-        route.getChecklist().setPlaces(new ArrayList<>());
-        route.getChecklist().getPlaces().add("Place1");
-        when(routeRepository.findById(1L)).thenReturn(Optional.of(route));
-
-        // Mock the post request
-        mockMvc.perform(MockMvcRequestBuilders.post("/updatePlace/1").session(session)
-            .param("prevPlaceTitle", "Place1")
-            .param("placeTitle", "Place2"))
 
             .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
             .andExpect(MockMvcResultMatchers.redirectedUrl("/makeChecklist/checklist/1"));

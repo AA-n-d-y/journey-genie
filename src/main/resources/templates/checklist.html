@@ -55,33 +55,14 @@
                         <tr>
                             <th class = "w-75"> Activity Name </th>
                             <th>  </th>
-                            <th>  </th>
                         </tr>
 
                         <!-- Data -->
                         <tr th:each = "activity : ${activities}">
 
-                            <!-- Update -->
-                            <form th:action = "@{/updateActivity/{id}(id=${checklistID})}" method = "POST">
-                                <!-- Title -->
-                                <td>
-                                    <input id = "activityBox" type = "text" th:value = "${activity}" class = "form-control w-50" onchange="inputChangeA()">
-                                </td>
-                                
-                                <!-- Update button -->
-                                <td>
-                                    <input id = "activityHiddenBox" type = "hidden" name = "activityTitle">
-                                    <input type = "hidden" th:value = "${activity}" name = "prevActivityTitle">
-                                    <input type = "submit" value = "UPDATE" class = "btn btn-white text-success" style = "text-decoration: underline;">
-                                </td>
-
-                                <script> 
-                                    function inputChangeA() {
-                                        document.getElementById("activityHiddenBox").value = document.getElementById("activityBox").value;
-                                    }
-                                </script>
-                            </form>
-
+                            <!-- Title -->
+                            <td id = "activityBox" th:text = "${activity}" class = "w-75"></td>
+                            
                             <!-- Delete -->
                             <td>
                                 <form th:action = "@{/deleteActivity/{id}(id=${checklistID})}" method = "POST">
@@ -107,32 +88,13 @@
                         <tr>
                             <th class = "w-75"> Place Name </th>
                             <th>  </th>
-                            <th>  </th>
                         </tr>
 
                         <!-- Data -->
                         <tr th:each = "place : ${places}">
 
-                            <!-- Update -->
-                            <form th:action = "@{/updatePlace/{id}(id=${checklistID})}" method = "POST">
-                                <!-- Title -->
-                                <td>
-                                    <input id = "placeBox" type = "text" th:value = "${place}" class = "form-control w-50" onchange="inputChangeP()">
-                                </td>
-                                
-                                <!-- Update button -->
-                                <td>
-                                    <input id = "placeHiddenBox" type = "hidden" name = "placeTitle">
-                                    <input type = "hidden" th:value = "${place}" name = "prevPlaceTitle">
-                                    <input type = "submit" value = "UPDATE" class = "btn btn-white text-success" style = "text-decoration: underline;">
-                                </td>
-
-                                <script> 
-                                    function inputChangeP() {
-                                        document.getElementById("placeHiddenBox").value = document.getElementById("placeBox").value;
-                                    }
-                                </script>
-                            </form>
+                            <!-- Title -->
+                            <td id = "placeBox" th:text = "${place}" class = "w-75"></td>
 
                             <!-- Delete -->
                             <td class = "text-danger" style = "text-decoration: underline;">
