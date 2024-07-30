@@ -4,7 +4,6 @@ package com.genie.journey_genie.controllers;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.when;
 import static org.hamcrest.Matchers.*;
@@ -13,19 +12,15 @@ import static org.hamcrest.Matchers.allOf;
 import org.hamcrest.Matchers;
 import java.nio.charset.Charset;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import org.springframework.http.MediaType;
-import org.springframework.http.MediaType.*;
 import com.genie.journey_genie.models.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.mock.web.MockHttpSession;
 import java.util.List;
 import java.util.ArrayList;
@@ -50,6 +45,8 @@ public class UserControllerTest {
     @Autowired
     private UserController controller;
 
+    @Value("${GOOGLE_API_KEY}")
+    private String GOOGLE_API_KEY;
 
     /// Testing our functionality
 
@@ -59,6 +56,38 @@ public class UserControllerTest {
         assertThat(controller).isNotNull();
     }
 
+    @Test
+    void preferencesTest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/preferences"))
+        .andExpect(MockMvcResultMatchers.status().isUnauthorized())
+        .andExpect(MockMvcResultMatchers.view().name("loginPage"));
+
+        User user = new User("John", "Smith", "testuser", "54321", "johnsmith@example.com", "user");
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute("sessionUser", user);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/preferences").session(session))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.view().name("preferences"))
+
+        .andExpect(MockMvcResultMatchers.model().attribute("user", user))
+        .andExpect(MockMvcResultMatchers.model().attribute("hasPreferences", false))
+        .andExpect(MockMvcResultMatchers.model().attribute("GOOGLE_API_KEY", GOOGLE_API_KEY));
+
+        Preferences preferences = new Preferences(1,2,false,"Canada",3,"hiking,beaches,sight seeing");
+        user.setPreferences(preferences);
+
+        String interests[] = preferences.getInterests().split(",");
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/preferences").session(session))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.view().name("preferences"))
+
+        .andExpect(MockMvcResultMatchers.model().attribute("user", user))
+        .andExpect(MockMvcResultMatchers.model().attribute("interests", interests))
+        .andExpect(MockMvcResultMatchers.model().attribute("hasPreferences", true))
+        .andExpect(MockMvcResultMatchers.model().attribute("GOOGLE_API_KEY", GOOGLE_API_KEY));
+    }
 
     // Getting the registration page when logged out
     @Test
@@ -163,6 +192,23 @@ public class UserControllerTest {
             .andExpect(MockMvcResultMatchers.status().isConflict())
             .andExpect(MockMvcResultMatchers.view().name("userExists"));
     }
-    
 
+    @Test
+    void savePreferencesTest() throws Exception {
+        Preferences preferences = new Preferences(1,2,false,"Canada",3,"hiking,beaches,sight seeing");
+        User user = new User("John", "Smith", "testuser", "54321", "johnsmith@example.com", "admin");
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute("sessionUser", user);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/save-preferences").session(session)
+            .param("duration", Integer.toString(preferences.getDuration()) )
+            .param("activitiesPerDay", Integer.toString(preferences.getActivitiesPerDay()))
+            .param("tolls", Boolean.toString(preferences.isTolls()))
+            .param("location", preferences.getLocation())
+            .param("range", Float.toString(preferences.getRange()))
+            .param("interests", preferences.getInterests()))
+
+            .andExpect(MockMvcResultMatchers.status().isCreated());
+    }
+    
 }
