@@ -44,14 +44,14 @@
                 interestList += "," + interests[i].value;
             }
 
-            let input = "Generate a list of activities for a vacation based on the following intructions and display it as an ampersand-separated list of street addresses corresponding to each activity."
-            + " The output should contain no end-of-lines. Nothing else should be shown."
-            + " The trip should be " + document.getElementById("duration").value + " days long"
-            + " There must be exactly " + document.getElementById("activitiesPerDay").value + " activities per day. "
-            + " The output should not start with an ampersand. "
-            + " The activities should be in and around " + document.getElementById("location").value
-            + " The activities should be a maximum of " + document.getElementById("range").value + " hours away from eachother"
-            + " The trip should suit someone who is interested in " + interestList;
+            let input = "Generate a list of activities for a vacation based on the following intructions and display it as an ampersand-separated list of street addresses corresponding to each activity. "
+            + "The output should contain no end-of-lines. Nothing else should be shown. "
+            + "There must be exactly " + document.getElementById("activitiesPerDay").value * document.getElementById("duration").value + " activities. "
+            + "Activities and addresses cannot be repeated. They should be spread accross multiple cities or countries. "
+            + "The output should not start with an ampersand. "
+            + "The activities should be in and around " + document.getElementById("location").value + ". "
+            + "Each activity should be at most " + document.getElementById("range").value + " hours away from the previous activity. "
+            + "The trip should suit someone who is interested in " + interestList;
 
             console.log(input);
 
