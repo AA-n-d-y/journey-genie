@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <title>Preferences</title>
+    <script type="importmap">
+        {
+          "imports": {
+            "@google/generative-ai": "https://esm.run/@google/generative-ai"
+          }
+        }
+    </script>
+    <script type="module" th:if="${hasPreferences}">
+
+        import { GoogleGenerativeAI } from "@google/generative-ai";        
+        
+        const API_KEY = "[[${GOOGLE_API_KEY}]]"; // Add your API key here
+        
+        const genAI = new GoogleGenerativeAI(API_KEY);
+    
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      
+        async function generateContent(prompt) {
+            try {
+                const result = await model.generateContent(prompt);
+                const response = await result.response;
+                const text = await response.text();
+                return text;
+            } catch (error) {
+                console.error('Error generating content:', error);
+                return 'Failed to generate content';
+            }
+        }
+    
+    
+        document.getElementById('generateTrip').addEventListener('click', async () => {
+            let interests = document.getElementsByClassName("interests");
+            var interestList = interests[0].value;
+
+            for (let i = 1; i < interests.length; i++) {
+                interestList += "," + interests[i].value;
+            }
+
+            let input = "Generate a list of activities for a vacation based on the following intructions and display it as an ampersand-separated list of street addresses corresponding to each activity. "
+            + "The output should contain no end-of-lines. Nothing else should be shown. "
+            + "There must be exactly " + document.getElementById("activitiesPerDay").value * document.getElementById("duration").value + " activities. "
+            + "Activities and addresses cannot be repeated. They should be spread accross multiple cities or countries. "
+            + "The output should not start with an ampersand. "
+            + "The activities should be in and around " + document.getElementById("location").value + ". "
+            + "Each activity should be at most " + document.getElementById("range").value + " hours away from the previous activity. "
+            + "The trip should suit someone who is interested in " + interestList;
+
+            console.log(input);
+
+            const outputDiv = document.getElementById('generationStatus');
+            outputDiv.textContent = 'Generating...';
+        
+            let generatedText = await generateContent(input);
+            outputDiv.textContent = generatedText.replaceAll("&","\n");
+            // outputDiv.textContent = generatedText;
+
+            if (!document.getElementById("createRoute")) {
+                const createRoute = document.createElement("div");
+                createRoute.innerHTML = 
+                '<form action="/index/' + generatedText + ' method="GET">'
+                + '<input type="submit" id="createRoute" value="createRoute" class = "btn btn-info text-white w-100"></input>'
+                + '</form>'
+                outputDiv.append(createRoute);
+            }
+        });
+    </script>
+    <script>
+
+        function savePreferences() {
+
+            let interests = document.getElementsByClassName("interests");
+            var interestList = interests[0].value;
+
+            for (let i = 1; i < interests.length; i++) {
+                interestList += "," + interests[i].value;
+            }
+
+            fetch('/save-preferences', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        'duration': document.getElementById("duration").value,
+                        'activitiesPerDay': document.getElementById("activitiesPerDay").value,
+                        'tolls': document.getElementById("tolls").checked,
+                        'location': document.getElementById("location").value,
+                        'range': document.getElementById("range").value,
+                        'interests': interestList
+                    })
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            alert('Preferences saved successfully.');
+                        } else {
+                            alert('Failed to save preferences.');
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                    });
+        }
+
+        function addInterest() {
+            let table = document.getElementById("interestTable");
+            let row = document.createElement("tr");
+            row.innerHTML = '<td><input style="width:90%" type="text" name="interests" class="interests" required></td><td><button class="btn btn-danger" onclick="deleteInterest(this)">Delete</button></td>';
+            table.appendChild(row);
+        }
+
+        function deleteInterest(interest) {
+            interest.parentElement.parentElement.remove();
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <nav class = "navbar navbar-expand-md bg-info h4 px-4 py-3 text-white" style = "min-height: 75px;">
+            <!-- Website name-->
+            <span class="fs-4 px-2"> JourneyGenie </span>
+
+            <!-- Other pages -->
+            <div class="navbar-collapse fs-5 d-flex justify-content-md-end justify-content-center">
+                <ul class="navbar-nav">
+                    <!-- Home -->
+                    <form action="/home" method="GET">
+                        <input type="submit" value="Home" class="btn btn-dark text-white mx-2"></input>
+                    </form>
+
+                    <!-- Routes -->
+                    <form action="/map" method="GET">
+                        <input type="submit" value="Routes" class="btn btn-dark text-white mx-2"></input>
+                    </form>
+
+                    <!-- Log out -->
+                    <form action="/logout" method="POST">
+                        <input type="submit" value="Log out" class="btn btn-danger text-white mx-2"></input>
+                    </form>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <main class = "container">
+
+        <div style = "margin-top: 100px;">
+
+                <h1 class="text-center mb-5">Preferences</h1>
+                <form th:if="${hasPreferences}" id="preferences" class="row justify-content-sm-center">
+                    <label for="duration">Trip duration</label>
+                    <input type="number" name="duration" id="duration" placeholder="days" th:value="${user.preferences.duration}" required>
+                    <label for="activitiesPerDay">Activities per day</label>
+                    <input type="number" name="activitiesPerDay" id="activitiesPerDay" placeholder="# of activities" th:value="${user.preferences.activitiesPerDay}" required>
+                    <label for="tolls">Allow tolls roads</label>
+                    <input th:if="${user.preferences.tolls}" type="checkbox" name="tolls" id="tolls" checked>
+                    <input th:unless="${user.preferences.tolls}" type="checkbox" name="tolls" id="tolls">
+                    <label for="location">Prefered Location</label>
+                    <input type="text" name="location" id="location" placeholder="country/city" th:value="${user.preferences.location}" required>
+                    <label for="range">Max time between Activities</label>
+                    <input type="number" name="range" id="range" placeholder="hours" th:value="${user.preferences.range}" required>
+                    <label for="interests">Interests</label>
+                    <button onclick="addInterest()" class="btn btn-dark text-white mx-2">Add Interest</button>
+                    <table id="interestTable">
+                        <tr th:each="interest:${interests}">
+                            <td><input style="width:90%" type="text" name="interests" class="interests" required th:value="${interest}"></td>
+                            <td><button class="btn btn-danger" onclick="deleteInterest(this)">Delete</button></td>
+                        </tr>
+                    </table>
+                    <button onclick="savePreferences()" class = "btn btn-info text-white w-100">Save</button>
+                </form>
+                <form th:unless="${hasPreferences}" id="preferences" class="row justify-content-sm-center">
+                    <label for="duration">Trip duration</label>
+                    <input type="number" name="duration" id="duration" placeholder="days" required>
+                    <label for="activitiesPerDay">Activities per day</label>
+                    <input type="number" name="activitiesPerDay" id="activitiesPerDay" placeholder="# of activities" required>
+                    <label for="tolls">Allow tolls roads</label>
+                    <input type="checkbox" name="tolls" id="tolls">
+                    <label for="location">Prefered Location</label>
+                    <input type="text" name="location" id="location" placeholder="country/city" required>
+                    <label for="range">Max time between Activities</label>
+                    <input type="number" name="range" id="range" placeholder="hours" required>
+                    <label for="interests">Interests</label>
+                    <button onclick="addInterest()" class="btn btn-dark text-white mx-2">Add Interest</button>
+                    <table id="interestTable">
+                        <tr>
+                            <td><input style="width:90%" type="text" name="interests" class="interests" required></td>
+                            <td><button class="btn btn-danger" onclick="deleteInterest(this)">Delete</button></td>
+                        </tr>
+                    </table>
+                    <button onclick="savePreferences()" class = "btn btn-info text-white w-100">Save</button>
+                </form>
+                <button th:if="${hasPreferences}" id="generateTrip" class = "btn btn-info text-white w-100">Generate trip</button>
+                <div id="generationStatus" style="white-space: pre-line"></div>
+
+        </div>
+    </main>
+    
+</body>
+</html>

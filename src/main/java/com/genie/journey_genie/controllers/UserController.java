@@ -6,12 +6,14 @@ import java.util.Map;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.ui.Model;
 
+import com.genie.journey_genie.models.Preferences;
 import com.genie.journey_genie.models.User;
 import com.genie.journey_genie.models.UserRepository;
 
@@ -24,7 +26,15 @@ public class UserController {
     // Creating the repository object
     @Autowired
     private UserRepository repo;
+
+    @Value("${GOOGLE_API_KEY}")
+    private String GOOGLE_API_KEY;
   
+    private boolean isUserLoggedIn(HttpSession session) {
+        User user = (User) session.getAttribute("sessionUser");
+        return user != null;
+    }
+
     // Get request (displaying registration page)
     @GetMapping("/register")
     public String displayRegistration(Model model, HttpServletResponse response, HttpServletRequest request, HttpSession session) {
@@ -77,6 +87,43 @@ public class UserController {
             response.setStatus(201);
             return "loginPage";
         }
+    }
+
+    @PostMapping("/save-preferences")
+    public void savePreferences(@RequestParam Map<String, String> newPreferences, HttpSession session, HttpServletResponse response) {
+        int duration = Integer.parseInt(newPreferences.get("duration"));
+        int activitiesPerDay = Integer.parseInt(newPreferences.get("activitiesPerDay"));
+        boolean tolls = Boolean.parseBoolean(newPreferences.get("tolls"));
+        String location = newPreferences.get("location");
+        float range = Float.parseFloat(newPreferences.get("range"));
+        String interests = newPreferences.get("interests");
+        Preferences preferences = new Preferences(duration, activitiesPerDay, tolls, location, range, interests);
+
+        User user = (User) session.getAttribute("sessionUser");
+        user.setPreferences(preferences);
+        repo.save(user);
+        response.setStatus(201);
+    }
+
+    @GetMapping("/preferences")
+    public String preferences(Model model, HttpSession session, HttpServletResponse response) {
+        if (!isUserLoggedIn(session)) {
+            response.setStatus(401); // Unauthorized
+            return "loginPage";
+        }
+        User user = (User) session.getAttribute("sessionUser");
+        model.addAttribute("user", user);
+
+        if (user.getPreferences() != null) {
+            String interests[] = user.getPreferences().getInterests().split(",");
+            model.addAttribute("interests", interests);
+            model.addAttribute("hasPreferences", true);
+        } else {
+            model.addAttribute("hasPreferences", false);
+        }   
+        
+        model.addAttribute("GOOGLE_API_KEY", GOOGLE_API_KEY);
+        return "preferences";
     }
 
     
