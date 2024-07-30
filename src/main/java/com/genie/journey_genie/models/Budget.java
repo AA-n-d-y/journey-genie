@@ -1,9 +1,6 @@
 package com.genie.journey_genie.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 public class Budget {
@@ -11,14 +8,18 @@ public class Budget {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     private String item;
     private Double amount;
     private String fromCurrency;
     private String toCurrency;
     private Double convertedAmount;
 
-    // Getters and setters
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -65,5 +66,13 @@ public class Budget {
 
     public void setConvertedAmount(Double convertedAmount) {
         this.convertedAmount = convertedAmount;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
