@@ -455,19 +455,24 @@
 <!--                <i onclick="calculateRoute('FLYING')" class="mdi mdi-airplane btn-icon" title="Flying Route"></i>-->
                 <div class="btn-group btn-group-toggle" data-toggle="buttons">
                     <label class="btn btn-info active">
-                        <input type="radio" style="scale: 0; position: absolute" name="options" id="driving" onclick="setTravelMode('DRIVING')" checked>Driving Route
+                        <input type="radio" style="scale: 0; position: absolute" name="options" id="driving" onclick="setTravelMode('DRIVING')" checked>
+                        <i class="mdi mdi-car btn-icon" title="Car Route"></i>
                     </label>
                     <label class="btn btn-info">
-                        <input type="radio" style="scale: 0; position: absolute" name="options" id="walking" onclick="setTravelMode('WALKING')">Walking Route
+                        <input type="radio" style="scale: 0; position: absolute" name="options" id="walking" onclick="setTravelMode('WALKING')">
+                        <i class="mdi mdi-walk btn-icon" title="Walking Route"></i>
                     </label>
                     <label class="btn btn-info">
-                        <input type="radio" style="scale: 0; position: absolute" name="options" id="bicycling" onclick="setTravelMode('BICYCLING')">Cycling Route
+                        <input type="radio" style="scale: 0; position: absolute" name="options" id="bicycling" onclick="setTravelMode('BICYCLING')">
+                        <i class="mdi mdi-bike btn-icon" title="Bicycling Route"></i>
                     </label>
                     <label class="btn btn-info">
-                        <input type="radio" style="scale: 0; position: absolute" name="options" id="transit" onclick="setTravelMode('TRANSIT')">Transit Route
+                        <input type="radio" style="scale: 0; position: absolute" name="options" id="transit" onclick="setTravelMode('TRANSIT')">
+                        <i class="mdi mdi-train btn-icon" title="Transit Route"></i>
                     </label>
                     <label class="btn btn-info">
-                        <input type="radio" style="scale: 0; position: absolute" name="options" id="flying" onclick="setTravelMode('FLYING')">Flying Route
+                        <input type="radio" style="scale: 0; position: absolute" name="options" id="flying" onclick="setTravelMode('FLYING')">
+                        <i class="mdi mdi-airplane btn-icon" title="Flying Route"></i>
                     </label>
                 </div>
                 <!-- <button onclick="calculateBestRoute()" class="btn btn-info">Best Route</button> -->
@@ -478,7 +483,7 @@
             <div id="routes"></div>
             <div id="map" style="width: 100%;" class="mt-5"></div>
             <iframe id="iframe" height="500px" width="100%" style="border:0; display:none" loading="lazy" allowfullscreen th:inline="javascript"></iframe>
-            <a href="/saved-routes" class="btn btn-link mt-4 mb-5">See Your Saved Routes</a>
+                <a href="/saved-routes" class="btn btn-link mt-4 mb-5">See Your Saved Routes</a>
     </div>
 </main>
 </body>
