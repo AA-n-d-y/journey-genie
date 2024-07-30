@@ -115,7 +115,7 @@
             const options = {method: 'GET', headers: {accept: 'application/json'}};
 
             let data;
-            await fetch("https://corsproxy.io/?https://api.content.tripadvisor.com/api/v1/location/nearby_search?language=en&key=" + TRIPADVISOR_KEY + "&latLong=" + locations[id].lat() + "," + locations[id].lng() + "&category=hotels", options)
+            await fetch("https://corsproxy.io/?https://api.content.tripadvisor.com/api/v1/location/nearby_search?language=en&key=" + TRIPADVISOR_KEY + "&latLong=" + locations[id].lat() + "," + locations[id].lng() + "&category=hotels&radius=10", options)
                 .then(response => response.json())
                 .then(response => {data = response})
                 .then(() => {console.log(data)})
@@ -123,7 +123,8 @@
             document.getElementById('hotels-box').classList.add('show')
             for (const i in data.data) {
                 let newElement = document.createElement("div")
-                newElement.innerHTML = "<p style='margin-bottom: 5px'>" + data.data[i].name + "</p>" +
+                newElement.innerHTML = "<p style='margin-bottom: 0'>" + data.data[i].name + "</p>" +
+                    "<p style='margin-bottom: 5px'>" + (parseFloat(data.data[i].distance) * 1.609344).toFixed(2) + "km</p>" +
                     "<button class='btn btn-light' style='margin-top: 0; margin-bottom: 20px' onclick='document.getElementById(" + id + ").value = \"" + data.data[i].address_obj.address_string + "\";" +
                     "addressToLatLng(\"" + data.data[i].address_obj.address_string + "\"," + id + ");" +
                     "closeModal()'>Select Hotel</button>"
