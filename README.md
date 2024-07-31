@@ -64,10 +64,12 @@ After logging in, the routes page can be accessed by clicking a button in the na
 
 ### User Story: Destination Recommendations feature
 
+After registration, the user will be redirected to the preferences page where they can edit interests and preferences. They may return to the page at any time to make further adjustments. The user can click a button on the preferences page to generate a trip based on the interests and preferences provided. The user will be redirected to the map page where they can see all the locations on the map and modify the generated trip. On the map page, the user can click a button to add a hotel between locations. They will be provided a selection of hotels from TripAdvisor. <br><br>
 
 
 ### User Story: Budget Tracker feature
 
+On the route details page for a given route the user can click on “Track Budget” which will take them to the budget tracker page where they can create a budget for their route. On this page the user can click “More” to change their “From Currency” and their “To Currency”. The user can input item names and their costs which will then converted into whatever currency they selected. They can then add this item to the list. They can also edit or remove any of the items on the list. If all the items are in the same currency then a total amount and a converted total amount will be displayed. If not then the user can click on “Match Currencies” to change the currency in the amount column and the converted amount and then they can click the “Update All Rows” button. <br><br>
 
 
 ### User Story: Checklist feature
