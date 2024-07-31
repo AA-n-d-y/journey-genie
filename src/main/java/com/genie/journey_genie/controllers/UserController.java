@@ -89,6 +89,8 @@ public class UserController {
         }
     }
 
+
+    // Post request (saving preferences)
     @PostMapping("/save-preferences")
     public void savePreferences(@RequestParam Map<String, String> newPreferences, HttpSession session, HttpServletResponse response) {
         int duration = Integer.parseInt(newPreferences.get("duration"));
@@ -105,6 +107,8 @@ public class UserController {
         response.setStatus(201);
     }
 
+
+    // Get request (getting the preferences page)
     @GetMapping("/preferences")
     public String preferences(Model model, HttpSession session, HttpServletResponse response) {
         if (!isUserLoggedIn(session)) {

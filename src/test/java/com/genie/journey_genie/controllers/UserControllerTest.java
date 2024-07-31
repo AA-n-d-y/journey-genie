@@ -193,6 +193,8 @@ public class UserControllerTest {
             .andExpect(MockMvcResultMatchers.view().name("userExists"));
     }
 
+
+    // Testing saving preferences
     @Test
     void savePreferencesTest() throws Exception {
         Preferences preferences = new Preferences(1,2,false,"Canada",3,"hiking,beaches,sight seeing");
