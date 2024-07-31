@@ -32,6 +32,9 @@ public class RouteController {
     @Value("${GOOGLE_API_KEY}")
     private String GOOGLE_API_KEY;
 
+    @Value("${env.TRIPADVISOR_API_KEY}")
+    private String TRIPADVISOR_API_KEY;
+
     private boolean isUserLoggedIn(HttpSession session) {
         User user = (User) session.getAttribute("sessionUser");
         return user != null;
@@ -84,6 +87,25 @@ public class RouteController {
         return new RedirectView("/saved-routes");
     }
 
+    @GetMapping("/edit-route/{id}")
+    @Transactional
+    public String editRoute(@PathVariable Long id, Model model, HttpServletResponse response, HttpServletRequest request, HttpSession session) {
+        if (!isUserLoggedIn(session)) {
+            response.setStatus(401);
+            return "loginPage";
+        }
+        Route2 route = route2Repository.findById(id).orElse(null);
+        String travelMode = route.getTravelMode();
+        String points = Arrays.toString(route.getPoints()).substring(1, Arrays.toString(route.getPoints()).length()-1);
+        System.out.println(points);
+        model.addAttribute("points", points);
+        model.addAttribute("routeID", id);
+        model.addAttribute("travelMode", travelMode);
+        model.addAttribute("GOOGLE_API_KEY", GOOGLE_API_KEY);
+        model.addAttribute("TRIPADVISOR_API_KEY", TRIPADVISOR_API_KEY);
+        return "index";
+    }
+
     @PostMapping("/save-route")
     @Transactional
     public String saveRoute(
@@ -103,6 +125,31 @@ public class RouteController {
         User user = getLoggedInUser(session);
             Route2 route = new Route2(coords, points, travelMode, user);
             route2Repository.save(route);
+        return "redirect:/saved-routes";
+    }
+
+    @PostMapping("/update-route")
+    @Transactional
+    public String updateRoute(
+            Model model,
+            @RequestParam String[] coords,
+            @RequestParam String[] points,
+            @RequestParam String travelMode,
+            @RequestParam Long id,
+            HttpServletResponse response,
+            HttpServletRequest request,
+            HttpSession session) {
+
+        if (!isUserLoggedIn(session)) {
+            response.setStatus(401); // Unauthorized
+            return "loginPage";
+        }
+
+        Route2 route = route2Repository.findById(id).orElse(null);
+        route.setCoords(coords);
+        route.setPoints(points);
+        route.setTravelMode(travelMode);
+        route2Repository.save(route);
         return "redirect:/saved-routes";
     }
 

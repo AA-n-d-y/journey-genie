@@ -71,6 +71,40 @@
 
         }
 
+        function initRoute() {
+            console.log("init map");
+
+            directionsService = new google.maps.DirectionsService();
+            directionsRenderer = new google.maps.DirectionsRenderer();
+            geocoder = new google.maps.Geocoder();
+
+            iframe = document.getElementById("iframe");
+
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: 49.2827, lng: -123.1207 },
+                zoom: 8,
+            });
+            directionsRenderer.setMap(map);
+
+            console.log("generatingTrip");
+
+            let points = "[[${points}]]";
+            let pointsArray = points.split(", ");
+            for (const i in pointsArray) {
+                pointsArray[i] = pointsArray[i].replaceAll('%2C', ',')
+            }
+
+            for (let i = 0; i < pointsArray.length; i++) {
+                console.log(pointsArray[i]);
+                addLocation();
+                let activities = document.getElementsByClassName("location");
+                activities[activities.length-1].value = pointsArray[i];
+                addressToLatLng(pointsArray[i], i);
+            }
+
+            setTravelMode("[[${travelMode}]]")
+        }
+
         function setTravelMode(mode) {
             document.getElementById(travelMode).toggleAttribute('checked')
             document.getElementById(travelMode).parentElement.classList.toggle('active')
@@ -123,6 +157,7 @@
                 document.getElementsByClassName("location")[i].id = (document.getElementsByClassName("location")[i].id - 1)
             }
             locations.splice(locId, 1)
+            markers[locId].setMap(null)
             markers.splice(locId, 1)
         }
 
@@ -378,6 +413,52 @@
                     console.error('Error:', error);
                 });
         }
+
+        function updateRoute() {
+            if (document.getElementsByClassName('location').length < 2) {
+                alert("You must have at least 2 locations.");
+                return;
+            }
+            for (let i in locations) {
+                if (!locations[i]) {
+                    alert("Please fill in all locations.");
+                    return;
+                }
+            }
+
+            const routePoints = []
+            for (let i in locations) {
+                routePoints[i] = document.getElementById(i).value.replaceAll(',', '%2C');
+            }
+
+            const coords = []
+            for (let i in locations) {
+                coords[i] = locations[i].lat() + '%2C' + locations[i].lng()
+            }
+
+            fetch('/update-route', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'coords': coords,
+                    'points': routePoints,
+                    'travelMode': travelMode,
+                    'id': "[[${routeID}]]"
+                })
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Route saved successfully.');
+                    } else {
+                        alert('Failed to save route.');
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        }
     </script>
     <style>
         #map {
@@ -435,10 +516,13 @@
         }
     </style>
 </head>
+<th:block th:if="${#ctx.containsVariable('points')}">
+    <body onload="initRoute()">
+</th:block>
 <th:block th:if="${isGeneratedTrip}">
 <body onload="initGeneratedTrip()">
 </th:block>
-<th:block th:unless="${isGeneratedTrip}">
+<th:block th:unless="${isGeneratedTrip} or ${#ctx.containsVariable('points')}">
 <body onload="initMap()">
 </th:block>
     <!-- Navigation bar -->
@@ -489,12 +573,6 @@
     <div class="col-8 justify-content-center">
             <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-3">
                 <button onclick="addLocation(this)" class="btn btn-primary">Add Location</button>
-<!--                TODO: Add icons to radio buttons-->
-<!--                <i onclick="calculateRoute('DRIVING')" class="mdi mdi-car btn-icon" title="Car Route"></i>-->
-<!--                <i onclick="calculateRoute('WALKING')" class="mdi mdi-walk btn-icon" title="Walking Route"></i>-->
-<!--                <i onclick="calculateRoute('BICYCLING')" class="mdi mdi-bike btn-icon" title="Bicycling Route"></i>-->
-<!--                <i onclick="calculateRoute('TRANSIT')" class="mdi mdi-train btn-icon" title="Transit Route"></i>-->
-<!--                <i onclick="calculateRoute('FLYING')" class="mdi mdi-airplane btn-icon" title="Flying Route"></i>-->
                 <div class="btn-group btn-group-toggle" data-toggle="buttons">
                     <label class="btn btn-info active">
                         <input type="radio" style="scale: 0; position: absolute" name="options" id="driving" onclick="setTravelMode('DRIVING')" checked>
@@ -520,7 +598,8 @@
                 <!-- <button onclick="calculateBestRoute()" class="btn btn-info">Best Route</button> -->
                 <button onclick="calculateRouteAll()" class="btn btn-primary">Display Full Route</button>
                 <button onclick="clearMap()" class="btn btn-secondary">Clear Map</button>
-                <button onclick="saveRoute()" class="btn btn-success">Save This Route</button>
+                <button th:if="${#ctx.containsVariable('points')}" onclick="updateRoute()" class="btn btn-success">Save This Route</button>
+                <button th:unless="${#ctx.containsVariable('points')}" onclick="saveRoute()" class="btn btn-success">Save This Route</button>
             </div>
             <div id="routes"></div>
             <div id="map" style="width: 100%;" class="mt-5"></div>
