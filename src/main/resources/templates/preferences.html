@@ -40,8 +40,13 @@
             let interests = document.getElementsByClassName("interests");
             var interestList = interests[0].value;
 
-            for (let i = 1; i < interests.length; i++) {
-                interestList += "," + interests[i].value;
+            if (interests.length == 2) {
+                interestList += " and " + interests[1].value;
+            } else if (interests.length > 2) {
+                for (let i = 1; i < interests.length-1; i++) {
+                    interestList += ", " + interests[i].value;
+                } 
+                interestList += " and " + interests[interests.length-1].value;
             }
 
             let input = "Generate a list of activities for a vacation based on the following intructions and display it as an ampersand-separated list of street addresses corresponding to each activity. "
