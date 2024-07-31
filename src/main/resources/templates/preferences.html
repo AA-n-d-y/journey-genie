@@ -66,7 +66,7 @@
                 const createRoute = document.createElement("div");
                 createRoute.innerHTML = 
                 '<form action="/index/' + generatedText + ' method="GET">'
-                + '<input type="submit" id="createRoute" value="createRoute" class = "btn btn-info text-white w-100"></input>'
+                + '<input type="submit" id="createRoute" value="createRoute" class = "btn btn-info text-white w-100 mb-5"></input>'
                 + '</form>'
                 outputDiv.append(createRoute);
             }
@@ -155,48 +155,49 @@
                 <h1 class="text-center mb-5">Preferences</h1>
                 <form th:if="${hasPreferences}" id="preferences" class="row justify-content-sm-center">
                     <label for="duration">Trip duration</label>
-                    <input type="number" name="duration" id="duration" placeholder="days" th:value="${user.preferences.duration}" required>
+                    <input type="number" name="duration" id="duration" placeholder="days" th:value="${user.preferences.duration}" class = "mb-4" required>
                     <label for="activitiesPerDay">Activities per day</label>
-                    <input type="number" name="activitiesPerDay" id="activitiesPerDay" placeholder="# of activities" th:value="${user.preferences.activitiesPerDay}" required>
+                    <input type="number" name="activitiesPerDay" id="activitiesPerDay" placeholder="# of activities" th:value="${user.preferences.activitiesPerDay}" class = "mb-4" required>
                     <label for="tolls">Allow tolls roads</label>
                     <input th:if="${user.preferences.tolls}" type="checkbox" name="tolls" id="tolls" checked>
                     <input th:unless="${user.preferences.tolls}" type="checkbox" name="tolls" id="tolls">
-                    <label for="location">Prefered Location</label>
-                    <input type="text" name="location" id="location" placeholder="country/city" th:value="${user.preferences.location}" required>
+                    <label for="location" class = "mt-4">Preferred Location</label>
+                    <input type="text" name="location" id="location" placeholder="country/city" th:value="${user.preferences.location}" class = "mb-4" required>
                     <label for="range">Max time between Activities</label>
-                    <input type="number" name="range" id="range" placeholder="hours" th:value="${user.preferences.range}" required>
-                    <label for="interests">Interests</label>
-                    <button onclick="addInterest()" class="btn btn-dark text-white mx-2">Add Interest</button>
+                    <input type="number" name="range" id="range" placeholder="hours" th:value="${user.preferences.range}" class = "mb-4" required>
+                    <label for="interests" class = "mb-2">Interests</label>
+                    <button onclick="addInterest()" class="btn btn-dark text-white mx-2 mb-2">Add Interest</button>
                     <table id="interestTable">
                         <tr th:each="interest:${interests}">
                             <td><input style="width:90%" type="text" name="interests" class="interests" required th:value="${interest}"></td>
                             <td><button class="btn btn-danger" onclick="deleteInterest(this)">Delete</button></td>
                         </tr>
                     </table>
-                    <button onclick="savePreferences()" class = "btn btn-info text-white w-100">Save</button>
+                    <button onclick="savePreferences()" class = "btn btn-info text-white w-100 mt-5 mb-4">Save</button>
                 </form>
+                
                 <form th:unless="${hasPreferences}" id="preferences" class="row justify-content-sm-center">
                     <label for="duration">Trip duration</label>
-                    <input type="number" name="duration" id="duration" placeholder="days" required>
+                    <input type="number" name="duration" id="duration" placeholder="days" class = "mb-4" required>
                     <label for="activitiesPerDay">Activities per day</label>
-                    <input type="number" name="activitiesPerDay" id="activitiesPerDay" placeholder="# of activities" required>
+                    <input type="number" name="activitiesPerDay" id="activitiesPerDay" placeholder="# of activities" class = "mb-4" required>
                     <label for="tolls">Allow tolls roads</label>
                     <input type="checkbox" name="tolls" id="tolls">
-                    <label for="location">Prefered Location</label>
-                    <input type="text" name="location" id="location" placeholder="country/city" required>
+                    <label for="location" class = "mt-4">Preferred Location</label>
+                    <input type="text" name="location" id="location" placeholder="country/city" class = "mb-4" required>
                     <label for="range">Max time between Activities</label>
-                    <input type="number" name="range" id="range" placeholder="hours" required>
-                    <label for="interests">Interests</label>
-                    <button onclick="addInterest()" class="btn btn-dark text-white mx-2">Add Interest</button>
+                    <input type="number" name="range" id="range" placeholder="hours" class = "mb-4" required>
+                    <label for="interests" class = "mb-2">Interests</label>
+                    <button onclick="addInterest()" class="btn btn-dark text-white mx-2 mb-2">Add Interest</button>
                     <table id="interestTable">
                         <tr>
                             <td><input style="width:90%" type="text" name="interests" class="interests" required></td>
                             <td><button class="btn btn-danger" onclick="deleteInterest(this)">Delete</button></td>
                         </tr>
                     </table>
-                    <button onclick="savePreferences()" class = "btn btn-info text-white w-100">Save</button>
+                    <button onclick="savePreferences()" class = "btn btn-info text-white w-100 mt-5 mb-4">Save</button>
                 </form>
-                <button th:if="${hasPreferences}" id="generateTrip" class = "btn btn-info text-white w-100">Generate trip</button>
+                <button th:if="${hasPreferences}" id="generateTrip" class = "btn btn-info text-white w-100 mb-3">Generate trip</button>
                 <div id="generationStatus" style="white-space: pre-line"></div>
 
         </div>
