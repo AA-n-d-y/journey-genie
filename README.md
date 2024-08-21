@@ -4,7 +4,7 @@ JourneyGenie is an online web application that helps users plan trip itineraries
 
 
 ## Tech Stack
-**Frontend:** Bootstrap <br>
+**Frontend:** HTML, JavaScript, Bootstrap <br>
 **Backend:** Java Spring Boot <br>
 **Database:** PostgreSQL <br>
 **Testing Frameworks/Libraries:** MockMvc, JUnit <br>
